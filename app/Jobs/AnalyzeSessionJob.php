@@ -8,6 +8,7 @@ use App\Models\ConversationApiCall;
 use App\Models\ConversationSession;
 use App\Services\FallbackSessionAnalyzer;
 use App\Support\ErrorAnalysis;
+use App\Support\GeminiRetry;
 use App\Support\SessionTranscript;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -44,9 +45,16 @@ class AnalyzeSessionJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     // Langflow alone may take up to services.langflow.timeout (120s by
-    // default) before the Gemini fallback (~30s HTTP timeout) even starts.
-    // The queue's retry_after must stay above this (DB_QUEUE_RETRY_AFTER=200).
+    // default) before the Gemini fallback starts. Gemini's own budget
+    // (gemini.retry_budgets.analysis, 120s) is cut to what is left of
+    // $timeout minus DEADLINE_MARGIN_SECONDS, so the whole analysis ends
+    // before the worker kills the job. The queue's retry_after must stay
+    // above $timeout (DB_QUEUE_RETRY_AFTER, 200 by default) or a slow run is
+    // handed to a second worker and runs twice.
     public int $timeout = 180;
+
+    /** Seconds kept free at the end of $timeout for storing the result. */
+    public const DEADLINE_MARGIN_SECONDS = 15;
 
     // Only transient Langflow failures are retried (see handle()); every
     // other failure is caught and recorded — see `analysis:retry-failed`.
@@ -80,7 +88,10 @@ class AnalyzeSessionJob implements ShouldQueue
         }
 
         try {
-            $result = $analyzer->analyze(SessionTranscript::build($session), $session->id);
+            $result = GeminiRetry::within(
+                $this->timeout - self::DEADLINE_MARGIN_SECONDS,
+                fn () => $analyzer->analyze(SessionTranscript::build($session), $session->id),
+            );
         } catch (Throwable $e) {
             report($e);
 

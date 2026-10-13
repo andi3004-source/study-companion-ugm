@@ -35,6 +35,33 @@ class GeminiRetry
     /** An attempt is not started with less time than this left in the budget. */
     private const MIN_ATTEMPT_SECONDS = 1.0;
 
+    /** Outer deadline set by within(); null outside it. */
+    private static ?Carbon $deadline = null;
+
+    /**
+     * Runs $callback with every Gemini call inside it ending by $seconds from
+     * now: each call's budget is cut to the time left. AnalyzeSessionJob uses
+     * this so Langflow plus the Gemini fallback never outlive the job's own
+     * timeout. Nested calls keep the earlier deadline.
+     *
+     * @template T
+     *
+     * @param  Closure(): T  $callback
+     * @return T
+     */
+    public static function within(float $seconds, Closure $callback): mixed
+    {
+        $previous = self::$deadline;
+        $deadline = Carbon::now()->addMilliseconds((int) round($seconds * 1000));
+        self::$deadline = $previous !== null && $previous->lt($deadline) ? $previous : $deadline;
+
+        try {
+            return $callback();
+        } finally {
+            self::$deadline = $previous;
+        }
+    }
+
     /**
      * @param  string  $kind  self::CHAT, self::SCAN or self::ANALYSIS: picks the time budget
      * @param  float  $timeout  per-attempt timeout; INF means "whatever is left of the budget"
@@ -42,8 +69,12 @@ class GeminiRetry
      */
     public static function send(string $kind, string $model, float $timeout, Closure $send): Response
     {
-        $budget = self::budget($kind);
         $start = Carbon::now();
+        $budget = self::budget($kind);
+
+        if (self::$deadline !== null) {
+            $budget = min($budget, max(0.0, $start->diffInMilliseconds(self::$deadline) / 1000));
+        }
         $models = array_values(array_unique([$model, ...(array) config('gemini.fallback_models', [])]));
 
         foreach ($models as $i => $current) {

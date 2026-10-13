@@ -90,6 +90,9 @@
         <server name="SCAN_BENDA_MAX_IMAGE_BYTES" value="4000000" force="true"/>
         <server name="SCAN_BENDA_RATE_LIMIT_PER_MINUTE" value="6" force="true"/>
         <server name="SCAN_BENDA_TIMEOUT" value="30" force="true"/>
+        <!-- Above AnalyzeSessionJob::$timeout; see AnalysisDeadlineTest. -->
+        <env name="DB_QUEUE_RETRY_AFTER" value="200" force="true"/>
+        <server name="DB_QUEUE_RETRY_AFTER" value="200" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
