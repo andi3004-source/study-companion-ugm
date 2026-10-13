@@ -25,10 +25,16 @@ class GeminiClient implements AiClient
 {
     private const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
-    /** Per-attempt timeout, the HTTP client's own default; GeminiRetry cuts it to the budget left. */
+    /** Meaning translations: one plain call, no GeminiRetry (GeminiMeaningTranslator retries on its own). */
+    public const TRANSLATION = 'translation';
+
+    /** Per-attempt timeout for chat and translations, the HTTP client's own default. */
     private const TIMEOUT_SECONDS = 30;
 
     private ?string $apiKey;
+
+    /** GeminiRetry::CHAT, ::ANALYSIS or self::TRANSLATION; see forKind(). */
+    private string $kind = GeminiRetry::CHAT;
 
     public function __construct(?string $apiKey = null)
     {
@@ -38,6 +44,19 @@ class GeminiClient implements AiClient
     public function isConfigured(): bool
     {
         return filled($this->apiKey);
+    }
+
+    /**
+     * A copy for another kind of call, which picks the GeminiRetry time budget.
+     * Chat is the default; analysis waits per attempt for whatever is left of
+     * its budget; translation skips GeminiRetry so retries never stack.
+     */
+    public function forKind(string $kind): static
+    {
+        $clone = clone $this;
+        $clone->kind = $kind;
+
+        return $clone;
     }
 
     /**
@@ -70,13 +89,15 @@ class GeminiClient implements AiClient
             ],
         ];
 
-        $response = GeminiRetry::send(
-            $model,
-            self::TIMEOUT_SECONDS,
-            fn (string $model, float $timeout) => Http::timeout($timeout)
-                ->post(self::BASE_URL.'/'.$model.':generateContent?key='.urlencode($this->apiKey), $body)
-                ->throw(),
-        );
+        $send = fn (string $model, float $timeout) => Http::timeout($timeout)
+            ->post(self::BASE_URL.'/'.$model.':generateContent?key='.urlencode($this->apiKey), $body)
+            ->throw();
+
+        $response = match ($this->kind) {
+            self::TRANSLATION => $send($model, self::TIMEOUT_SECONDS),
+            GeminiRetry::ANALYSIS => GeminiRetry::send($this->kind, $model, INF, $send),
+            default => GeminiRetry::send($this->kind, $model, self::TIMEOUT_SECONDS, $send),
+        };
 
         $data = $response->json();
 

@@ -45,6 +45,7 @@ class GeminiObjectRecognizer implements ObjectRecognizer
         ];
 
         $response = GeminiRetry::send(
+            GeminiRetry::SCAN,
             (string) config('services.gemini.model'),
             (float) config('scan.timeout', 30),
             fn (string $model, float $timeout) => Http::timeout($timeout)

@@ -17,8 +17,20 @@ return [
     // Random extra wait added to each delay, 0 up to this many milliseconds.
     'retry_jitter_ms' => (int) env('GEMINI_RETRY_JITTER_MS', 250),
 
-    // Hard ceiling for the whole call in seconds: every attempt, every wait and
-    // every fallback model together. Each attempt's timeout is cut to what remains.
+    // Hard ceiling per kind of call, in seconds: every attempt, every wait and
+    // every fallback model together. Each attempt's timeout is cut to what
+    // remains. `?:` so an empty variable falls back instead of becoming 0.
+    // Meaning translations are not listed: they keep their own slow retry
+    // (GeminiMeaningTranslator) and never go through GeminiRetry.
+    'retry_budgets' => [
+        'chat' => (float) (env('GEMINI_RETRY_BUDGET_CHAT') ?: 15),
+        // Camera: SCAN_BENDA_TIMEOUT, when set, is how long the camera may wait.
+        'scan' => (float) (env('GEMINI_RETRY_BUDGET_SCAN') ?: env('SCAN_BENDA_TIMEOUT') ?: 30),
+        // End-of-session error analysis (the Gemini analyzer).
+        'analysis' => (float) (env('GEMINI_RETRY_BUDGET_ANALYSIS') ?: 120),
+    ],
+
+    // Older single budget, still read for any kind without its own entry above.
     'retry_budget_seconds' => (float) env('GEMINI_RETRY_BUDGET_SECONDS', 12),
 
     // Models tried in order when the main model still answers 503 after its

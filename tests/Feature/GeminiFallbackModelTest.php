@@ -122,7 +122,7 @@ class GeminiFallbackModelTest extends TestCase
     public function test_the_fallback_shares_the_main_models_time_budget(): void
     {
         $this->freezeTime();
-        config(['gemini.fallback_models' => [self::SPARE], 'gemini.retry_jitter_ms' => 0]);
+        config(['gemini.fallback_models' => [self::SPARE], 'gemini.retry_jitter_ms' => 0, 'gemini.retry_budgets.chat' => 12]);
         $start = now();
         // Each call "takes" 2 seconds: main 2+1+2+3+2 = 10s, leaving 2s for the spare.
         Http::fake(function (Request $request) {

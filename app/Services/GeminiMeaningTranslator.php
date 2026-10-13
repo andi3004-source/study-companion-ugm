@@ -32,7 +32,13 @@ class GeminiMeaningTranslator
     /** @var int[] seconds to wait before attempts 2, 3, 4 — a real ~15k-word run hit both 429 and 503 within the first minute on attempt 1 alone. */
     private const RETRY_DELAYS_SECONDS = [15, 30, 60];
 
-    public function __construct(private readonly AiClient $client) {}
+    private readonly AiClient $client;
+
+    public function __construct(AiClient $client)
+    {
+        // One plain call per attempt: the loop below is the only retry, so retries never stack.
+        $this->client = $client instanceof GeminiClient ? $client->forKind(GeminiClient::TRANSLATION) : $client;
+    }
 
     public function isConfigured(): bool
     {

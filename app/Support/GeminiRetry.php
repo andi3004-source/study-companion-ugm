@@ -16,7 +16,8 @@ use Illuminate\Support\Sleep;
  * connection error/timeout is retried; 400, 403, 404 and 429 fail at once.
  * When the model still answers 503 after its retries, the next model in
  * gemini.fallback_models (empty by default) gets the same rules. Everything,
- * waits and fallbacks included, stays inside gemini.retry_budget_seconds.
+ * waits and fallbacks included, stays inside the budget for that kind of
+ * call (gemini.retry_budgets: chat, scan, analysis).
  *
  * The caller's closure holds the request body (for a scan, the photo), so a
  * retry resends it from memory: nothing is written to disk here. The log gets
@@ -25,15 +26,23 @@ use Illuminate\Support\Sleep;
  */
 class GeminiRetry
 {
+    public const CHAT = 'chat';
+
+    public const SCAN = 'scan';
+
+    public const ANALYSIS = 'analysis';
+
     /** An attempt is not started with less time than this left in the budget. */
     private const MIN_ATTEMPT_SECONDS = 1.0;
 
     /**
+     * @param  string  $kind  self::CHAT, self::SCAN or self::ANALYSIS: picks the time budget
+     * @param  float  $timeout  per-attempt timeout; INF means "whatever is left of the budget"
      * @param  Closure(string $model, float $timeout): Response  $send  must throw on failure (->throw())
      */
-    public static function send(string $model, float $timeout, Closure $send): Response
+    public static function send(string $kind, string $model, float $timeout, Closure $send): Response
     {
-        $budget = (float) config('gemini.retry_budget_seconds', 12);
+        $budget = self::budget($kind);
         $start = Carbon::now();
         $models = array_values(array_unique([$model, ...(array) config('gemini.fallback_models', [])]));
 
@@ -89,6 +98,12 @@ class GeminiRetry
 
             Sleep::for((int) round($delay * 1000))->milliseconds();
         }
+    }
+
+    /** Seconds for the whole call: gemini.retry_budgets.{kind}, else the older gemini.retry_budget_seconds. */
+    public static function budget(string $kind): float
+    {
+        return (float) (config("gemini.retry_budgets.{$kind}") ?: config('gemini.retry_budget_seconds', 12));
     }
 
     /** Seconds to wait before retry number $retry (1-based), jitter included. */

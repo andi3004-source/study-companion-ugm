@@ -186,7 +186,7 @@ class GeminiRetryTest extends TestCase
     public function test_the_time_budget_is_respected_including_call_time(): void
     {
         $this->freezeTime();
-        config(['gemini.retry_jitter_ms' => 0]);
+        config(['gemini.retry_jitter_ms' => 0, 'gemini.retry_budgets.chat' => 12]);
         $start = now();
         $timeouts = [];
         $calls = 0;

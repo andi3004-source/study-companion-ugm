@@ -6,6 +6,7 @@ use App\Contracts\AiClient;
 use App\Contracts\SessionAnalyzer;
 use App\Enums\ErrorCategory;
 use App\Support\ErrorAnalysis;
+use App\Support\GeminiRetry;
 
 /**
  * Error analysis through the already-integrated AiClient (Gemini). The
@@ -17,7 +18,13 @@ class GeminiSessionAnalyzer implements SessionAnalyzer
 {
     private const MAX_TOKENS = 1024;
 
-    public function __construct(private readonly AiClient $client) {}
+    private readonly AiClient $client;
+
+    public function __construct(AiClient $client)
+    {
+        // Analysis gets its own, longer GeminiRetry budget; other clients (fakes, Anthropic) pass through.
+        $this->client = $client instanceof GeminiClient ? $client->forKind(GeminiRetry::ANALYSIS) : $client;
+    }
 
     public function isConfigured(): bool
     {
