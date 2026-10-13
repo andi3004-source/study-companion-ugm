@@ -9,10 +9,9 @@ use RuntimeException;
 
 /**
  * Thin wrapper around the Gemini generateContent API. The key is read only
- * from config (backed by env), never passed to or exposed in any view/JS —
- * it does travel in the request URL's query string (Gemini's own API
- * design, not something this client can avoid), but never in a header or
- * anywhere the app itself logs or renders.
+ * from config (backed by env), never passed to or exposed in any view/JS.
+ * It travels in the x-goog-api-key header, never in the URL, so it can't
+ * leak through connection error messages (which quote the URL) or logs.
  *
  * Implements the same AiClient contract as AnthropicClient so
  * ConversationService's rate-limit/history/system-prompt logic never has to
@@ -90,7 +89,8 @@ class GeminiClient implements AiClient
         ];
 
         $send = fn (string $model, float $timeout) => Http::timeout($timeout)
-            ->post(self::BASE_URL.'/'.$model.':generateContent?key='.urlencode($this->apiKey), $body)
+            ->withHeaders(['x-goog-api-key' => (string) $this->apiKey])
+            ->post(self::BASE_URL.'/'.$model.':generateContent', $body)
             ->throw();
 
         $response = match ($this->kind) {
