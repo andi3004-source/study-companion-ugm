@@ -52,7 +52,7 @@ Lihat `.env.example` untuk keterangan dan nilai bawaan. Variabel utama:
 | `SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE` | Driver sesi, antrean, dan cache |
 | `MAIL_*` | Pengiriman email (verifikasi, reset password) |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Provider AI aktif: percakapan dan `translate:meanings` |
-| `GEMINI_RETRY_MAX`, `GEMINI_RETRY_DELAYS`, `GEMINI_RETRY_JITTER_MS`, `GEMINI_RETRY_BUDGET_SECONDS`, `GEMINI_FALLBACK_MODELS` | Coba ulang saat Gemini penuh, lihat [Ketahanan terhadap beban Gemini](#ketahanan-terhadap-beban-gemini) |
+| `GEMINI_RETRY_MAX`, `GEMINI_RETRY_DELAYS`, `GEMINI_RETRY_JITTER_MS`, `GEMINI_RETRY_BUDGET_CHAT`, `GEMINI_RETRY_BUDGET_SCAN`, `GEMINI_RETRY_BUDGET_ANALYSIS`, `GEMINI_RETRY_BUDGET_SECONDS`, `GEMINI_FALLBACK_MODELS` | Coba ulang saat Gemini penuh, lihat [Ketahanan terhadap beban Gemini](#ketahanan-terhadap-beban-gemini) |
 | `DAILY_MESSAGE_LIMIT` | Pesan Ngobrol per pengguna per hari (bawaan 50; bilangan bulat 1-1000, nilai lain kembali ke 50) |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Provider AI alternatif (tidak aktif) |
 | `PRONUNCIATION_SERVICE_URL`, `PRONUNCIATION_CHECKER_DRIVER` | Layanan cek pelafalan (`ml` atau `stt_match`) |
@@ -108,12 +108,14 @@ di-commit):
   `APP_LOCALE`, `APP_FALLBACK_LOCALE`, `TRUSTED_PROXIES`, `APP_FORCE_HTTPS`
 - Basis data (biasanya diisi otomatis oleh Laravel Cloud): `DB_CONNECTION`,
   `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
-- Antrean, cache, sesi, log: `QUEUE_CONNECTION`, `CACHE_STORE`,
+- Antrean, cache, sesi, log: `QUEUE_CONNECTION`, `DB_QUEUE_RETRY_AFTER`, `CACHE_STORE`,
   `SESSION_DRIVER`, `SESSION_SECURE_COOKIE`, `LOG_CHANNEL`, `LOG_LEVEL`
 - Email: `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`,
   `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`
 - AI dan layanan: `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_RETRY_MAX`,
   `GEMINI_RETRY_DELAYS`, `GEMINI_RETRY_JITTER_MS`, `GEMINI_RETRY_BUDGET_SECONDS`,
+  `GEMINI_RETRY_BUDGET_CHAT`, `GEMINI_RETRY_BUDGET_SCAN`,
+  `GEMINI_RETRY_BUDGET_ANALYSIS`,
   `GEMINI_FALLBACK_MODELS`, `ANTHROPIC_API_KEY`,
   `ANTHROPIC_MODEL`, `LANGFLOW_URL`, `LANGFLOW_FLOW_ID`, `LANGFLOW_API_KEY`,
   `LANGFLOW_TIMEOUT`, `PRONUNCIATION_SERVICE_URL`,
@@ -248,12 +250,13 @@ salin berkas cadangan ke `/data/database/database.sqlite`, lalu nyalakan lagi.
 - Basis data: `DB_JOURNAL_MODE`, `DB_BUSY_TIMEOUT` (`DB_CONNECTION` dan
   `DB_DATABASE` ditetapkan oleh `docker-compose.yml`)
 - Log, sesi, antrean, cache: `LOG_CHANNEL`, `LOG_LEVEL`, `SESSION_DRIVER`,
-  `SESSION_LIFETIME`, `SESSION_SECURE_COOKIE`, `QUEUE_CONNECTION`,
+  `SESSION_LIFETIME`, `SESSION_SECURE_COOKIE`, `QUEUE_CONNECTION`, `DB_QUEUE_RETRY_AFTER`,
   `CACHE_STORE`, `FILESYSTEM_DISK`
 - Email: `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`,
   `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`
 - AI: `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_RETRY_MAX`, `GEMINI_RETRY_DELAYS`,
-  `GEMINI_RETRY_JITTER_MS`, `GEMINI_RETRY_BUDGET_SECONDS`, `GEMINI_FALLBACK_MODELS`,
+  `GEMINI_RETRY_JITTER_MS`, `GEMINI_RETRY_BUDGET_SECONDS`, `GEMINI_RETRY_BUDGET_CHAT`,
+  `GEMINI_RETRY_BUDGET_SCAN`, `GEMINI_RETRY_BUDGET_ANALYSIS`, `GEMINI_FALLBACK_MODELS`,
   `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`,
   `LANGFLOW_URL`, `LANGFLOW_FLOW_ID`, `LANGFLOW_API_KEY`, `LANGFLOW_TIMEOUT`,
   `DAILY_MESSAGE_LIMIT`
@@ -325,7 +328,8 @@ aturannya ada di satu kelas, `App\Support\GeminiRetry`, yang dipakai oleh semua
 panggilan HTTP ke Gemini: klien chat (`GeminiClient`, yang juga dipakai analisis
 kesalahan versi Gemini) dan pengenal benda Raba lalu dengar
 (`GeminiObjectRecognizer`). Langflow punya mekanisme coba ulang sendiri dan
-tidak ikut diubah.
+tidak ikut diubah. Kunci Gemini selalu dikirim lewat header `x-goog-api-key`,
+tidak pernah di URL, sehingga tidak bisa ikut tercetak di pesan galat koneksi.
 
 **Aturan:**
 
@@ -334,16 +338,35 @@ tidak ikut diubah.
 - Maksimal `GEMINI_RETRY_MAX` kali coba ulang (bawaan 2, jadi 3 percobaan
   total). Jedanya `GEMINI_RETRY_DELAYS` (bawaan 1 detik lalu 3 detik), masing-masing
   ditambah acak kecil 0 sampai `GEMINI_RETRY_JITTER_MS` milidetik (bawaan 250).
-- **Anggaran waktu** `GEMINI_RETRY_BUDGET_SECONDS` (bawaan 12 detik) adalah batas
-  keras untuk seluruh proses: semua percobaan, semua jeda, dan model cadangan.
-  Timeout tiap percobaan dipotong menjadi sisa anggaran. Percobaan berikutnya
-  tidak dimulai bila jeda ditambah minimal 1 detik waktu panggilan tidak muat
-  lagi. Akibatnya, satu jawaban yang memang butuh lebih dari 12 detik juga
-  terpotong. Naikkan nilai ini bila itu terjadi.
+- **Anggaran waktu per jenis panggilan** adalah batas keras untuk seluruh
+  proses: semua percobaan, semua jeda, dan model cadangan. Timeout tiap
+  percobaan dipotong menjadi sisa anggaran. Percobaan berikutnya tidak dimulai
+  bila jeda ditambah minimal 1 detik waktu panggilan tidak muat lagi.
+
+  | Jenis | Variabel | Bawaan | Timeout per percobaan |
+  | --- | --- | --- | --- |
+  | Chat (Ngobrol, pesan pembuka, umpan balik akhir sesi) | `GEMINI_RETRY_BUDGET_CHAT` | 15 detik | 30 detik, dipotong ke sisa anggaran |
+  | Kamera (Raba lalu dengar) | `GEMINI_RETRY_BUDGET_SCAN` | `SCAN_BENDA_TIMEOUT` bila diisi, kalau tidak 30 detik | `SCAN_BENDA_TIMEOUT`, dipotong ke sisa anggaran |
+  | Analisis akhir sesi (analyzer Gemini) | `GEMINI_RETRY_BUDGET_ANALYSIS` | 120 detik | seluruh sisa anggaran |
+  | Terjemahan arti (`translate:meanings`) | tidak ada | tidak dipotong | 30 detik, satu panggilan tanpa `GeminiRetry` |
+
+  Variabel yang kosong memakai nilai bawaan. Variabel lama
+  `GEMINI_RETRY_BUDGET_SECONDS` (bawaan 12) tetap dibaca, tetapi hanya sebagai
+  cadangan untuk jenis panggilan yang tidak punya anggaran sendiri. Jawaban
+  yang memang butuh lebih lama dari anggarannya ikut terpotong. Naikkan
+  variabel jenis itu bila hal ini terjadi.
+- **Analisis di antrean**: `AnalyzeSessionJob` punya timeout 180 detik.
+  Langflow (sampai `LANGFLOW_TIMEOUT`, bawaan 120 detik) ditambah Gemini harus
+  selesai sebelum 180 - 15 = 165 detik. Karena itu anggaran analisis Gemini
+  dipotong ke sisa waktu tersebut. Kalau Langflow memakai 120 detik penuh lalu
+  gagal, Gemini hanya mendapat sekitar 45 detik. `retry_after` antrean
+  (`DB_QUEUE_RETRY_AFTER`, kini bawaan 200 detik) harus selalu di atas 180.
+  Kalau tidak, job yang lambat diserahkan ke worker kedua dan analisisnya
+  jalan dua kali.
 - **Model cadangan** `GEMINI_FALLBACK_MODELS` (daftar dipisah koma, **bawaan
   kosong**). Model cadangan hanya dicoba bila model utama tetap 503 setelah
   semua percobaan ulangnya, berurutan sesuai daftar, dengan aturan yang sama
-  dan anggaran waktu yang sama. Galat koneksi atau timeout tidak memicu model
+  dan anggaran waktu yang sama (anggaran jenis panggilan itu). Galat koneksi atau timeout tidak memicu model
   cadangan. Isi daftar ini hanya dengan nama dari `php artisan gemini:models`.
   Aplikasi tidak menebak nama model.
 - **Log**: tiap percobaan yang gagal dicatat sebagai `gemini: percobaan gagal`
@@ -359,16 +382,17 @@ tidak ikut diubah.
 - **Tampilan**: bila semua percobaan habis, pengguna melihat pesan yang sudah
   ada ("Layanan AI sedang penuh, coba lagi sebentar."). Di Raba lalu dengar,
   pesan itu disertai tombol **Foto lagi**.
-- `translate:meanings` juga memakai `GeminiClient`, jadi ikut mendapat aturan
-  ini. Di atasnya, perintah itu tetap punya coba ulang lambatnya sendiri (429
-  dan 5xx, jeda 15/30/60 detik) karena berupa pekerjaan massal.
+- `translate:meanings` **tidak** memakai `GeminiRetry`. Pekerjaan massal ini
+  tetap memakai coba ulang lambatnya sendiri (429 dan 5xx, jeda 15/30/60 detik)
+  dengan satu panggilan HTTP per percobaan, jadi coba ulangnya tidak bertumpuk.
 
 **Batas jujurnya:** coba ulang hanya menolong lonjakan beban yang singkat. Bila
 Gemini penuh lebih lama dari anggaran waktunya, permintaan tetap gagal. Coba
 ulang juga tidak menjamin layanan tersedia. Model cadangan hanya membantu bila
 model itu memang tersedia untuk akun atau kunci yang dipakai. Model lain bisa
 saja sedang penuh juga. Pengguna juga menunggu lebih lama sebelum melihat pesan
-galat, paling lama sebesar anggaran waktunya.
+galat, paling lama sebesar anggaran jenis panggilannya (15 detik untuk chat,
+30 detik untuk kamera).
 
 ## Analisis kesalahan ("Kesalahan terbanyakmu")
 
@@ -446,9 +470,9 @@ Analisis berjalan sebagai job antrean. Ada dua cara:
    juga muncul di Progress setelah worker selesai memprosesnya.
    `composer run dev` sudah menjalankan worker (`queue:listen`).
 
-   **Anjuran: `DB_QUEUE_RETRY_AFTER=200`.** Nilai bawaannya 90 detik, padahal
-   job analisis boleh berjalan sampai 180 detik. Antrean menganggap job yang
-   belum selesai setelah `retry_after` detik sebagai macet dan menyerahkannya
+   **`DB_QUEUE_RETRY_AFTER` bawaannya 200 detik.** Jangan turunkan di bawah
+   180 detik, karena job analisis boleh berjalan sampai 180 detik. Antrean
+   menganggap job yang belum selesai setelah `retry_after` detik sebagai macet dan menyerahkannya
    lagi ke worker, sehingga analisis yang lambat bisa jalan dua kali (dua
    panggilan AI). `retry_after` harus selalu lebih besar dari timeout job.
 
