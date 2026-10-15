@@ -1,0 +1,1649 @@
+[
+  {
+    "base": "be",
+    "past": "was/were",
+    "past_participle": "been",
+    "ing_form": "being",
+    "frequency_rank_raw": 2398724162,
+    "meaning_id": "menjadi/adalah",
+    "rank": 1
+  },
+  {
+    "base": "have",
+    "past": "had",
+    "past_participle": "had",
+    "ing_form": "having",
+    "frequency_rank_raw": 1564202750,
+    "meaning_id": "punya/memiliki",
+    "rank": 2
+  },
+  {
+    "base": "do",
+    "past": "did",
+    "past_participle": "done",
+    "ing_form": "doing",
+    "frequency_rank_raw": 950751722,
+    "meaning_id": "melakukan",
+    "rank": 3
+  },
+  {
+    "base": "see",
+    "past": "saw",
+    "past_participle": "seen",
+    "ing_form": "seeing",
+    "frequency_rank_raw": 681410380,
+    "meaning_id": "melihat",
+    "rank": 4
+  },
+  {
+    "base": "get",
+    "past": "got",
+    "past_participle": "got",
+    "ing_form": "getting",
+    "frequency_rank_raw": 605984508,
+    "meaning_id": "mendapatkan",
+    "rank": 5
+  },
+  {
+    "base": "find",
+    "past": "found",
+    "past_participle": "found",
+    "ing_form": "finding",
+    "frequency_rank_raw": 502043038,
+    "meaning_id": "menemukan",
+    "rank": 6
+  },
+  {
+    "base": "go",
+    "past": "went",
+    "past_participle": "gone",
+    "ing_form": "going",
+    "frequency_rank_raw": 421086358,
+    "meaning_id": "pergi",
+    "rank": 7
+  },
+  {
+    "base": "buy",
+    "past": "bought",
+    "past_participle": "bought",
+    "ing_form": "buying",
+    "frequency_rank_raw": 410780176,
+    "meaning_id": "membeli",
+    "rank": 8
+  },
+  {
+    "base": "make",
+    "past": "made",
+    "past_participle": "made",
+    "ing_form": "making",
+    "frequency_rank_raw": 405084642,
+    "meaning_id": "membuat",
+    "rank": 9
+  },
+  {
+    "base": "read",
+    "past": "read",
+    "past_participle": "read",
+    "ing_form": "reading",
+    "frequency_rank_raw": 322331766,
+    "meaning_id": "membaca",
+    "rank": 10
+  },
+  {
+    "base": "set",
+    "past": "set",
+    "past_participle": "set",
+    "ing_form": "setting",
+    "frequency_rank_raw": 313469591,
+    "meaning_id": "menetapkan/meletakkan",
+    "rank": 11
+  },
+  {
+    "base": "know",
+    "past": "knew",
+    "past_participle": "known",
+    "ing_form": "knowing",
+    "frequency_rank_raw": 306100813,
+    "meaning_id": "tahu/mengetahui",
+    "rank": 12
+  },
+  {
+    "base": "send",
+    "past": "sent",
+    "past_participle": "sent",
+    "ing_form": "sending",
+    "frequency_rank_raw": 274103587,
+    "meaning_id": "mengirim",
+    "rank": 13
+  },
+  {
+    "base": "take",
+    "past": "took",
+    "past_participle": "taken",
+    "ing_form": "taking",
+    "frequency_rank_raw": 264349801,
+    "meaning_id": "mengambil",
+    "rank": 14
+  },
+  {
+    "base": "show",
+    "past": "showed",
+    "past_participle": "shown",
+    "ing_form": "showing",
+    "frequency_rank_raw": 247541986,
+    "meaning_id": "menunjukkan",
+    "rank": 15
+  },
+  {
+    "base": "think",
+    "past": "thought",
+    "past_participle": "thought",
+    "ing_form": "thinking",
+    "frequency_rank_raw": 217856550,
+    "meaning_id": "berpikir",
+    "rank": 16
+  },
+  {
+    "base": "learn",
+    "past": "learnt",
+    "past_participle": "learnt",
+    "ing_form": "learning",
+    "frequency_rank_raw": 179428286,
+    "meaning_id": "belajar",
+    "rank": 17
+  },
+  {
+    "base": "cost",
+    "past": "cost",
+    "past_participle": "cost",
+    "ing_form": "costing",
+    "frequency_rank_raw": 158887256,
+    "meaning_id": "berharga/menghabiskan biaya",
+    "rank": 18
+  },
+  {
+    "base": "say",
+    "past": "said",
+    "past_participle": "said",
+    "ing_form": "saying",
+    "frequency_rank_raw": 156845267,
+    "meaning_id": "berkata",
+    "rank": 19
+  },
+  {
+    "base": "come",
+    "past": "came",
+    "past_participle": "come",
+    "ing_form": "coming",
+    "frequency_rank_raw": 154326119,
+    "meaning_id": "datang",
+    "rank": 20
+  },
+  {
+    "base": "let",
+    "past": "let",
+    "past_participle": "let",
+    "ing_form": "letting",
+    "frequency_rank_raw": 143062438,
+    "meaning_id": "mengizinkan",
+    "rank": 21
+  },
+  {
+    "base": "give",
+    "past": "gave",
+    "past_participle": "given",
+    "ing_form": "giving",
+    "frequency_rank_raw": 140688602,
+    "meaning_id": "memberi",
+    "rank": 22
+  },
+  {
+    "base": "sell",
+    "past": "sold",
+    "past_participle": "sold",
+    "ing_form": "selling",
+    "frequency_rank_raw": 137696613,
+    "meaning_id": "menjual",
+    "rank": 23
+  },
+  {
+    "base": "pay",
+    "past": "paid",
+    "past_participle": "paid",
+    "ing_form": "paying",
+    "frequency_rank_raw": 129198530,
+    "meaning_id": "membayar",
+    "rank": 24
+  },
+  {
+    "base": "light",
+    "past": "lit",
+    "past_participle": "lit",
+    "ing_form": "lighting",
+    "frequency_rank_raw": 126699632,
+    "meaning_id": "menyalakan/menerangi",
+    "rank": 25
+  },
+  {
+    "base": "write",
+    "past": "wrote",
+    "past_participle": "written",
+    "ing_form": "writing",
+    "frequency_rank_raw": 126645151,
+    "meaning_id": "menulis",
+    "rank": 26
+  },
+  {
+    "base": "become",
+    "past": "became",
+    "past_participle": "become",
+    "ing_form": "becoming",
+    "frequency_rank_raw": 120495036,
+    "meaning_id": "menjadi",
+    "rank": 27
+  },
+  {
+    "base": "keep",
+    "past": "kept",
+    "past_participle": "kept",
+    "ing_form": "keeping",
+    "frequency_rank_raw": 119602514,
+    "meaning_id": "menyimpan/mempertahankan",
+    "rank": 28
+  },
+  {
+    "base": "run",
+    "past": "ran",
+    "past_participle": "run",
+    "ing_form": "running",
+    "frequency_rank_raw": 117213565,
+    "meaning_id": "berlari",
+    "rank": 29
+  },
+  {
+    "base": "put",
+    "past": "put",
+    "past_participle": "put",
+    "ing_form": "putting",
+    "frequency_rank_raw": 115205090,
+    "meaning_id": "meletakkan",
+    "rank": 30
+  },
+  {
+    "base": "tell",
+    "past": "told",
+    "past_participle": "told",
+    "ing_form": "telling",
+    "frequency_rank_raw": 109553730,
+    "meaning_id": "memberitahu",
+    "rank": 31
+  },
+  {
+    "base": "drive",
+    "past": "drove",
+    "past_participle": "driven",
+    "ing_form": "driving",
+    "frequency_rank_raw": 107799371,
+    "meaning_id": "mengemudi",
+    "rank": 32
+  },
+  {
+    "base": "meet",
+    "past": "met",
+    "past_participle": "met",
+    "ing_form": "meeting",
+    "frequency_rank_raw": 93275872,
+    "meaning_id": "bertemu",
+    "rank": 33
+  },
+  {
+    "base": "feel",
+    "past": "felt",
+    "past_participle": "felt",
+    "ing_form": "feeling",
+    "frequency_rank_raw": 91924001,
+    "meaning_id": "merasa",
+    "rank": 34
+  },
+  {
+    "base": "choose",
+    "past": "chose",
+    "past_participle": "chosen",
+    "ing_form": "choosing",
+    "frequency_rank_raw": 90010174,
+    "meaning_id": "memilih",
+    "rank": 35
+  },
+  {
+    "base": "speed",
+    "past": "sped",
+    "past_participle": "sped",
+    "ing_form": "speeding",
+    "frequency_rank_raw": 83135749,
+    "meaning_id": "melaju cepat",
+    "rank": 36
+  },
+  {
+    "base": "mean",
+    "past": "meant",
+    "past_participle": "meant",
+    "ing_form": "meaning",
+    "frequency_rank_raw": 80312172,
+    "meaning_id": "bermaksud/berarti",
+    "rank": 37
+  },
+  {
+    "base": "build",
+    "past": "built",
+    "past_participle": "built",
+    "ing_form": "building",
+    "frequency_rank_raw": 77203075,
+    "meaning_id": "membangun",
+    "rank": 38
+  },
+  {
+    "base": "leave",
+    "past": "left",
+    "past_participle": "left",
+    "ing_form": "leaving",
+    "frequency_rank_raw": 70957750,
+    "meaning_id": "meninggalkan/pergi",
+    "rank": 39
+  },
+  {
+    "base": "bid",
+    "past": "bade",
+    "past_participle": "bidden",
+    "ing_form": "bidding",
+    "frequency_rank_raw": 70427114,
+    "meaning_id": "menawar",
+    "rank": 40
+  },
+  {
+    "base": "lead",
+    "past": "led",
+    "past_participle": "led",
+    "ing_form": "leading",
+    "frequency_rank_raw": 68325439,
+    "meaning_id": "memimpin",
+    "rank": 41
+  },
+  {
+    "base": "wed",
+    "past": "wed",
+    "past_participle": "wed",
+    "ing_form": "wedding",
+    "frequency_rank_raw": 66796198,
+    "meaning_id": "menikah",
+    "rank": 42
+  },
+  {
+    "base": "fall",
+    "past": "fell",
+    "past_participle": "fallen",
+    "ing_form": "falling",
+    "frequency_rank_raw": 65501110,
+    "meaning_id": "jatuh",
+    "rank": 43
+  },
+  {
+    "base": "win",
+    "past": "won",
+    "past_participle": "won",
+    "ing_form": "winning",
+    "frequency_rank_raw": 65264239,
+    "meaning_id": "menang",
+    "rank": 44
+  },
+  {
+    "base": "spring",
+    "past": "sprang",
+    "past_participle": "sprung",
+    "ing_form": "springing",
+    "frequency_rank_raw": 64814116,
+    "meaning_id": "melompat/muncul tiba-tiba",
+    "rank": 45
+  },
+  {
+    "base": "deal",
+    "past": "dealt",
+    "past_participle": "dealt",
+    "ing_form": "dealing",
+    "frequency_rank_raw": 63828244,
+    "meaning_id": "menangani/berdagang",
+    "rank": 46
+  },
+  {
+    "base": "hold",
+    "past": "held",
+    "past_participle": "held",
+    "ing_form": "holding",
+    "frequency_rank_raw": 63777575,
+    "meaning_id": "memegang",
+    "rank": 47
+  },
+  {
+    "base": "feed",
+    "past": "fed",
+    "past_participle": "fed",
+    "ing_form": "feeding",
+    "frequency_rank_raw": 62663785,
+    "meaning_id": "memberi makan",
+    "rank": 48
+  },
+  {
+    "base": "understand",
+    "past": "understood",
+    "past_participle": "understood",
+    "ing_form": "understanding",
+    "frequency_rank_raw": 61719969,
+    "meaning_id": "mengerti",
+    "rank": 49
+  },
+  {
+    "base": "cut",
+    "past": "cut",
+    "past_participle": "cut",
+    "ing_form": "cutting",
+    "frequency_rank_raw": 61337417,
+    "meaning_id": "memotong",
+    "rank": 50
+  },
+  {
+    "base": "bring",
+    "past": "brought",
+    "past_participle": "brought",
+    "ing_form": "bringing",
+    "frequency_rank_raw": 57608074,
+    "meaning_id": "membawa",
+    "rank": 51
+  },
+  {
+    "base": "ring",
+    "past": "rang",
+    "past_participle": "rung",
+    "ing_form": "ringing",
+    "frequency_rank_raw": 54342432,
+    "meaning_id": "berdering",
+    "rank": 52
+  },
+  {
+    "base": "hit",
+    "past": "hit",
+    "past_participle": "hit",
+    "ing_form": "hitting",
+    "frequency_rank_raw": 53171478,
+    "meaning_id": "memukul",
+    "rank": 53
+  },
+  {
+    "base": "string",
+    "past": "strung",
+    "past_participle": "strung",
+    "ing_form": "stringing",
+    "frequency_rank_raw": 52681344,
+    "meaning_id": "merangkai/memasang tali",
+    "rank": 54
+  },
+  {
+    "base": "break",
+    "past": "broke",
+    "past_participle": "broken",
+    "ing_form": "breaking",
+    "frequency_rank_raw": 51242970,
+    "meaning_id": "memecahkan",
+    "rank": 55
+  },
+  {
+    "base": "saw",
+    "past": "sawed",
+    "past_participle": "sawn",
+    "ing_form": "sawing",
+    "frequency_rank_raw": 48544776,
+    "meaning_id": "menggergaji",
+    "rank": 56
+  },
+  {
+    "base": "hear",
+    "past": "heard",
+    "past_participle": "heard",
+    "ing_form": "hearing",
+    "frequency_rank_raw": 47426506,
+    "meaning_id": "mendengar",
+    "rank": 57
+  },
+  {
+    "base": "stand",
+    "past": "stood",
+    "past_participle": "stood",
+    "ing_form": "standing",
+    "frequency_rank_raw": 46292709,
+    "meaning_id": "berdiri",
+    "rank": 58
+  },
+  {
+    "base": "begin",
+    "past": "began",
+    "past_participle": "begun",
+    "ing_form": "beginning",
+    "frequency_rank_raw": 45434902,
+    "meaning_id": "memulai",
+    "rank": 59
+  },
+  {
+    "base": "wind",
+    "past": "wound",
+    "past_participle": "wound",
+    "ing_form": "winding",
+    "frequency_rank_raw": 42974876,
+    "meaning_id": "memutar/melilitkan",
+    "rank": 60
+  },
+  {
+    "base": "fit",
+    "past": "fit",
+    "past_participle": "fit",
+    "ing_form": "fitting",
+    "frequency_rank_raw": 42342802,
+    "meaning_id": "cocok/pas",
+    "rank": 61
+  },
+  {
+    "base": "dream",
+    "past": "dreamt",
+    "past_participle": "dreamt",
+    "ing_form": "dreaming",
+    "frequency_rank_raw": 33518573,
+    "meaning_id": "bermimpi",
+    "rank": 62
+  },
+  {
+    "base": "cast",
+    "past": "cast",
+    "past_participle": "cast",
+    "ing_form": "casting",
+    "frequency_rank_raw": 33395024,
+    "meaning_id": "melempar/memerankan",
+    "rank": 63
+  },
+  {
+    "base": "bear",
+    "past": "bore",
+    "past_participle": "borne",
+    "ing_form": "bearing",
+    "frequency_rank_raw": 31981362,
+    "meaning_id": "menanggung/melahirkan",
+    "rank": 64
+  },
+  {
+    "base": "blow",
+    "past": "blew",
+    "past_participle": "blown",
+    "ing_form": "blowing",
+    "frequency_rank_raw": 31344495,
+    "meaning_id": "meniup",
+    "rank": 65
+  },
+  {
+    "base": "speak",
+    "past": "spoke",
+    "past_participle": "spoken",
+    "ing_form": "speaking",
+    "frequency_rank_raw": 31324712,
+    "meaning_id": "berbicara",
+    "rank": 66
+  },
+  {
+    "base": "fight",
+    "past": "fought",
+    "past_participle": "fought",
+    "ing_form": "fighting",
+    "frequency_rank_raw": 30784313,
+    "meaning_id": "berkelahi",
+    "rank": 67
+  },
+  {
+    "base": "wear",
+    "past": "wore",
+    "past_participle": "worn",
+    "ing_form": "wearing",
+    "frequency_rank_raw": 29846762,
+    "meaning_id": "memakai",
+    "rank": 68
+  },
+  {
+    "base": "rise",
+    "past": "rose",
+    "past_participle": "risen",
+    "ing_form": "rising",
+    "frequency_rank_raw": 29535295,
+    "meaning_id": "naik/terbit",
+    "rank": 69
+  },
+  {
+    "base": "sleep",
+    "past": "slept",
+    "past_participle": "slept",
+    "ing_form": "sleeping",
+    "frequency_rank_raw": 29491537,
+    "meaning_id": "tidur",
+    "rank": 70
+  },
+  {
+    "base": "drink",
+    "past": "drank",
+    "past_participle": "drunk",
+    "ing_form": "drinking",
+    "frequency_rank_raw": 29254937,
+    "meaning_id": "minum",
+    "rank": 71
+  },
+  {
+    "base": "eat",
+    "past": "ate",
+    "past_participle": "eaten",
+    "ing_form": "eating",
+    "frequency_rank_raw": 29237400,
+    "meaning_id": "makan",
+    "rank": 72
+  },
+  {
+    "base": "fly",
+    "past": "flew",
+    "past_participle": "flown",
+    "ing_form": "flying",
+    "frequency_rank_raw": 28279478,
+    "meaning_id": "terbang",
+    "rank": 73
+  },
+  {
+    "base": "beat",
+    "past": "beat",
+    "past_participle": "beaten",
+    "ing_form": "beating",
+    "frequency_rank_raw": 27616668,
+    "meaning_id": "mengalahkan/memukul",
+    "rank": 74
+  },
+  {
+    "base": "hide",
+    "past": "hid",
+    "past_participle": "hidden",
+    "ing_form": "hiding",
+    "frequency_rank_raw": 27157035,
+    "meaning_id": "bersembunyi",
+    "rank": 75
+  },
+  {
+    "base": "spend",
+    "past": "spent",
+    "past_participle": "spent",
+    "ing_form": "spending",
+    "frequency_rank_raw": 26713310,
+    "meaning_id": "menghabiskan (waktu/uang)",
+    "rank": 76
+  },
+  {
+    "base": "grow",
+    "past": "grew",
+    "past_participle": "grown",
+    "ing_form": "growing",
+    "frequency_rank_raw": 26701492,
+    "meaning_id": "tumbuh",
+    "rank": 77
+  },
+  {
+    "base": "ride",
+    "past": "rode",
+    "past_participle": "ridden",
+    "ing_form": "riding",
+    "frequency_rank_raw": 26153004,
+    "meaning_id": "menunggang/naik kendaraan",
+    "rank": 78
+  },
+  {
+    "base": "forget",
+    "past": "forgot",
+    "past_participle": "forgotten",
+    "ing_form": "forgetting",
+    "frequency_rank_raw": 25162411,
+    "meaning_id": "melupakan",
+    "rank": 79
+  },
+  {
+    "base": "spread",
+    "past": "spread",
+    "past_participle": "spread",
+    "ing_form": "spreading",
+    "frequency_rank_raw": 24520573,
+    "meaning_id": "menyebarkan",
+    "rank": 80
+  },
+  {
+    "base": "lose",
+    "past": "lost",
+    "past_participle": "lost",
+    "ing_form": "losing",
+    "frequency_rank_raw": 24136984,
+    "meaning_id": "kehilangan/kalah",
+    "rank": 81
+  },
+  {
+    "base": "seek",
+    "past": "sought",
+    "past_participle": "sought",
+    "ing_form": "seeking",
+    "frequency_rank_raw": 24135344,
+    "meaning_id": "mencari",
+    "rank": 82
+  },
+  {
+    "base": "wet",
+    "past": "wet",
+    "past_participle": "wet",
+    "ing_form": "wetting",
+    "frequency_rank_raw": 23918294,
+    "meaning_id": "membasahi",
+    "rank": 83
+  },
+  {
+    "base": "draw",
+    "past": "drew",
+    "past_participle": "drawn",
+    "ing_form": "drawing",
+    "frequency_rank_raw": 22705371,
+    "meaning_id": "menggambar",
+    "rank": 84
+  },
+  {
+    "base": "stick",
+    "past": "stuck",
+    "past_participle": "stuck",
+    "ing_form": "sticking",
+    "frequency_rank_raw": 22399126,
+    "meaning_id": "menempel/menusuk",
+    "rank": 85
+  },
+  {
+    "base": "slide",
+    "past": "slid",
+    "past_participle": "slid",
+    "ing_form": "sliding",
+    "frequency_rank_raw": 22339084,
+    "meaning_id": "meluncur/tergelincir",
+    "rank": 86
+  },
+  {
+    "base": "catch",
+    "past": "caught",
+    "past_participle": "caught",
+    "ing_form": "catching",
+    "frequency_rank_raw": 20400979,
+    "meaning_id": "menangkap",
+    "rank": 87
+  },
+  {
+    "base": "split",
+    "past": "split",
+    "past_participle": "split",
+    "ing_form": "splitting",
+    "frequency_rank_raw": 19998411,
+    "meaning_id": "membagi/membelah",
+    "rank": 88
+  },
+  {
+    "base": "sit",
+    "past": "sat",
+    "past_participle": "sat",
+    "ing_form": "sitting",
+    "frequency_rank_raw": 19797379,
+    "meaning_id": "duduk",
+    "rank": 89
+  },
+  {
+    "base": "teach",
+    "past": "taught",
+    "past_participle": "taught",
+    "ing_form": "teaching",
+    "frequency_rank_raw": 19079783,
+    "meaning_id": "mengajar",
+    "rank": 90
+  },
+  {
+    "base": "strip",
+    "past": "stripped",
+    "past_participle": "stripped",
+    "ing_form": "stripping",
+    "frequency_rank_raw": 18711440,
+    "meaning_id": "melucuti/menelanjangi",
+    "rank": 91
+  },
+  {
+    "base": "strike",
+    "past": "struck",
+    "past_participle": "struck",
+    "ing_form": "striking",
+    "frequency_rank_raw": 18621050,
+    "meaning_id": "memukul/mogok",
+    "rank": 92
+  },
+  {
+    "base": "shoe",
+    "past": "shod",
+    "past_participle": "shod",
+    "ing_form": "shoeing",
+    "frequency_rank_raw": 16342426,
+    "meaning_id": "memasang tapal kuda",
+    "rank": 93
+  },
+  {
+    "base": "lay",
+    "past": "laid",
+    "past_participle": "laid",
+    "ing_form": "laying",
+    "frequency_rank_raw": 16122690,
+    "meaning_id": "meletakkan/berbaring",
+    "rank": 94
+  },
+  {
+    "base": "prove",
+    "past": "proved",
+    "past_participle": "proven",
+    "ing_form": "proving",
+    "frequency_rank_raw": 16046788,
+    "meaning_id": "membuktikan",
+    "rank": 95
+  },
+  {
+    "base": "bet",
+    "past": "bet",
+    "past_participle": "bet",
+    "ing_form": "betting",
+    "frequency_rank_raw": 15943118,
+    "meaning_id": "bertaruh",
+    "rank": 96
+  },
+  {
+    "base": "throw",
+    "past": "threw",
+    "past_participle": "thrown",
+    "ing_form": "throwing",
+    "frequency_rank_raw": 15751985,
+    "meaning_id": "melempar",
+    "rank": 97
+  },
+  {
+    "base": "wake",
+    "past": "woke",
+    "past_participle": "woken",
+    "ing_form": "waking",
+    "frequency_rank_raw": 14120141,
+    "meaning_id": "bangun",
+    "rank": 98
+  },
+  {
+    "base": "burn",
+    "past": "burnt",
+    "past_participle": "burnt",
+    "ing_form": "burning",
+    "frequency_rank_raw": 13602754,
+    "meaning_id": "membakar",
+    "rank": 99
+  },
+  {
+    "base": "lie",
+    "past": "lay",
+    "past_participle": "lain",
+    "ing_form": "lying",
+    "frequency_rank_raw": 13533542,
+    "meaning_id": "berbaring",
+    "rank": 100
+  },
+  {
+    "base": "hurt",
+    "past": "hurt",
+    "past_participle": "hurt",
+    "ing_form": "hurting",
+    "frequency_rank_raw": 12936269,
+    "meaning_id": "melukai/menyakiti",
+    "rank": 101
+  },
+  {
+    "base": "swing",
+    "past": "swung",
+    "past_participle": "swung",
+    "ing_form": "swinging",
+    "frequency_rank_raw": 12734467,
+    "meaning_id": "mengayun",
+    "rank": 102
+  },
+  {
+    "base": "shoot",
+    "past": "shot",
+    "past_participle": "shot",
+    "ing_form": "shooting",
+    "frequency_rank_raw": 12695618,
+    "meaning_id": "menembak",
+    "rank": 103
+  },
+  {
+    "base": "spin",
+    "past": "span",
+    "past_participle": "spun",
+    "ing_form": "spinning",
+    "frequency_rank_raw": 12671696,
+    "meaning_id": "berputar",
+    "rank": 104
+  },
+  {
+    "base": "shut",
+    "past": "shut",
+    "past_participle": "shut",
+    "ing_form": "shutting",
+    "frequency_rank_raw": 11689186,
+    "meaning_id": "menutup",
+    "rank": 105
+  },
+  {
+    "base": "sing",
+    "past": "sang",
+    "past_participle": "sung",
+    "ing_form": "singing",
+    "frequency_rank_raw": 11114001,
+    "meaning_id": "bernyanyi",
+    "rank": 106
+  },
+  {
+    "base": "hang",
+    "past": "hung",
+    "past_participle": "hung",
+    "ing_form": "hanging",
+    "frequency_rank_raw": 11077672,
+    "meaning_id": "menggantung",
+    "rank": 107
+  },
+  {
+    "base": "mistake",
+    "past": "mistook",
+    "past_participle": "mistaken",
+    "ing_form": "mistaking",
+    "frequency_rank_raw": 10841486,
+    "meaning_id": "salah mengira",
+    "rank": 108
+  },
+  {
+    "base": "quit",
+    "past": "quit",
+    "past_participle": "quit",
+    "ing_form": "quitting",
+    "frequency_rank_raw": 10324803,
+    "meaning_id": "berhenti",
+    "rank": 109
+  },
+  {
+    "base": "bend",
+    "past": "bent",
+    "past_participle": "bent",
+    "ing_form": "bending",
+    "frequency_rank_raw": 9342191,
+    "meaning_id": "membengkokkan",
+    "rank": 110
+  },
+  {
+    "base": "swim",
+    "past": "swam",
+    "past_participle": "swum",
+    "ing_form": "swimming",
+    "frequency_rank_raw": 8739102,
+    "meaning_id": "berenang",
+    "rank": 111
+  },
+  {
+    "base": "spell",
+    "past": "spelt",
+    "past_participle": "spelt",
+    "ing_form": "spelling",
+    "frequency_rank_raw": 8506049,
+    "meaning_id": "mengeja",
+    "rank": 112
+  },
+  {
+    "base": "arise",
+    "past": "arose",
+    "past_participle": "arisen",
+    "ing_form": "arising",
+    "frequency_rank_raw": 8337093,
+    "meaning_id": "muncul/timbul",
+    "rank": 113
+  },
+  {
+    "base": "dive",
+    "past": "dived",
+    "past_participle": "dived",
+    "ing_form": "diving",
+    "frequency_rank_raw": 8254655,
+    "meaning_id": "menyelam",
+    "rank": 114
+  },
+  {
+    "base": "sink",
+    "past": "sank",
+    "past_participle": "sunk",
+    "ing_form": "sinking",
+    "frequency_rank_raw": 8120590,
+    "meaning_id": "tenggelam",
+    "rank": 115
+  },
+  {
+    "base": "rid",
+    "past": "rid",
+    "past_participle": "rid",
+    "ing_form": "ridding",
+    "frequency_rank_raw": 7877480,
+    "meaning_id": "menyingkirkan",
+    "rank": 116
+  },
+  {
+    "base": "breed",
+    "past": "bred",
+    "past_participle": "bred",
+    "ing_form": "breeding",
+    "frequency_rank_raw": 7716901,
+    "meaning_id": "membiakkan",
+    "rank": 117
+  },
+  {
+    "base": "dig",
+    "past": "dug",
+    "past_participle": "dug",
+    "ing_form": "digging",
+    "frequency_rank_raw": 7292787,
+    "meaning_id": "menggali",
+    "rank": 118
+  },
+  {
+    "base": "shake",
+    "past": "shook",
+    "past_participle": "shaken",
+    "ing_form": "shaking",
+    "frequency_rank_raw": 6839319,
+    "meaning_id": "mengguncang",
+    "rank": 119
+  },
+  {
+    "base": "shed",
+    "past": "shed",
+    "past_participle": "shed",
+    "ing_form": "shedding",
+    "frequency_rank_raw": 6720397,
+    "meaning_id": "meluruhkan/menumpahkan",
+    "rank": 120
+  },
+  {
+    "base": "bind",
+    "past": "bound",
+    "past_participle": "bound",
+    "ing_form": "binding",
+    "frequency_rank_raw": 6677053,
+    "meaning_id": "mengikat",
+    "rank": 121
+  },
+  {
+    "base": "smell",
+    "past": "smelt",
+    "past_participle": "smelt",
+    "ing_form": "smelling",
+    "frequency_rank_raw": 6642666,
+    "meaning_id": "mencium bau",
+    "rank": 122
+  },
+  {
+    "base": "lean",
+    "past": "leant",
+    "past_participle": "leant",
+    "ing_form": "leaning",
+    "frequency_rank_raw": 6431362,
+    "meaning_id": "bersandar/condong",
+    "rank": 123
+  },
+  {
+    "base": "steal",
+    "past": "stole",
+    "past_participle": "stolen",
+    "ing_form": "stealing",
+    "frequency_rank_raw": 6257493,
+    "meaning_id": "mencuri",
+    "rank": 124
+  },
+  {
+    "base": "bite",
+    "past": "bit",
+    "past_participle": "bitten",
+    "ing_form": "biting",
+    "frequency_rank_raw": 6058201,
+    "meaning_id": "menggigit",
+    "rank": 125
+  },
+  {
+    "base": "shine",
+    "past": "shone",
+    "past_participle": "shone",
+    "ing_form": "shining",
+    "frequency_rank_raw": 5881862,
+    "meaning_id": "bersinar",
+    "rank": 126
+  },
+  {
+    "base": "undertake",
+    "past": "undertook",
+    "past_participle": "undertaken",
+    "ing_form": "undertaking",
+    "frequency_rank_raw": 5613443,
+    "meaning_id": "melaksanakan/berjanji",
+    "rank": 127
+  },
+  {
+    "base": "tear",
+    "past": "tore",
+    "past_participle": "torn",
+    "ing_form": "tearing",
+    "frequency_rank_raw": 5605530,
+    "meaning_id": "merobek",
+    "rank": 128
+  },
+  {
+    "base": "upset",
+    "past": "upset",
+    "past_participle": "upset",
+    "ing_form": "upsetting",
+    "frequency_rank_raw": 5544484,
+    "meaning_id": "mengecewakan/membuat kesal",
+    "rank": 129
+  },
+  {
+    "base": "freeze",
+    "past": "froze",
+    "past_participle": "frozen",
+    "ing_form": "freezing",
+    "frequency_rank_raw": 5526731,
+    "meaning_id": "membeku",
+    "rank": 130
+  },
+  {
+    "base": "burst",
+    "past": "burst",
+    "past_participle": "burst",
+    "ing_form": "bursting",
+    "frequency_rank_raw": 5147573,
+    "meaning_id": "meletus/pecah",
+    "rank": 131
+  },
+  {
+    "base": "knit",
+    "past": "knit",
+    "past_participle": "knit",
+    "ing_form": "knitting",
+    "frequency_rank_raw": 5113070,
+    "meaning_id": "merajut",
+    "rank": 132
+  },
+  {
+    "base": "leap",
+    "past": "leapt",
+    "past_participle": "leapt",
+    "ing_form": "leaping",
+    "frequency_rank_raw": 4767538,
+    "meaning_id": "melompat",
+    "rank": 133
+  },
+  {
+    "base": "withdraw",
+    "past": "withdrew",
+    "past_participle": "withdrawn",
+    "ing_form": "withdrawing",
+    "frequency_rank_raw": 4652948,
+    "meaning_id": "menarik diri/menarik uang",
+    "rank": 134
+  },
+  {
+    "base": "sweat",
+    "past": "sweat",
+    "past_participle": "sweat",
+    "ing_form": "sweating",
+    "frequency_rank_raw": 4551615,
+    "meaning_id": "berkeringat",
+    "rank": 135
+  },
+  {
+    "base": "bust",
+    "past": "bust",
+    "past_participle": "bust",
+    "ing_form": "busting",
+    "frequency_rank_raw": 4547742,
+    "meaning_id": "merusak/menghancurkan",
+    "rank": 136
+  },
+  {
+    "base": "strive",
+    "past": "strove",
+    "past_participle": "striven",
+    "ing_form": "striving",
+    "frequency_rank_raw": 4152261,
+    "meaning_id": "berusaha keras",
+    "rank": 137
+  },
+  {
+    "base": "spill",
+    "past": "spilt",
+    "past_participle": "spilt",
+    "ing_form": "spilling",
+    "frequency_rank_raw": 3890646,
+    "meaning_id": "menumpahkan",
+    "rank": 138
+  },
+  {
+    "base": "abide",
+    "past": "abided",
+    "past_participle": "abided",
+    "ing_form": "abiding",
+    "frequency_rank_raw": 3722809,
+    "meaning_id": "mematuhi/tinggal",
+    "rank": 139
+  },
+  {
+    "base": "sweep",
+    "past": "swept",
+    "past_participle": "swept",
+    "ing_form": "sweeping",
+    "frequency_rank_raw": 3623863,
+    "meaning_id": "menyapu",
+    "rank": 140
+  },
+  {
+    "base": "thrust",
+    "past": "thrust",
+    "past_participle": "thrust",
+    "ing_form": "thrusting",
+    "frequency_rank_raw": 3500671,
+    "meaning_id": "mendorong keras",
+    "rank": 141
+  },
+  {
+    "base": "forgive",
+    "past": "forgave",
+    "past_participle": "forgiven",
+    "ing_form": "forgiving",
+    "frequency_rank_raw": 3379266,
+    "meaning_id": "memaafkan",
+    "rank": 142
+  },
+  {
+    "base": "shrink",
+    "past": "shrank",
+    "past_participle": "shrunk",
+    "ing_form": "shrinking",
+    "frequency_rank_raw": 3261118,
+    "meaning_id": "menyusut",
+    "rank": 143
+  },
+  {
+    "base": "awake",
+    "past": "awoke",
+    "past_participle": "awoken",
+    "ing_form": "awaking",
+    "frequency_rank_raw": 3230337,
+    "meaning_id": "terbangun",
+    "rank": 144
+  },
+  {
+    "base": "swear",
+    "past": "swore",
+    "past_participle": "sworn",
+    "ing_form": "swearing",
+    "frequency_rank_raw": 3082372,
+    "meaning_id": "bersumpah/mengumpat",
+    "rank": 145
+  },
+  {
+    "base": "lend",
+    "past": "lent",
+    "past_participle": "lent",
+    "ing_form": "lending",
+    "frequency_rank_raw": 2926360,
+    "meaning_id": "meminjamkan",
+    "rank": 146
+  },
+  {
+    "base": "behold",
+    "past": "beheld",
+    "past_participle": "beheld",
+    "ing_form": "beholding",
+    "frequency_rank_raw": 2847118,
+    "meaning_id": "melihat/memandang",
+    "rank": 147
+  },
+  {
+    "base": "sting",
+    "past": "stung",
+    "past_participle": "stung",
+    "ing_form": "stinging",
+    "frequency_rank_raw": 2773263,
+    "meaning_id": "menyengat",
+    "rank": 148
+  },
+  {
+    "base": "undergo",
+    "past": "underwent",
+    "past_participle": "undergone",
+    "ing_form": "undergoing",
+    "frequency_rank_raw": 2620082,
+    "meaning_id": "mengalami",
+    "rank": 149
+  },
+  {
+    "base": "grind",
+    "past": "ground",
+    "past_participle": "ground",
+    "ing_form": "grinding",
+    "frequency_rank_raw": 2482307,
+    "meaning_id": "menggiling",
+    "rank": 150
+  },
+  {
+    "base": "sneak",
+    "past": "snuck",
+    "past_participle": "snuck",
+    "ing_form": "sneaking",
+    "frequency_rank_raw": 2280877,
+    "meaning_id": "mengendap-endap",
+    "rank": 151
+  },
+  {
+    "base": "swell",
+    "past": "swelled",
+    "past_participle": "swollen",
+    "ing_form": "swelling",
+    "frequency_rank_raw": 2213445,
+    "meaning_id": "membengkak",
+    "rank": 152
+  },
+  {
+    "base": "spit",
+    "past": "spat",
+    "past_participle": "spat",
+    "ing_form": "spitting",
+    "frequency_rank_raw": 2069895,
+    "meaning_id": "meludah",
+    "rank": 153
+  },
+  {
+    "base": "dwell",
+    "past": "dwelt",
+    "past_participle": "dwelt",
+    "ing_form": "dwelling",
+    "frequency_rank_raw": 2014411,
+    "meaning_id": "tinggal/berdiam",
+    "rank": 154
+  },
+  {
+    "base": "bleed",
+    "past": "bled",
+    "past_participle": "bled",
+    "ing_form": "bleeding",
+    "frequency_rank_raw": 1989071,
+    "meaning_id": "berdarah",
+    "rank": 155
+  },
+  {
+    "base": "weave",
+    "past": "wove",
+    "past_participle": "woven",
+    "ing_form": "weaving",
+    "frequency_rank_raw": 1965230,
+    "meaning_id": "menenun",
+    "rank": 156
+  },
+  {
+    "base": "creep",
+    "past": "crept",
+    "past_participle": "crept",
+    "ing_form": "creeping",
+    "frequency_rank_raw": 1811981,
+    "meaning_id": "merayap",
+    "rank": 157
+  },
+  {
+    "base": "sew",
+    "past": "sewed",
+    "past_participle": "sewn",
+    "ing_form": "sewing",
+    "frequency_rank_raw": 1756454,
+    "meaning_id": "menjahit",
+    "rank": 158
+  },
+  {
+    "base": "withstand",
+    "past": "withstood",
+    "past_participle": "withstood",
+    "ing_form": "withstanding",
+    "frequency_rank_raw": 1730101,
+    "meaning_id": "menahan/bertahan",
+    "rank": 159
+  },
+  {
+    "base": "flee",
+    "past": "fled",
+    "past_participle": "fled",
+    "ing_form": "fleeing",
+    "frequency_rank_raw": 1724638,
+    "meaning_id": "melarikan diri",
+    "rank": 160
+  },
+  {
+    "base": "sling",
+    "past": "slung",
+    "past_participle": "slung",
+    "ing_form": "slinging",
+    "frequency_rank_raw": 1688770,
+    "meaning_id": "menyelempangkan/melontarkan",
+    "rank": 161
+  },
+  {
+    "base": "tread",
+    "past": "trod",
+    "past_participle": "trodden",
+    "ing_form": "treading",
+    "frequency_rank_raw": 1672572,
+    "meaning_id": "menginjak",
+    "rank": 162
+  },
+  {
+    "base": "stride",
+    "past": "strode",
+    "past_participle": "stridden",
+    "ing_form": "striding",
+    "frequency_rank_raw": 1546387,
+    "meaning_id": "melangkah lebar",
+    "rank": 163
+  },
+  {
+    "base": "slit",
+    "past": "slit",
+    "past_participle": "slit",
+    "ing_form": "slitting",
+    "frequency_rank_raw": 1424036,
+    "meaning_id": "menyobek/membelah",
+    "rank": 164
+  },
+  {
+    "base": "spoil",
+    "past": "spoilt",
+    "past_participle": "spoilt",
+    "ing_form": "spoiling",
+    "frequency_rank_raw": 1419320,
+    "meaning_id": "merusak/memanjakan",
+    "rank": 165
+  },
+  {
+    "base": "sow",
+    "past": "sowed",
+    "past_participle": "sown",
+    "ing_form": "sowing",
+    "frequency_rank_raw": 1282086,
+    "meaning_id": "menabur",
+    "rank": 166
+  },
+  {
+    "base": "withhold",
+    "past": "withheld",
+    "past_participle": "withheld",
+    "ing_form": "withholding",
+    "frequency_rank_raw": 1201289,
+    "meaning_id": "menahan (informasi/pembayaran)",
+    "rank": 167
+  },
+  {
+    "base": "forbid",
+    "past": "forbade",
+    "past_participle": "forbidden",
+    "ing_form": "forbidding",
+    "frequency_rank_raw": 1184790,
+    "meaning_id": "melarang",
+    "rank": 168
+  },
+  {
+    "base": "weep",
+    "past": "wept",
+    "past_participle": "wept",
+    "ing_form": "weeping",
+    "frequency_rank_raw": 1038608,
+    "meaning_id": "menangis",
+    "rank": 169
+  },
+  {
+    "base": "cling",
+    "past": "clung",
+    "past_participle": "clung",
+    "ing_form": "clinging",
+    "frequency_rank_raw": 946281,
+    "meaning_id": "berpegangan erat",
+    "rank": 170
+  },
+  {
+    "base": "stink",
+    "past": "stank",
+    "past_participle": "stunk",
+    "ing_form": "stinking",
+    "frequency_rank_raw": 872742,
+    "meaning_id": "berbau busuk",
+    "rank": 171
+  },
+  {
+    "base": "slay",
+    "past": "slew",
+    "past_participle": "slain",
+    "ing_form": "slaying",
+    "frequency_rank_raw": 702325,
+    "meaning_id": "membunuh",
+    "rank": 172
+  },
+  {
+    "base": "fling",
+    "past": "flung",
+    "past_participle": "flung",
+    "ing_form": "flinging",
+    "frequency_rank_raw": 682999,
+    "meaning_id": "melemparkan dengan keras",
+    "rank": 173
+  },
+  {
+    "base": "mislead",
+    "past": "misled",
+    "past_participle": "misled",
+    "ing_form": "misleading",
+    "frequency_rank_raw": 643671,
+    "meaning_id": "menyesatkan",
+    "rank": 174
+  },
+  {
+    "base": "foresee",
+    "past": "foresaw",
+    "past_participle": "foreseen",
+    "ing_form": "foreseeing",
+    "frequency_rank_raw": 615358,
+    "meaning_id": "meramalkan/memperkirakan",
+    "rank": 175
+  },
+  {
+    "base": "mow",
+    "past": "mowed",
+    "past_participle": "mown",
+    "ing_form": "mowing",
+    "frequency_rank_raw": 517690,
+    "meaning_id": "memotong rumput",
+    "rank": 176
+  },
+  {
+    "base": "overtake",
+    "past": "overtook",
+    "past_participle": "overtaken",
+    "ing_form": "overtaking",
+    "frequency_rank_raw": 498189,
+    "meaning_id": "menyalip",
+    "rank": 177
+  },
+  {
+    "base": "kneel",
+    "past": "knelt",
+    "past_participle": "knelt",
+    "ing_form": "kneeling",
+    "frequency_rank_raw": 417602,
+    "meaning_id": "berlutut",
+    "rank": 178
+  },
+  {
+    "base": "forsake",
+    "past": "forsook",
+    "past_participle": "forsaken",
+    "ing_form": "forsaking",
+    "frequency_rank_raw": 359114,
+    "meaning_id": "meninggalkan/mengabaikan",
+    "rank": 179
+  },
+  {
+    "base": "misunderstand",
+    "past": "misunderstood",
+    "past_participle": "misunderstood",
+    "ing_form": "misunderstanding",
+    "frequency_rank_raw": 313613,
+    "meaning_id": "salah paham",
+    "rank": 180
+  },
+  {
+    "base": "overhear",
+    "past": "overheard",
+    "past_participle": "overheard",
+    "ing_form": "overhearing",
+    "frequency_rank_raw": 97704,
+    "meaning_id": "mendengar tanpa sengaja",
+    "rank": 181
+  },
+  {
+    "base": "overdraw",
+    "past": "overdrew",
+    "past_participle": "overdrawn",
+    "ing_form": "overdrawing",
+    "frequency_rank_raw": 23187,
+    "meaning_id": "menarik dana melebihi saldo",
+    "rank": 182
+  },
+  {
+    "base": "handwrite",
+    "past": "handwrote",
+    "past_participle": "handwritten",
+    "ing_form": "handwriting",
+    "frequency_rank_raw": 21641,
+    "meaning_id": "menulis tangan",
+    "rank": 183
+  }
+]

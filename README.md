@@ -66,6 +66,21 @@ Jangan commit `.env`.
 Target: MySQL terkelola, antrean `database`, HTTPS di belakang proxy. Belum
 pernah di-deploy sungguhan; ikuti daftar uji di akhir bagian ini.
 
+**Langkah singkat:**
+
+1. Push branch yang mau di-deploy ke GitHub, lalu di Laravel Cloud buat
+   aplikasi baru dari repo itu dan pilih branch-nya.
+2. Tambahkan basis data **MySQL 8** ke environment. Jangan pilih Postgres:
+   pencarian Kamus hanya punya varian MySQL dan SQLite.
+3. Salin isi `.env.cloud.example` ke variabel environment, lalu isi nilai yang
+   kosong (`APP_KEY`, `APP_URL`, `GEMINI_API_KEY`, email, dan lainnya).
+4. Isi perintah build dan deploy di bawah, lalu nyalakan pekerja antrean.
+5. Deploy, lalu jalankan perintah sekali jalan dari konsol/command Laravel Cloud.
+6. Ikuti daftar uji di akhir bagian ini.
+
+Layanan pelafalan Python (`pronunciation-service/`) tidak bisa dijalankan di
+Laravel Cloud, jadi templatnya mengisi `PRONUNCIATION_CHECKER_DRIVER` dengan `stt_match`.
+
 **Perintah build:**
 
 ```
@@ -97,9 +112,8 @@ php artisan app:seed-content
 php artisan db:seed --class=DemoUserSeeder --force
 ```
 
-`app:seed-content` membutuhkan tiga berkas besar yang tidak di-commit (lihat
-"Mengisi konten"). Tanpa berkas itu, perintah melewati seeder terkait dan
-keluar dengan status gagal. `DemoUserSeeder` selalu menolak bila `APP_ENV` bernilai production.
+Semua berkas yang dibutuhkan `app:seed-content` sudah di-commit (lihat
+"Mengisi konten"), jadi ikut ter-deploy. `DemoUserSeeder` selalu menolak bila `APP_ENV` bernilai production.
 
 **Variabel lingkungan** (nama saja; nilai diisi di dasbor Laravel Cloud, jangan
 di-commit):
@@ -202,14 +216,10 @@ docker compose up -d --build
 docker compose logs -f app   # tunggu "mulai: frankenphp run"
 ```
 
-Tiga berkas data besar tidak ada di git (lihat "Mengisi konten"). Salin ke
-`storage/app/seed-data/` **sebelum** `docker compose up -d --build` supaya ikut
-masuk image. Bila tertinggal, salin lalu jalankan seeding sekali jalan:
+Semua berkas data sudah di git (lihat "Mengisi konten"), jadi ikut masuk image.
+Seeding ulang bila perlu:
 
 ```
-docker compose cp mandarin_hsk1to6_complete.json app:/data/storage/app/seed-data/
-docker compose cp irregular_verbs_183_complete.json app:/data/storage/app/seed-data/
-docker compose cp english_vocab_cefr_10674.json app:/data/storage/app/seed-data/
 docker compose exec app php artisan app:seed-content
 ```
 
@@ -489,8 +499,8 @@ Semua berkas data dibaca dari `storage/app/seed-data`:
 - `reference/*.json` (di-commit): kurikulum HSK1, minggu, tips, tautan, dan
   data referensi lain (`ReferenceDataSeeder`);
 - `mandarin_hsk1to6_complete.json`, `irregular_verbs_183_complete.json`,
-  `english_vocab_cefr_10674.json` (**tidak** di-commit, karena besar; salin
-  sendiri ke server);
+  `english_vocab_cefr_10674.json` (di-commit, sekitar 14 MB, supaya ikut
+  ter-deploy ke Laravel Cloud);
 - `kesalahan_game.json`, `daftar_benda_tertutup.json`,
   `hsk1to3_kosakata_id.json` (di-commit; dibaca saat aplikasi berjalan).
 
