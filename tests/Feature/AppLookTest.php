@@ -61,7 +61,7 @@ class AppLookTest extends TestCase
     {
         $html = $this->page();
 
-        $this->assertStringContainsString('images/landing/logo-buku-putih.png', $html);
+        $this->assertStringContainsString('images/landing/logo-tuturnusa-putih.png', $html);
         // Every nav icon is a decorative SVG inside the aria-hidden span; no emoji left.
         $nav = substr($html, strpos($html, '<nav aria-label="Navigasi utama"'));
         $nav = substr($nav, 0, strpos($nav, '</nav>'));
@@ -78,7 +78,7 @@ class AppLookTest extends TestCase
 
     public function test_login_page_uses_the_brand_logo(): void
     {
-        $this->get('/login')->assertOk()->assertSee('images/landing/logo-buku.png', false)->assertDontSee('>好</div>', false);
+        $this->get('/login')->assertOk()->assertSee('images/landing/logo-tuturnusa.png', false)->assertDontSee('>好</div>', false);
     }
 
     public function test_cards_get_a_soft_shadow_except_in_high_contrast(): void

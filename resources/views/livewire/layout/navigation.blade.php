@@ -25,7 +25,7 @@ new class extends Component
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-xl bg-orange flex items-center justify-center font-display font-600 text-base text-navy">好</div>
-                        <span class="font-display font-600 text-white hidden sm:block">Study Companion</span>
+                        <span class="font-display font-600 text-white hidden sm:block">TUTURNUSA</span>
                     </a>
                 </div>
 

@@ -37,7 +37,7 @@ class LandingScreenReaderTextTest extends TestCase
 
         $this->assertStringContainsString('aria-label="Dengarkan kalimat contoh Mandarin"', $html);
         $this->assertStringContainsString('aria-label="Dengarkan kalimat contoh Inggris"', $html);
-        $this->assertStringContainsString('Companion<span class="sr-only">, beranda</span>', $html);
+        $this->assertStringContainsString('TUTURNUSA<span class="sr-only">, beranda</span>', $html);
         $this->assertDoesNotMatchRegularExpression('#>\s*(klik di sini|selengkapnya)\s*<#i', $html);
     }
 

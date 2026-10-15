@@ -1,6 +1,6 @@
 # Pedoman teks untuk pengguna pembaca layar
 
-Protokol menulis kata-kata di Study Companion supaya enak didengar lewat
+Protokol menulis kata-kata di TUTURNUSA supaya enak didengar lewat
 pembaca layar (NVDA, JAWS, Narator, TalkBack, VoiceOver). Pertama dipakai di
 halaman awal (`resources/views/welcome.blade.php` dan
 `resources/views/components/landing/`). Halaman lain sebaiknya ikut.
@@ -26,7 +26,7 @@ apa itu.
 - Hindari "klik di sini", "selengkapnya", "lihat ini".
 - Tombol ikon wajib punya `aria-label` yang menyebut tindakan **dan** objeknya:
   "Dengarkan kalimat contoh Mandarin", bukan "Speaker" atau "Putar".
-- Tautan logo ke beranda dibacakan "Study Companion, beranda".
+- Tautan logo ke beranda dibacakan "TUTURNUSA, beranda".
 - Bila dua tautan berteks sama menuju tempat berbeda, bedakan teksnya.
 
 ## 3. Jangan bergantung pada posisi, warna, atau bentuk

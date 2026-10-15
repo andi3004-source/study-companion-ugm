@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Study Companion' }}</title>
+    <title>{{ $title ?? 'TUTURNUSA' }}</title>
     {{-- Applies saved display settings before first paint (see displaySettings() in app.js). --}}
     <script>
         try {
@@ -65,8 +65,8 @@
         {{-- Desktop sidebar --}}
         <aside class="hidden sidebar:flex sidebar:flex-col w-[252px] shrink-0 bg-navy text-white px-5 py-6">
             <div class="flex items-center gap-2 mb-8 px-2">
-                <img src="{{ asset('images/landing/logo-buku-putih.png') }}" alt="" width="48" height="40" class="w-9 h-auto">
-                <span class="font-display font-600 text-lg">Study Companion</span>
+                <img src="{{ asset('images/landing/logo-tuturnusa-putih.png') }}" alt="" width="286" height="185" class="w-12 h-auto">
+                <span class="font-display font-600 text-lg">TUTURNUSA</span>
             </div>
 
             @php
@@ -153,7 +153,7 @@
         <div class="flex-1 min-w-0">
             {{-- Always rendered (the brand only shows on mobile, where the sidebar is hidden) so every page has a header landmark. --}}
             <header class="flex items-center justify-between gap-3 px-4 py-3 bg-navy text-white sticky top-0 z-30 sidebar:static sidebar:bg-transparent sidebar:text-ink sidebar:px-8">
-                <span class="font-display font-600 sidebar:hidden">Study Companion</span>
+                <span class="font-display font-600 sidebar:hidden">TUTURNUSA</span>
                 <div class="flex items-center gap-3 ml-auto">
                     <span class="text-xs text-white/80 sidebar:text-ink-soft">Hari {{ auth()->user()->dayNumber() ?? '-' }}</span>
 

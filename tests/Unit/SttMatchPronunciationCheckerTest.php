@@ -96,6 +96,8 @@ class SttMatchPronunciationCheckerTest extends TestCase
         $this->assertFalse($result['isCorrect']);
         $this->assertStringNotContainsString('Kurang tepat', $result['feedback']);
         $this->assertStringContainsString('Mesin pengenalan suara kesulitan', $result['feedback']);
+        // The raw transcript is named so the user can see what the engine produced.
+        $this->assertStringContainsString('yang tertangkap: "1111"', $result['feedback']);
     }
 
     public function test_punctuation_only_transcript_is_detected_for_english_too(): void

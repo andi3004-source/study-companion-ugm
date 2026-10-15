@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Study Companion') }}</title>
+        <title>{{ config('app.name', 'TUTURNUSA') }}</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -15,8 +15,8 @@
             {{-- Logo & brand --}}
             <div class="flex items-center gap-2 mb-2">
                 <a href="/" class="flex items-center gap-2">
-                    <img src="{{ asset('images/landing/logo-buku.png') }}" alt="" width="44" height="38" class="w-11 h-auto">
-                    <span class="font-display font-600 text-xl text-navy">Study Companion</span>
+                    <img src="{{ asset('images/landing/logo-tuturnusa.png') }}" alt="" width="286" height="185" class="w-16 h-auto">
+                    <span class="font-display font-600 text-xl text-navy">TUTURNUSA</span>
                 </a>
             </div>
             <p class="text-ink-soft text-sm mb-6">Belajar Mandarin & English setiap hari</p>

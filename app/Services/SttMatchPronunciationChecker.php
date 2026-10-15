@@ -41,7 +41,7 @@ class SttMatchPronunciationChecker implements PronunciationChecker
         if ($this->isUnrecognizable($heard, $lang)) {
             return [
                 'isCorrect' => false,
-                'feedback' => 'Mesin pengenalan suara kesulitan dengan kata pendek ini — coba ucapkan dengan sedikit lebih panjang, atau coba kata lain dulu.',
+                'feedback' => "Mesin pengenalan suara kesulitan dengan kata pendek ini (yang tertangkap: \"{$heard}\") — coba ucapkan dengan sedikit lebih panjang, atau coba kata lain dulu.",
             ];
         }
 

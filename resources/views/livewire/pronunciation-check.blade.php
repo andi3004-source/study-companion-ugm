@@ -109,7 +109,7 @@
                     <button type="button" onclick="speak({{ \Illuminate\Support\Js::from($selectedWord['headword']) }}, '{{ $selectedWord['lang_code'] }}')"
                             class="w-7 h-7 rounded-full bg-navy/5 hover:bg-navy/10 flex items-center justify-center text-navy" aria-label="Dengarkan target {{ $selectedWord['headword'] }}"><span aria-hidden="true">🔊</span></button>
                 </span>
-                @if ($transcript)
+                @if (filled($transcript))
                     <span class="flex items-center gap-1.5">
                         Yang terdengar (&ldquo;{{ $transcript }}&rdquo;)
                         <button type="button" onclick="speak({{ \Illuminate\Support\Js::from($transcript) }}, '{{ $selectedWord['lang_code'] }}')"

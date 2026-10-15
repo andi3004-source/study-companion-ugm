@@ -30,7 +30,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Study Companion</title>
+    <title>TUTURNUSA</title>
     <meta name="description" content="Pelatih kesalahan Mandarin dan Inggris untuk penutur Indonesia, dengan keyboard dan suara.">
     {{-- Apply the saved text size / contrast before the first paint (same 'tampilan' key as the app). --}}
     <script>
@@ -80,7 +80,7 @@
                 <div>
                     <x-landing.section-badge aria-hidden="true">Cara Kerja</x-landing.section-badge>
                     <h2 id="judul-cara-kerja" class="mt-3 text-2xl sm:text-3xl font-extrabold text-brand-navy leading-tight"><span class="sr-only">Cara kerja: </span>Mudah, terstruktur, efektif.</h2>
-                    <p class="mt-4 text-ink">Study Companion membantu kamu menemukan dan memperbaiki kesalahan dengan 3 langkah sederhana.</p>
+                    <p class="mt-4 text-ink">TUTURNUSA membantu kamu menemukan dan memperbaiki kesalahan dengan 3 langkah sederhana.</p>
                 </div>
                 <ol class="flex flex-col lg:flex-row gap-8 lg:gap-12">
                     <x-landing.step-item number="1" icon="mic" title="Dengarkan / Ketik" baca="Dengarkan atau ketik">Ngobrol dengan AI (kecerdasan buatan) dalam Mandarin atau Inggris, lewat keyboard atau suara.</x-landing.step-item>
@@ -108,7 +108,7 @@
                 <div>
                     <x-landing.section-badge aria-hidden="true">Coba Langsung</x-landing.section-badge>
                     <h2 id="judul-coba" class="mt-3 text-2xl sm:text-3xl font-extrabold text-brand-navy leading-tight"><span class="sr-only">Coba langsung: </span>Rasakan pengalamannya sekarang.</h2>
-                    <p class="mt-4 text-ink">Begini latihan di Study Companion: jawab dengan keyboard atau suara, lalu langsung lihat koreksinya. Contoh berikut tidak memakai AI; masuk untuk mencoba sungguhan.</p>
+                    <p class="mt-4 text-ink">Begini latihan di TUTURNUSA: jawab dengan keyboard atau suara, lalu langsung lihat koreksinya. Contoh berikut tidak memakai AI; masuk untuk mencoba sungguhan.</p>
                     <a href="{{ route('login') }}" data-tombol
                        class="mt-6 inline-flex items-center justify-center gap-2 min-h-[48px] px-6 rounded-xl bg-brand-navy text-white font-bold">Mulai coba sekarang<x-landing.icon name="arrow-right" class="w-5 h-5" /></a>
                 </div>
@@ -120,7 +120,7 @@
                 <section id="aksesibilitas" aria-labelledby="judul-aksesibilitas" class="rounded-[1.5rem] border border-brand-line bg-white/90 p-4 sm:p-8" data-kartu>
                     <x-landing.section-badge aria-hidden="true">Aksesibilitas</x-landing.section-badge>
                     <h2 id="judul-aksesibilitas" class="mt-3 text-2xl sm:text-3xl font-extrabold text-brand-navy leading-tight"><span class="sr-only">Aksesibilitas: </span>Untuk semua orang.</h2>
-                    <p class="mt-4 text-ink">Kami berupaya membuat Study Companion mudah diakses oleh semua pengguna, termasuk penyandang disabilitas. Pengujian sejauh ini dilakukan oleh tim (keyboard dan pembaca layar Narator) dan masih berlangsung. Aplikasi ini <strong>belum</strong> diuji dengan pengguna tunanetra.</p>
+                    <p class="mt-4 text-ink">Kami berupaya membuat TUTURNUSA mudah diakses oleh semua pengguna, termasuk penyandang disabilitas. Pengujian sejauh ini dilakukan oleh tim (keyboard dan pembaca layar Narator) dan masih berlangsung. Aplikasi ini <strong>belum</strong> diuji dengan pengguna tunanetra.</p>
                     <ul class="mt-6 grid gap-5 sm:grid-cols-2">
                         <x-landing.accessibility-item icon="check-circle" title="WCAG 2.2 AA">Pedoman aksesibilitas web yang kami kejar</x-landing.accessibility-item>
                         <x-landing.accessibility-item icon="zoom" title="Zoom 400%" baca="Zoom 400 persen">Tata letak tetap terbaca</x-landing.accessibility-item>

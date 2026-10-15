@@ -66,8 +66,8 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user);
 
-        // The app's dashboard replaces Breeze's default view/nav with the Study
-        // Companion sidebar layout (see layouts/study.blade.php), so this just
+        // The app's dashboard replaces Breeze's default view/nav with the TUTURNUSA
+        // sidebar layout (see layouts/study.blade.php), so this just
         // confirms an onboarded user's dashboard renders successfully.
         $response = $this->get('/dashboard');
 

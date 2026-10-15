@@ -33,7 +33,7 @@ class LandingDesignTest extends TestCase
     {
         $html = $this->html();
 
-        foreach (['hero-belajar.jpg', 'logo-buku.png', 'logo-buku-putih.png', 'ilustrasi-anak-ransel.png'] as $file) {
+        foreach (['hero-belajar.jpg', 'logo-tuturnusa.png', 'logo-tuturnusa-putih.png', 'ilustrasi-anak-ransel.png'] as $file) {
             $this->assertFileExists(public_path('images/landing/'.$file));
             $this->assertStringContainsString('images/landing/'.$file, $html);
         }
@@ -104,7 +104,7 @@ class LandingDesignTest extends TestCase
     {
         $html = $this->html();
 
-        $this->assertStringContainsString('&copy; '.now()->year.' Study Companion. Dibangun untuk pembelajar Indonesia.', $html);
+        $this->assertStringContainsString('&copy; '.now()->year.' TUTURNUSA. Dibangun untuk pembelajar Indonesia.', $html);
         $this->assertStringContainsString('href="'.route('bantuan').'"', $html);
         foreach (['Kebijakan Privasi', '>Kontak<', '>Tentang<'] as $missing) {
             $this->assertStringNotContainsString($missing, $html);

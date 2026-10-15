@@ -10,7 +10,7 @@
             Belajar bahasa dengan keyboard dan suara.
         </h1>
         <p class="mt-5 text-lg text-ink max-w-xl">
-            Study Companion adalah pelatih kesalahan Mandarin dan Inggris untuk penutur Indonesia, dirancang agar mudah diakses, inklusif, dan ramah untuk semua.
+            TUTURNUSA adalah pelatih kesalahan Mandarin dan Inggris untuk penutur Indonesia, dirancang agar mudah diakses, inklusif, dan ramah untuk semua.
         </p>
         <div class="mt-7 flex flex-col sm:flex-row gap-3">
             <a href="{{ route('login') }}" data-tombol

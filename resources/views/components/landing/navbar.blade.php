@@ -15,8 +15,8 @@
 <header class="sticky top-0 z-40 bg-brand-paper/95 backdrop-blur border-b border-brand-line">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
         <a href="/" class="flex items-center gap-2 min-h-[44px] text-brand-navy font-extrabold leading-tight" data-tombol>
-            <img src="{{ asset('images/landing/logo-buku.png') }}" alt="" width="44" height="38" class="w-10 h-auto">
-            <span>Study<br class="hidden sm:inline"> Companion<span class="sr-only">, beranda</span></span>
+            <img src="{{ asset('images/landing/logo-tuturnusa.png') }}" alt="" width="286" height="185" class="w-14 h-auto">
+            <span>TUTURNUSA<span class="sr-only">, beranda</span></span>
         </a>
 
         <button type="button" data-menu-toggle data-js-only hidden aria-controls="menu-utama" aria-expanded="false" aria-label="Buka menu"
