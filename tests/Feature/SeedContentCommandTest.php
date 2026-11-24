@@ -16,10 +16,7 @@ class SeedContentCommandTest extends TestCase
 {
     use RefreshDatabase, WithSmallVocabularyFixtures;
 
-    private const TABLES = [
-        'mandarin_words', 'irregular_verbs', 'ielts_vocab', 'week_topics', 'past_tense_steps', 'mandarin_week_grammar',
-        'info_details', 'generic_tips', 'platform_links', 'mandarin_conversations',
-    ];
+    private const TABLES = ['mandarin_words', 'irregular_verbs', 'week_topics'];
 
     private function counts(array $tables): array
     {

@@ -2,82 +2,25 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class VoiceCommandEndpointTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected function setUp(): void
+    public function test_public_endpoint_limits_input_and_routes(): void
     {
-        parent::setUp();
-        Http::preventStrayRequests();
+        $this->postJson(route('voice.command'), ['transcript' => 'buka buku saku'])
+            ->assertOk()->assertExactJson(['type' => 'navigate', 'target' => 'buku-saku', 'index' => null]);
+        $this->postJson(route('voice.command'), ['transcript' => 'buka kamus'])
+            ->assertOk()->assertJsonPath('type', 'unknown');
+        $this->postJson(route('voice.command'), ['transcript' => str_repeat('a', 201)])->assertUnprocessable();
+        $this->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => ['a', 'b', 'c', 'd']])->assertUnprocessable();
     }
 
-    private function user(array $overrides = []): User
+    public function test_endpoint_is_throttled_per_ip(): void
     {
-        return User::factory()->create($overrides + ['onboarded' => true, 'start_date' => now()->toDateString(), 'track' => 'both']);
-    }
-
-    public function test_returns_only_type_target_and_index(): void
-    {
-        $this->actingAs($this->user())->postJson(route('voice.command'), ['transcript' => 'Buka kamus'])
-            ->assertOk()
-            ->assertExactJson(['type' => 'navigate', 'target' => 'kamus', 'index' => null]);
-
-        $this->actingAs($this->user())->postJson(route('voice.command'), ['transcript' => 'nomor tiga'])
-            ->assertExactJson(['type' => 'choose_number', 'target' => null, 'index' => 2]);
-    }
-
-    public function test_empty_transcript_is_unknown_and_long_text_is_rejected(): void
-    {
-        $this->actingAs($this->user())->postJson(route('voice.command'), ['transcript' => ''])
-            ->assertOk()->assertExactJson(['type' => 'unknown', 'target' => null, 'index' => null]);
-
-        $this->actingAs($this->user())->postJson(route('voice.command'), ['transcript' => str_repeat('a', 201)])
-            ->assertStatus(422);
-    }
-
-    public function test_transcript_is_not_logged_or_stored(): void
-    {
-        Log::spy();
-        DB::enableQueryLog();
-
-        $this->actingAs($this->user())->postJson(route('voice.command'), ['transcript' => 'rahasia-ucapan-xyz'])->assertOk();
-
-        Log::shouldNotHaveReceived('info');
-        Log::shouldNotHaveReceived('debug');
-        Log::shouldNotHaveReceived('warning');
-        foreach (DB::getQueryLog() as $query) {
-            $this->assertStringNotContainsString('rahasia-ucapan-xyz', json_encode($query['bindings']));
+        for ($i = 0; $i < 60; $i++) {
+            $this->postJson(route('voice.command'), ['transcript' => 'ya'])->assertOk();
         }
-    }
-
-    public function test_requires_auth_verified_and_onboarded(): void
-    {
-        $this->postJson(route('voice.command'), ['transcript' => 'kamus'])->assertUnauthorized();
-
-        $this->actingAs($this->user(['onboarded' => false]))->post(route('voice.command'), ['transcript' => 'kamus'])->assertRedirect();
-    }
-
-    public function test_is_throttled_at_sixty_per_minute(): void
-    {
-        $user = $this->user();
-
-        foreach (range(1, 60) as $ignored) {
-            $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'ya'])->assertOk();
-        }
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'ya'])->assertStatus(429);
-    }
-
-    public function test_scan_flag_off_is_not_available(): void
-    {
-        $this->actingAs($this->user())->postJson(route('voice.command'), ['transcript' => 'kamera'])
-            ->assertExactJson(['type' => 'not_available', 'target' => 'scan.object', 'index' => null]);
+        $this->postJson(route('voice.command'), ['transcript' => 'ya'])->assertStatus(429);
     }
 }

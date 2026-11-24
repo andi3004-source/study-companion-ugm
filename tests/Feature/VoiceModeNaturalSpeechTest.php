@@ -2,10 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Database\Seeders\ReferenceDataSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -16,15 +12,6 @@ use Tests\TestCase;
  */
 class VoiceModeNaturalSpeechTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Http::preventStrayRequests();
-        $this->seed(ReferenceDataSeeder::class);
-    }
-
     protected function tearDown(): void
     {
         Livewire::flushState();
@@ -33,9 +20,7 @@ class VoiceModeNaturalSpeechTest extends TestCase
 
     private function page(string $url): string
     {
-        $user = User::factory()->create(['start_date' => now()->subDays(2)->toDateString(), 'track' => 'both', 'onboarded' => true]);
-
-        return $this->actingAs($user)->get($url)->assertOk()->getContent();
+        return $this->get($url)->assertOk()->getContent();
     }
 
     /** JS source with comments removed, so tests only look at code. */
@@ -54,7 +39,7 @@ class VoiceModeNaturalSpeechTest extends TestCase
         // tell() writes into the role="status" region and speaks.
         $this->assertMatchesRegularExpression("/async tell\(text\) \{\s*this\.announce\(text\);\s*await this\.say/", $engine);
         $this->assertMatchesRegularExpression("/getElementById\('mode-suara-status'\)/", $engine);
-        $this->assertStringContainsString('<p id="mode-suara-status" role="status"', $this->page('/dashboard'));
+        $this->assertStringContainsString('<p id="mode-suara-status" role="status"', $this->page('/'));
         // Unknown no longer ends at the old dead-end sentence.
         $this->assertStringNotContainsString("'Maaf, perintah tidak dikenali. Katakan perintah untuk daftar perintah.'", $engine);
         $this->assertStringContainsString('default:
@@ -68,18 +53,15 @@ class VoiceModeNaturalSpeechTest extends TestCase
         $adapters = $this->js('voice/adapters.js');
         $engine = $this->js('voice/engine.js');
 
-        $this->assertStringContainsString("hint: 'mulai, ulangi, satu sampai empat, penjelasan, lanjut, kembali, berhenti'", $adapters);
-        preg_match_all("/VoiceMode\.register\(\s*'([a-z-]+)',\s*\{\s*hint: '/", $adapters, $withHint);
-        $this->assertEqualsCanonicalizing(['game-hub', 'chat-picker', 'kata-bicara', 'chat', 'cards', 'dashboard', 'progress', 'scan'], $withHint[1]);
-        // The two games get the hint from gameAdapter().
-        preg_match_all("/VoiceMode\.register\(\s*'([a-z-]+)',\s*gameAdapter\(/", $adapters, $games);
-        $this->assertEqualsCanonicalizing(['game-listen-pick', 'game-error-hunter'], $games[1]);
+        foreach (['chat-picker', 'chat'] as $name) {
+            $this->assertMatchesRegularExpression("/VoiceMode\\.register\\(\\s*'".$name."',\\s*\\{\\s*hint: '/", $adapters);
+        }
 
         $this->assertStringContainsString("case 'help':
                 return this.tell(`\${pageHint(this.adapter())}. \${MESSAGES.general}`);", $engine);
     }
 
-    public function test_start_command_on_game_hub_scenario_picker_and_games(): void
+    public function test_start_command_on_scenario_picker(): void
     {
         $engine = $this->js('voice/engine.js');
         $adapters = $this->js('voice/adapters.js');
@@ -89,29 +71,20 @@ class VoiceModeNaturalSpeechTest extends TestCase
         $this->assertStringContainsString("querySelectorAll('[data-voice-start]')", $engine);
         $this->assertStringContainsString("return this.offer(starts, 'pilihan');", $engine);
         $this->assertMatchesRegularExpression('/if \(target && this\.routes\[target\]\) \{.*?window\.location\.href = this\.routes\[target\];/s', $engine);
-        // In a game, "mulai" reads the question or presses "Main lagi".
-        $this->assertStringContainsString("if (cmd.type === 'start' && (!cmd.target || cmd.target === route)) {", $adapters);
-        $this->assertStringContainsString('buttonNamed(/^main lagi$/i)', $adapters);
-
-        $hub = $this->page('/game');
-        $this->assertStringContainsString('data-voice-page="game-hub"', $hub);
-        $this->assertMatchesRegularExpression('#<a href="[^"]+/game/(dengar-pilih|pemburu-kesalahan)" data-voice-start="#', $hub);
-
         $picker = $this->page('/conversation');
         $this->assertStringContainsString('data-voice-page="chat-picker"', $picker);
         $this->assertStringContainsString('data-voice-start="Ngobrol Bebas"', $picker);
         $this->assertMatchesRegularExpression('#wire:click="selectScenario\(\'[^\']+\'\)" data-voice-start="[^"]+"#', $picker);
     }
 
-    public function test_adapters_are_registered_for_the_game_and_chat_pages(): void
+    public function test_adapters_are_registered_for_active_pages(): void
     {
         $adapters = $this->js('voice/adapters.js');
         $views = [
-            'game-hub' => 'games/hub',
-            'game-listen-pick' => 'games/listen-pick',
-            'game-error-hunter' => 'games/error-hunter',
             'chat-picker' => 'conversation/picker',
             'chat' => 'conversation/chat',
+            'ucapan' => 'pronunciation-check',
+            'bantuan' => 'bantuan',
         ];
 
         foreach ($views as $name => $view) {
@@ -143,8 +116,8 @@ class VoiceModeNaturalSpeechTest extends TestCase
         foreach (['terdengar', 'alternatif', 'confidence', 'parse:'] as $label) {
             $this->assertStringContainsString($label, $engine);
         }
-        $this->assertStringNotContainsString('mode-suara-debug', $this->page('/dashboard'));
-        $this->assertStringNotContainsString('mode-suara-debug', $this->page('/dashboard?voicedebug=1'));
+        $this->assertStringNotContainsString('mode-suara-debug', $this->page('/'));
+        $this->assertStringNotContainsString('mode-suara-debug', $this->page('/?voicedebug=1'));
     }
 
     public function test_transcript_is_never_stored(): void
@@ -169,10 +142,7 @@ class VoiceModeNaturalSpeechTest extends TestCase
         $this->page('/bantuan');
 
         $this->get('/bantuan')->assertOk()
-            ->assertSee('"masuk ke game"', false)
             ->assertSee('"tes obrolan"', false)
-            ->assertSee('"mulai pemburu kesalahan"', false)
-            ->assertSee('"jawab tiga"', false)
             ->assertSee('Saya dengar: …')
             ->assertSee('satu atau dua')
             ->assertSee('Belum diuji dengan pengguna tunanetra.');

@@ -32,8 +32,7 @@
         A complement to the semantic markup and screen readers, never a replacement. Off by default.
     --}}
     @php
-        $voiceRoutes = collect(['dashboard', 'cards.index', 'kamus', 'ujian', 'latihan-isian', 'game', 'game.error-hunter', 'game.listen-pick', 'conversation', 'pronunciation-check', 'kata-bicara', 'progress', 'bantuan'])
-            ->when(config('scan.enabled'), fn ($routes) => $routes->push('scan.object'))
+        $voiceRoutes = collect(['home', 'conversation', 'pronunciation-check', 'buku-saku', 'bantuan'])
             ->mapWithKeys(fn ($name) => [$name => route($name)]);
     @endphp
     <div x-data="voiceModeBar({{ \Illuminate\Support\Js::from(route('voice.command')) }}, {{ \Illuminate\Support\Js::from($voiceRoutes) }})"

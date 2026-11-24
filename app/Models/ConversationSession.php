@@ -3,11 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ConversationSession extends Model
 {
+    use Prunable;
+
+    public function prunable()
+    {
+        return static::where('started_at', '<', now()->subDay());
+    }
+
     public $timestamps = false;
 
     protected $fillable = [

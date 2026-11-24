@@ -16,8 +16,7 @@ namespace App\Support;
  *
  * Result: ['type' => string, 'target' => ?string, 'index' => ?int]
  *   navigate        target = route name
- *   not_available   target = route name or null (feature off or not built)
- *   start           target = game route name or null ("mulai", "main pemburu kesalahan")
+ *   start           target = null ("mulai")
  *   choose_number   index  = 0-based (1-12, or a-d)
  *   clarify         plus 'candidates' => two results, each with a 'label' (the phrase to offer)
  *   back, repeat, read_page, list_actions, more, confirm_yes, confirm_no,
@@ -27,7 +26,7 @@ class VoiceCommandParser
 {
     public const MAX_NUMBER = 12;
 
-    /** Words that may surround a page name or a command without changing it ("masuk ke game dong"). */
+    /** Words that may surround a page name or a command without changing it. */
     private const FILLERS = [
         'tolong', 'coba', 'buka', 'bukakan', 'masuk', 'pergi', 'ke', 'halaman', 'menu', 'fitur',
         'saya', 'aku', 'mau', 'ingin', 'pengen', 'ayo', 'yuk', 'dong', 'deh', 'tes', 'dulu', 'nih', 'sih',
@@ -38,54 +37,18 @@ class VoiceCommandParser
 
     /** phrase => route name */
     private const PAGES = [
-        'hari ini' => 'dashboard',
-        'dashboard' => 'dashboard',
-        'kartu' => 'cards.index',
-        'flashcard' => 'cards.index',
-        'kamus' => 'kamus',
-        'ujian' => 'ujian',
-        'kuis' => 'ujian',
-        'isian' => 'latihan-isian',
-        'game' => 'game',
-        'gim' => 'game',
-        'permainan' => 'game',
-        // How id-ID recognition often hears the English word "game".
-        'gem' => 'game',
-        'geim' => 'game',
-        'gaim' => 'game',
-        'gam' => 'game',
-        'pemburu kesalahan' => 'game.error-hunter',
-        'dengar dan pilih' => 'game.listen-pick',
+        'beranda' => 'home',
+        'hari ini' => 'home',
         'ngobrol' => 'conversation',
         'obrolan' => 'conversation',
         'percakapan' => 'conversation',
         'chat' => 'conversation',
-        'ngomong' => 'conversation',
         'ucapan' => 'pronunciation-check',
         'pengucapan' => 'pronunciation-check',
         'cek pengucapan' => 'pronunciation-check',
-        'kata bicara' => 'kata-bicara',
-        'kamus bicara' => 'kata-bicara',
-        'raba lalu dengar' => 'scan.object',
-        'kamera' => 'scan.object',
-        'potret' => 'scan.object',
-        'progress' => 'progress',
-        'kemajuan' => 'progress',
+        'buku saku' => 'buku-saku',
         'bantuan' => 'bantuan',
-        'bantu' => 'bantuan',
     ];
-
-    /** Pages that are mentioned in the command list but don't exist (yet). */
-    private const NOT_BUILT = ['pilih yang benar'];
-
-    /** Games that "mulai <nama>" / "main <nama>" can start. */
-    private const GAMES = [
-        'pemburu kesalahan' => 'game.error-hunter',
-        'dengar dan pilih' => 'game.listen-pick',
-    ];
-
-    /** Words after "mulai"/"main" that still mean a plain start ("mulai main", "main lagi"). */
-    private const START_SUFFIXES = ['main', 'lagi', 'game', 'gim', 'permainan', 'sekarang'];
 
     /** type => phrases (whole utterance) */
     private const COMMANDS = [
@@ -174,23 +137,10 @@ class VoiceCommandParser
     {
         $phrase = self::withoutFillers($text);
 
-        // "main game", "mau main gim": "main" in front of the game hub only.
-        if (str_starts_with($phrase, 'main ') && (self::PAGES[substr($phrase, 5)] ?? null) === 'game') {
-            $phrase = substr($phrase, 5);
-        }
-
-        if (in_array($phrase, self::NOT_BUILT, true)) {
-            return self::result('not_available');
-        }
-
         $route = self::PAGES[$phrase] ?? null;
 
         if ($route === null) {
             return null;
-        }
-
-        if ($route === 'scan.object' && ! config('scan.enabled')) {
-            return self::result('not_available', $route);
         }
 
         return self::result('navigate', $route);
@@ -208,7 +158,7 @@ class VoiceCommandParser
         return count($found) === 1 ? self::result($found[0]) : null;
     }
 
-    /** "mulai", "main", "ayo mulai", "mulai main", "mulai pemburu kesalahan", "main dengar dan pilih". */
+    /** A plain start command. */
     private static function start(string $text): ?array
     {
         if (! preg_match('/^(mulai|main)(?: (.+))?$/u', self::withoutFillers($text), $m)) {
@@ -217,12 +167,7 @@ class VoiceCommandParser
 
         $rest = $m[2] ?? '';
 
-        if ($rest === '' || in_array($rest, self::START_SUFFIXES, true)) {
-            // "main game" is the game hub (see page()), not a start.
-            return $m[1] === 'main' && (self::PAGES[$rest] ?? null) === 'game' ? null : self::result('start');
-        }
-
-        return isset(self::GAMES[$rest]) ? self::result('start', self::GAMES[$rest]) : null;
+        return $rest === '' ? self::result('start') : null;
     }
 
     private static function number(string $text): ?array
@@ -255,7 +200,7 @@ class VoiceCommandParser
     }
 
     /**
-     * One misheard word ("kamuss", "progres", "lanjud"): the known phrase with the
+     * One misheard word ("ngobroll", "lanjud"): the known phrase with the
      * same number of words and the smallest total distance wins. Two different
      * commands at the same distance give 'clarify' with both, never a guess.
      */
@@ -324,14 +269,9 @@ class VoiceCommandParser
     private static function phrases(): array
     {
         $starts = ['mulai'];
-        foreach (array_keys(self::GAMES) as $game) {
-            $starts[] = 'mulai '.$game;
-            $starts[] = 'main '.$game;
-        }
 
         return array_values(array_unique([
             ...array_keys(self::PAGES),
-            ...self::NOT_BUILT,
             ...array_merge(...array_values(self::COMMANDS)),
             ...$starts,
         ]));

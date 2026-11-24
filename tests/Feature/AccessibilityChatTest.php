@@ -31,9 +31,12 @@ class AccessibilityChatTest extends TestCase
 
     protected function mandarinSession(User $user, array $overrides = []): ConversationSession
     {
-        return ConversationSession::create(array_merge([
+        $session = ConversationSession::create(array_merge([
             'user_id' => $user->id, 'lang' => 'mandarin', 'scenario_key' => 'restaurant_ordering', 'started_at' => now(),
         ], $overrides));
+        session()->push('ngobrol.sesi', $session->id);
+
+        return $session;
     }
 
     public function test_layout_has_lang_skip_links_landmarks_and_one_h1(): void
@@ -50,7 +53,7 @@ class AccessibilityChatTest extends TestCase
         $this->assertStringContainsString('<a href="#kolom-tulis" class="skip-link">Lewati ke kolom tulis</a>', $html);
         $this->assertLessThan(strpos($html, '<header'), strpos($html, 'Lewati ke kolom tulis'), 'Skip links must come before the header.');
         $this->assertStringContainsString('<header', $html);
-        $this->assertStringContainsString('aria-label="Navigasi utama"', $html);
+        $this->assertStringNotContainsString('aria-label="Navigasi utama"', $html);
         $this->assertStringContainsString('<main id="konten"', $html);
         $this->assertStringContainsString('<footer', $html);
         $this->assertSame(1, substr_count($html, '<h1'));
@@ -98,6 +101,7 @@ class AccessibilityChatTest extends TestCase
         $session = ConversationSession::create([
             'user_id' => $user->id, 'lang' => 'english', 'scenario_key' => 'job_interview', 'started_at' => now(),
         ]);
+        session()->push('ngobrol.sesi', $session->id);
         ConversationTurn::create(['session_id' => $session->id, 'role' => 'assistant', 'content' => 'Tell me about yourself.']);
 
         Livewire::actingAs($user)->test(Chat::class, ['session' => $session])

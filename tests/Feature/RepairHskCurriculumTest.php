@@ -4,9 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\MandarinWord;
 use App\Models\User;
-use App\Models\UserWordProgress;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class RepairHskCurriculumTest extends TestCase
@@ -77,7 +77,7 @@ class RepairHskCurriculumTest extends TestCase
         $user = User::factory()->create();
 
         $before = MandarinWord::where('hanzi', '都')->first();
-        UserWordProgress::create(['user_id' => $user->id, 'word_type' => 'mandarin', 'word_id' => $before->id, 'is_known' => true]);
+        DB::table('user_word_progress')->insert(['user_id' => $user->id, 'word_type' => 'mandarin', 'word_id' => $before->id, 'is_known' => true, 'created_at' => now(), 'updated_at' => now()]);
 
         $this->artisan('hsk:repair-curriculum')->assertSuccessful();
 
@@ -86,7 +86,7 @@ class RepairHskCurriculumTest extends TestCase
         $this->assertSame($before->order_in_batch, $after->order_in_batch);
         $this->assertSame($before->meaning_id, $after->meaning_id);
         $this->assertSame(150, MandarinWord::count());
-        $this->assertTrue(UserWordProgress::where('word_id', $before->id)->where('word_type', 'mandarin')->value('is_known'));
+        $this->assertEquals(1, DB::table('user_word_progress')->where('word_id', $before->id)->where('word_type', 'mandarin')->value('is_known'));
     }
 
     public function test_is_idempotent(): void

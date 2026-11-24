@@ -13,7 +13,7 @@ use Illuminate\Support\LazyCollection;
  * Imports the official HSK1-6 dataset (storage/app/seed-data/mandarin_hsk1to6_complete.json).
  *
  * HSK1 is NOT re-inserted: the existing 150 rows in mandarin_words drive the
- * Dashboard's day-by-day curriculum via batch_number/order_in_batch, and their
+ * the historical curriculum via batch_number/order_in_batch, and their
  * ids are referenced by user_word_progress, so they must keep their id, batch
  * and order. Instead we enrich each matched row in place with the columns the
  * curated data lacks (traditional, radical, frequency, ...) — never its

@@ -3,7 +3,7 @@
 # `php artisan serve`. Not a production image.
 FROM php:8.2-cli
 
-RUN docker-php-ext-install pdo_sqlite
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/* \n    && docker-php-ext-install pdo_sqlite
 
 WORKDIR /var/www/html
 

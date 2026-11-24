@@ -153,7 +153,7 @@ class SingleServerDeployTest extends TestCase
         foreach (['TRUSTED_PROXIES=*', 'APP_FORCE_HTTPS=true', 'APP_ENV=staging', 'APP_DEBUG=false', 'DB_JOURNAL_MODE=wal'] as $line) {
             $this->assertMatchesRegularExpression('/^'.preg_quote($line, '/').'$/m', $env, $line);
         }
-        foreach (['DOMAIN', 'APP_KEY', 'GEMINI_API_KEY', 'ANTHROPIC_API_KEY', 'LANGFLOW_API_KEY', 'MAIL_PASSWORD', 'DEMO_ACCOUNT_PASSWORD', 'REGISTRATION_INVITE_CODE'] as $secret) {
+        foreach (['DOMAIN', 'APP_KEY', 'GEMINI_API_KEY', 'ANTHROPIC_API_KEY', 'LANGFLOW_API_KEY', 'MAIL_PASSWORD'] as $secret) {
             $this->assertMatchesRegularExpression('/^'.$secret.'=$/m', $env, $secret.' must be empty');
         }
         // Values stay plain: docker compose and Laravel would expand ${...} differently.

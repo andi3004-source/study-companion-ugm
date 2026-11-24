@@ -5,7 +5,7 @@ namespace App\Support;
 /**
  * Decides between the (up to 3) alternatives SpeechRecognition returns for
  * one utterance. Every alternative is parsed; raw texts are never compared,
- * so "Kamus" vs "kamus." or "buka kamus" vs "kamus" don't count as a doubt.
+ * so "Ucapan" vs "ucapan." or "buka ucapan" vs "ucapan" don't count as a doubt.
  *
  *   accept   the top alternative is a known command and no other alternative
  *            is a different known command: act on it

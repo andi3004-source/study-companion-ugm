@@ -49,12 +49,15 @@ class HskLevelLockTest extends TestCase
     {
         $user = User::factory()->create(['start_date' => now()->toDateString(), 'track' => 'both', 'onboarded' => true]);
 
-        return ConversationSession::create([
+        $session = ConversationSession::create([
             'user_id' => $user->id,
             'lang' => $lang,
             'scenario_key' => $lang === 'mandarin' ? 'restaurant_ordering' : 'job_interview',
             'started_at' => now(),
         ]);
+        session()->push('ngobrol.sesi', $session->id);
+
+        return $session;
     }
 
     private function mandarinWord(string $hanzi, int $batch, int $order, int $level = 1): MandarinWord

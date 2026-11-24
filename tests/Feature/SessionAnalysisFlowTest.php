@@ -92,6 +92,8 @@ class SessionAnalysisFlowTest extends TestCase
             'scenario_key' => $lang === 'mandarin' ? 'restaurant_ordering' : 'job_interview', 'started_at' => now(),
         ]);
 
+        session()->push('ngobrol.sesi', $session->id);
+
         if ($withUserTurn) {
             ConversationTurn::create(['session_id' => $session->id, 'role' => 'user', 'content' => '我是高兴', 'input_mode' => 'text']);
             ConversationTurn::create(['session_id' => $session->id, 'role' => 'assistant', 'content' => '你为什么高兴？']);

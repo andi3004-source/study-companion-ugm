@@ -22,7 +22,7 @@ RUN composer dump-autoload --no-dev --optimize --no-scripts
 #    TLS is done by the separate "proxy" service (Caddy) in docker-compose.yml.
 FROM dunglas/frankenphp:1-php8.3-alpine
 
-RUN install-php-extensions pcntl opcache
+RUN apk add --no-cache ffmpeg && install-php-extensions pcntl opcache
 
 ENV APP_DATA=/data
 

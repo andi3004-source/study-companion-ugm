@@ -8,17 +8,17 @@ use App\Jobs\AnalyzeSessionJob;
 use App\Models\ConversationApiCall;
 use App\Models\ConversationSession;
 use App\Models\ConversationTurn;
-use App\Models\User;
 use App\Models\WeekTopic;
 use App\Support\HskVocabularyPrompt;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\RateLimiter;
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
 
 /**
  * Orchestrates the AI Conversation Partner: scenario lookup, session
- * lifecycle, the daily message quota, and turning stored turns into a
+ * lifecycle and turning stored turns into a
  * bounded LLM request. All calls go through the bound AiClient (see
  * AppServiceProvider), whose key never leaves the backend.
  */
@@ -70,35 +70,27 @@ class ConversationService
             ?? throw new InvalidArgumentException("Unknown scenario: {$lang}/{$scenarioKey}");
     }
 
-    public function startSession(User $user, string $lang, string $scenarioKey): ConversationSession
+    public function startSession(string $lang, string $scenarioKey): ConversationSession
     {
         $this->scenario($lang, $scenarioKey); // throws if unknown
 
-        return ConversationSession::create([
-            'user_id' => $user->id,
+        $session = ConversationSession::create([
             'lang' => $lang,
             'scenario_key' => $scenarioKey,
             'started_at' => now(),
             'last_message_at' => now(),
         ]);
+        session()->push('ngobrol.sesi', $session->id);
+
+        return $session;
     }
 
-    /**
-     * "Ngobrol Bebas": picks a random topic (or uses $topicOverride, when the
-     * dashboard's checklist detail modal already knows the day's topic and
-     * wants that instead of a random one — see startSessionForTopic()),
-     * creates the session, and has Claude open with the first message — the
-     * user never has to type first. The opener isn't a scripted string; it's
-     * the same system-prompt + Claude-call path as every other reply, just
-     * seeded with a one-off instruction that's never stored as a real user
-     * turn (so it never counts against the daily quota).
-     */
-    public function startRandomSession(User $user, string $lang, ?string $topicOverride = null): ConversationSession
+    /** Start with a random topic and an AI opening message. */
+    public function startRandomSession(string $lang): ConversationSession
     {
-        $topic = $topicOverride ?? $this->randomTopic($lang);
+        $topic = $this->randomTopic($lang);
 
         $session = ConversationSession::create([
-            'user_id' => $user->id,
             'lang' => $lang,
             'scenario_key' => 'random',
             'topic_label' => $topic,
@@ -135,44 +127,9 @@ class ConversationService
             'tokens_out' => $result['tokens_out'],
         ]);
 
+        session()->push('ngobrol.sesi', $session->id);
+
         return $session;
-    }
-
-    /**
-     * Entry point for the dashboard checklist's "Latihan Ngobrol" button
-     * (a "speaking" item already carries its day's topic): reuses a scripted
-     * scenario when its persona genuinely matches the topic, otherwise
-     * starts "Ngobrol Bebas" with that topic assigned directly instead of a
-     * random one. In practice scripted scenarios are situational roleplay
-     * (job interview, hotel check-in, ...) while checklist topics are
-     * subject areas (Family & Hometown, Technology, ...) — different axes
-     * that rarely overlap — so this almost always takes the random-mode
-     * branch, which is the honest behavior given the data, not a fallback
-     * that's failing.
-     */
-    public function startSessionForTopic(User $user, string $lang, ?string $topic): ConversationSession
-    {
-        $scenarioKey = $topic ? $this->matchingScenarioKey($lang, $topic) : null;
-
-        return $scenarioKey
-            ? $this->startSession($user, $lang, $scenarioKey)
-            : $this->startRandomSession($user, $lang, $topic);
-    }
-
-    /** Word-overlap match between the topic and a scenario's label — see startSessionForTopic(). */
-    private function matchingScenarioKey(string $lang, string $topic): ?string
-    {
-        $topicWords = collect(preg_split('/[^a-zA-Z]+/', strtolower($topic)))->filter();
-
-        foreach ($this->scenarios($lang) as $key => $scenario) {
-            $labelWords = collect(preg_split('/[^a-zA-Z]+/', strtolower($scenario['label'])))->filter();
-
-            if ($topicWords->intersect($labelWords)->isNotEmpty()) {
-                return $key;
-            }
-        }
-
-        return null;
     }
 
     private function randomTopic(string $lang): string
@@ -206,17 +163,9 @@ class ConversationService
         return $this->scenario($session->lang, $session->scenario_key);
     }
 
-    public function messagesSentToday(User $user): int
+    public function remainingMessagesToday(): int
     {
-        return ConversationTurn::where('role', 'user')
-            ->whereHas('session', fn ($q) => $q->where('user_id', $user->id))
-            ->whereDate('created_at', today())
-            ->count();
-    }
-
-    public function remainingMessagesToday(User $user): int
-    {
-        return max(0, self::dailyMessageLimit() - $this->messagesSentToday($user));
+        return max(0, self::dailyMessageLimit() - RateLimiter::attempts('ngobrol:day:'.request()->ip()));
     }
 
     /**

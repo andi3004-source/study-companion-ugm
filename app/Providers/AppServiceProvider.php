@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Contracts\AiClient;
-use App\Contracts\ObjectRecognizer;
 use App\Contracts\PronunciationChecker;
 use App\Contracts\SessionAnalyzer;
 use App\Services\AnthropicClient;
@@ -13,9 +12,6 @@ use App\Services\GeminiSessionAnalyzer;
 use App\Services\LangflowSessionAnalyzer;
 use App\Services\MlPronunciationChecker;
 use App\Services\OpenAiCompatibleClient;
-use App\Services\Scan\GeminiObjectRecognizer;
-use App\Services\Scan\NullObjectRecognizer;
-use App\Services\Scan\OpenAiVisionRecognizer;
 use App\Services\SttMatchPronunciationChecker;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Middleware\TrustProxies;
@@ -72,19 +68,6 @@ class AppServiceProvider extends ServiceProvider
             };
         });
 
-        // "Raba lalu dengar": Gemini vision when a key is set, otherwise the
-        // OpenAI-compatible vision endpoint when ITS key is set (local
-        // 9router, OpenRouter, ...), otherwise a recognizer that always
-        // answers tidak_yakin instead of guessing.
-        $this->app->bind(ObjectRecognizer::class, function ($app) {
-            if (filled(config('services.gemini.key'))) {
-                return $app->make(GeminiObjectRecognizer::class);
-            }
-
-            return filled(config('services.openai_compatible.key'))
-                ? $app->make(OpenAiVisionRecognizer::class)
-                : $app->make(NullObjectRecognizer::class);
-        });
     }
 
     /**
@@ -103,11 +86,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        RateLimiter::for('voice-command', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+        RateLimiter::for('voice-command', fn (Request $request) => Limit::perMinute(60)->by($request->ip()));
 
-        RateLimiter::for('scan-benda', function (Request $request) {
-            return Limit::perMinute(max(1, (int) config('scan.rate_limit_per_minute', 6)))
-                ->by($request->user()?->id ?: $request->ip());
-        });
     }
 }

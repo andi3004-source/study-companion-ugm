@@ -25,7 +25,7 @@ class BukuSakuCatalog
     {
         $books = [];
         foreach (self::BOOKS as $slug => $judul) {
-            $books[$slug] = ['slug' => $slug, 'judul' => $judul];
+            $books[$slug] = $this->book($slug);
         }
 
         return $books;
@@ -35,7 +35,7 @@ class BukuSakuCatalog
     {
         abort_unless(isset(self::BOOKS[$slug]), 404);
 
-        return ['slug' => $slug, 'judul' => self::BOOKS[$slug]];
+        return ['slug' => $slug, 'judul' => self::BOOKS[$slug], 'ringkasan' => $slug === 'buku-saku-mandiri' ? 'Panduan aktivitas sehari-hari.' : 'Panduan olahraga mandiri.'];
     }
 
     public function chapters(string $bookSlug): array
