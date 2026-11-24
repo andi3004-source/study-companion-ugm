@@ -45,7 +45,10 @@ Tuturnusa sekarang diarahkan untuk **anak-anak tunanetra**: tidak bisa melihat, 
   - Pengecekan kepemilikan di `Chat::mount` (`Chat.php:41`) diganti `in_array($session->id, session('ngobrol.sesi', []))`. Kalau tidak ada, 404.
   - `config/session.php`: `expire_on_close => true` (lewat env `SESSION_EXPIRE_ON_CLOSE=true`), jadi riwayat hilang begitu browser ditutup.
   - Jatah pesan harian (`messagesSentToday`/`remainingMessagesToday`, `Chat.php:68,104`) diganti `RateLimiter` per IP dengan batas `dailyMessageLimit()` per 24 jam. Throttle per menit per IP juga ada di kirim pesan.
-  - Model `ConversationSession` memakai trait `Prunable` (`created_at < now()->subDay()`). Turn dan api_call ikut terhapus lewat cascade/`pruning()`. `model:prune` dijadwalkan harian di `routes/console.php`.
+  - Model `ConversationSession` memakai trait `Prunable` (`started_at < now()->subDay()`; tabel ini tidak punya `created_at`). Turn dan api_call ikut terhapus lewat cascade/`pruning()`. `model:prune` dijadwalkan **tiap jam** di `routes/console.php`.
+  - Pemeriksaan kepemilikan sesi ada di satu tempat (mis. method `sesiMilikBrowserIni()`), dipanggil di `mount` **dan** di setiap aksi Livewire (kirim pesan, selesai, poll analisis), bukan cuma di `mount`.
+  - Pembacaan otomatis balasan AI (`autoPlay`) **default mati**. Suara hanya diputar setelah anak menekan tombol, supaya tidak bertabrakan dengan pembaca layar.
+  - Sebelum mikrofon pertama kali aktif di Ngobrol/Ucapan, tampilkan pemberitahuan privasi singkat: apa yang dikirim (suara diproses browser/penyedia STT, teks dikirim ke AI) dan bahwa data dihapus dalam 24 jam. Ketentuan persetujuan wali dan tinjauan hukum UU PDP menjadi tanggung jawab pemilik produk, di luar cakupan kode.
   - Yang tetap jalan tanpa perubahan: `AnalyzeSessionJob`, `RetryFailedAnalyses`, `SessionTranscript`.
 - Rate limiter lain yang memakai `$request->user()?->id ?: ip` cukup memakai IP.
 
@@ -68,6 +71,7 @@ footer: Bantuan & aksesibilitas (tautan kecil)
 - Hapus `$navGroups`, sidebar, bottom bar, dan panel "Lainnya".
 - Header berisi logo kecil (tautan ke beranda) dan toggle Mode suara. Tidak ada tombol Keluar.
 - Tiap halaman fitur punya tautan "← Beranda" di paling atas `#konten`.
+- Mode suara menjadi **push-to-talk**: satu ujaran per tekan tombol, status diumumkan lewat `role="status"`, tidak ada hotkey huruf tunggal, mikrofon tidak terbuka lagi otomatis setelah respons, dan semua audio aplikasi berhenti sebelum mendengarkan (temuan R1 §4).
 - `$voiceRoutes` dikurangi menjadi `['dashboard', 'conversation', 'pronunciation-check', 'buku-saku']`. Pemetaan perintah di `resources/js/voice/adapters.js` dan `engine.js` untuk fitur yang dihapus ikut dibuang. Server-side command parsing di `VoiceCommandController` beserta servisnya juga dirampingkan.
 - Isi Bantuan yang esensial (daftar perintah suara + pernyataan aksesibilitas) dipindah ke halaman statis kecil `/bantuan` yang ditautkan dari footer, bukan jadi kartu *(call gue)*.
 
@@ -115,3 +119,9 @@ Di file Figma `tuturnusa`, buat frame **Beranda (desktop 1440 + mobile 390)**, *
 3. `python scripts/buku_saku/tts.py`, lalu dengarkan satu MP3 tiap buku.
 4. `npm run build` jalan tanpa error, dan ukuran bundle JS turun.
 5. Manual: buka di Chrome dengan VoiceOver/NVDA. Tab dari atas harus berurutan skip link → mode suara → logo → 3 kartu, nama kartunya dibacakan, dan navigasi heading (H) di halaman bab bekerja. Tes Mode suara dengan "buka buku saku".
+
+## Masukan riset (24 Nov 2026)
+Riset ada di `docs/research/`. Yang diadopsi:
+- R1: prune `started_at` per jam, cek kepemilikan sesi di setiap aksi, `autoPlay` default mati, Mode suara push-to-talk, pemberitahuan privasi, metadata durasi MP3 dibuat saat build.
+- R3: `aria-label` pada `<audio>` ("Audio narasi bab: …"), satu kalimat yang menjelaskan dua pilihan (dengar narasi atau pakai pembaca layar sendiri), wadah `aria-live="polite"` yang tidak di-remount di Ngobrol, rate edge-tts −10%, review manual 2–3 bab sebelum MP3 di-commit, `@axe-core/playwright` di CI, dan `/bantuan` berisi pintasan NVDA/TalkBack.
+- R2 (kontras sudah dihitung ulang oleh Claude): teks/garis utama navy `#14294D` (14.44:1 di putih). Oranye `#F9B934` **hanya** untuk latar dengan teks navy (8.26:1). Teks oranye di latar terang dilarang (1.75:1). Fokus global `:focus-visible` memakai cincin dua nada: 3px biru `#1D4ED8` (6.7:1 di putih) dengan offset 3px dan cincin luar putih, supaya tetap terlihat di latar navy (biru di navy hanya 2.16:1). Target sentuh minimal 56×56px. Kartu dan tombol memakai border 2px nyata supaya tetap terlihat di `forced-colors`. Reflow 320px/zoom 400% tanpa scroll horizontal. Teks bab `max-w-2xl`, rata kiri. Kalimat UI maksimal 10–15 kata, tanpa kiasan visual. Pola kartu ala GOV.UK: `<ul>` → `<li>` → satu `<a>` berisi `<h2>` + `<p>`, tanpa kontrol bersarang.
