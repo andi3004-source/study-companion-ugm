@@ -141,3 +141,12 @@ Reviewer: Claude, Codex, Cursor (`docs/research/qa-desain-bab1-*.md`). Antigravi
 - **Istilah (keputusan user):** judul bagian "Patokan indra" (Buku Saku Mandiri) menjadi **"Cara tahu sudah benar"**; "Patokan rasa dan napas" (Senam Dasar) menjadi **"Yang kamu rasakan"**. Isi tetap dari buku. Catatan: di PDF Senam Dasar hanya 11 dari 12 gerakan memuat "Patokan rasa dan napas" — W1-G wajib memeriksa gerakan yang tidak punya.
 - Teks penjelasan minimal 18px.
 - **Semua permukaan putih** (keputusan user): tidak ada latar pastel/berwarna di layar maupun kotak catatan; blok dibedakan dengan border navy 2px, oranye hanya aksen.
+
+## Warna konsisten di semua perangkat (keputusan user, 24 Nov 2026)
+- Satu palet terang, hex sRGB saja (tidak ada P3/oklch, tidak ada `prefers-color-scheme`, `darkMode` Tailwind tidak dipakai).
+- `<meta name="color-scheme" content="only light">` + `:root { color-scheme: only light; }` agar browser tidak menggelapkan otomatis (Chrome Android auto-dark, mode gelap Samsung Internet, WebView TWA). Mode gelap Samsung Internet diverifikasi di perangkat saat QA.
+- `<meta name="theme-color" content="#14294D">` tanpa variasi media; manifest PWA `theme_color #14294D`, `background_color #FFFFFF`.
+- Kontrol bawaan memakai `accent-color: #14294D`.
+- Font Inter self-host (tidak bergantung font sistem).
+- **Setelan "kontras tinggi" bawaan aplikasi DIHAPUS** (keputusan user): kelas `kontras-tinggi`, aturan CSS-nya, dan opsinya di `displaySettings`/Bantuan. Setelan **ukuran teks** (normal/besar/sangat besar) tetap ada karena tidak mengubah warna.
+- Pengecualian yang sengaja TIDAK dikunci karena merupakan alat bantu pilihan pengguna di tingkat OS: tema kontras Windows (`forced-colors`, tetap didukung dengan border nyata dan fokus `Highlight`) serta Smart Invert iOS / inversi warna Android. Web tidak dapat dan tidak boleh memblokirnya (WCAG).
