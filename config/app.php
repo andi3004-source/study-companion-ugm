@@ -55,7 +55,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
-    | Behind a reverse proxy (docker-compose.yml + Caddy): TRUSTED_PROXIES="*"
+    | Behind a reverse proxy (docker-compose.yml + Caddy): TRUSTED_PROXIES=<Docker private CIDRs>
     | or a comma-separated list of IPs/CIDRs; APP_FORCE_HTTPS=true makes every
     | generated URL https://. Both are off by default (see AppServiceProvider).
     */

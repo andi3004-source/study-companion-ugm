@@ -77,6 +77,12 @@ test.describe('Mode Suara & Pengenalan Suara (W3-C & W4-G)', () => {
       // Persetujuan sudah diberikan sebelumnya
     }
 
+    // Push-to-talk (W3-C): tekan pertama menyalakan mode, satu tekan lagi untuk satu perintah.
+    await expect(tombolModeSuara).toHaveAttribute('aria-pressed', 'true');
+    // Tekan saat pengantar masih dibacakan sengaja menghentikan suara; tunggu pengantar selesai dulu.
+    await page.waitForFunction(() => !(window as any).VoiceMode?.speaking);
+    await tombolModeSuara.click();
+
     // Bernavigasi ke /buku-saku via perintah suara
     await page.waitForURL(/.*buku-saku.*/, { timeout: 8000 });
     await expect(page).toHaveURL(/.*buku-saku.*/);

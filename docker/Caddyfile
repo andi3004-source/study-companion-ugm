@@ -3,5 +3,9 @@
 # and forwards to the app container, adding X-Forwarded-For/-Proto/-Host.
 {$DOMAIN} {
 	encode zstd gzip
+	# Largest legitimate upload is a ~2 MB Ucapan recording; reject bigger bodies at the edge.
+	request_body {
+		max_size 3MB
+	}
 	reverse_proxy app:80
 }
