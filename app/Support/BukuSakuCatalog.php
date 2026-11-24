@@ -136,7 +136,7 @@ class BukuSakuCatalog
             'judul' => $fields['judul'],
             'bagian' => $fields['bagian'],
             'urutan' => $number,
-            'html' => Str::markdown($body, ['html_input' => 'strip', 'allow_unsafe_links' => false]),
+            'html' => self::wrapPatokanBoxes(Str::markdown($body, ['html_input' => 'strip', 'allow_unsafe_links' => false])),
         ];
     }
 
@@ -153,5 +153,22 @@ class BukuSakuCatalog
         }
 
         return $manifest;
+    }
+
+    private static function wrapPatokanBoxes(string $html): string
+    {
+        return preg_replace_callback(
+            '/<h2>(Cara tahu sudah benar|Yang kamu rasakan)<\/h2>\s*<p>(.*?)<\/p>/s',
+            static function (array $m): string {
+                $label = htmlspecialchars($m[1], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+                return sprintf(
+                    '<aside class="kotak-patokan-bab" aria-label="%1$s"><h2>%1$s</h2><p>%2$s</p></aside>',
+                    $label,
+                    $m[2]
+                );
+            },
+            $html
+        );
     }
 }

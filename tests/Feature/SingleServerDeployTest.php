@@ -169,7 +169,7 @@ class SingleServerDeployTest extends TestCase
 
         foreach ([
             'Server Linux', 'Port 80 dan 443', 'git clone', 'cp .env.production.example .env', 'docker compose up -d --build',
-            'docker compose exec app php artisan app:seed-content', 'php artisan db:seed --class=DemoUserSeeder --force',
+            'docker compose exec app php artisan app:seed-content',
             'git pull', 'VACUUM INTO', 'Batas pengeluaran API', '`REGISTRATION_INVITE_CODE`', '`TRUSTED_PROXIES`',
         ] as $phrase) {
             $this->assertStringContainsString($phrase, $section, $phrase);

@@ -1,0 +1,11 @@
+# Brief W3-C (Cursor Composer) — bersihkan UI lama, Mode suara push-to-talk, perbaiki Buku Saku
+1. Baca `docs/orchestra/00-konteks-bersama.md`, rancangan (seluruhnya), `docs/orchestra/mockup-figma.md`, gambar `docs/orchestra/qa/*.png`, dan tugas **W3-C** di `docs/superpowers/plans/2026-11-24-tuturnusa-refactor.md`. W2-A (route baru, tanpa akun, PHP lama dihapus) dan W3-P (PWA) SUDAH ter-merge di branch dasarmu.
+2. Agent paralel: Antigravity (W4-G) memegang `tests/e2e/`, `playwright.config.ts`, `scripts/e2e.sh`, `.github/workflows/`, `package.json`/`package-lock.json`. Jangan sentuh. Kode PHP `app/`/`routes/` jangan diubah kecuali benar-benar perlu untuk view (catat di ringkasan).
+3. **Bug wajib (ditemukan Claude saat uji langsung):**
+   - Judul ganda: judul materi SUDAH berisi label ("Bab 1. Cara Menyikat…", "Gerakan 8. Duduk…"). Di `resources/views/buku-saku/{chapter,book}.blade.php` dan tautan bab berikut/sebelumnya, tampilkan `judul` apa adanya, jangan tambah "Bab N." lagi. Pengantar dan Referensi tanpa nomor.
+   - Info posisi: "Bab 1 dari 15" (Mandiri) / "Gerakan 8 dari 12" (Senam): hitung hanya halaman bernomor 01–98, label "Bab"/"Gerakan" sesuai buku; pengantar/referensi tidak menampilkan "N dari M".
+   - h1 halaman bab 48px (3rem), bukan 2.75rem. Teks isi 22px. Kolom 800px di tengah.
+   - Bantuan masih menyebut perintah suara fitur lama (kamus, ujian, kartu, game…): selaraskan dengan 3 fitur + Buku Saku.
+   Tambah tes untuk keempatnya (dengan materi asli lewat route `buku-saku.*`).
+4. Sisa W3-C sesuai rencana: hapus view/komponen/JS/CSS/aset fitur lama (welcome, dashboard, profile, layouts app/guest, kartu/kamus/ujian/game/auth/landing…), hapus sidebar + bottom bar dari `layouts/study.blade.php` (header logo + Mode suara + footer saja, `navRingkas` tidak perlu lagi), Mode suara push-to-talk (satu ujaran per tekan, tanpa hotkey huruf tunggal, mic tidak aktif lagi otomatis, hentikan audio app sebelum mendengar, status `role=status`, nama tombol tetap "Mode suara" + `aria-pressed`), README tanpa akun demo/fitur lama. Pastikan `rg` di rencana W3-C bersih.
+5. TDD. Gerbang: `bash scripts/ci.sh` exit 0. Jangan commit. Akhiri dengan ringkasan file + angka tes + hal yang harus diputuskan Claude.

@@ -2,24 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /** Kontrak fondasi visual layout study (W1-C). */
 class StudyLayoutTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected function studyHtml(): string
     {
-        $user = User::factory()->create([
-            'start_date' => now()->subDays(2)->toDateString(),
-            'track' => 'both',
-            'onboarded' => true,
-        ]);
-
-        return $this->actingAs($user)->get(route('bantuan'))->assertOk()->getContent();
+        return $this->get(route('bantuan'))->assertOk()->getContent();
     }
 
     public function test_body_uses_white_background_not_cream(): void

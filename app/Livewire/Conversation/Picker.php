@@ -10,7 +10,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Throwable;
 
-#[Layout('layouts.study', ['navRingkas' => true])]
+#[Layout('layouts.study')]
 class Picker extends Component
 {
     public string $lang = 'mandarin';

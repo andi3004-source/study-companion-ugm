@@ -101,7 +101,8 @@ class VoiceModeNaturalSpeechTest extends TestCase
         $this->assertMatchesRegularExpression('/watch\(\) \{.*?this\.observer\.disconnect\(\);\s*this\.observer\.observe\(main, \{ childList: true, subtree: true \}\);/s', $engine);
         $this->assertMatchesRegularExpression('/cleanup\(\) \{.*?this\.observer\?\.disconnect\(\);/s', $engine);
         $this->assertMatchesRegularExpression('/syncAdapter\(force = false\) \{.*?if \(!force && page === this\.currentPage\) return;.*?onActivate/s', $engine);
-        $this->assertMatchesRegularExpression('/this\.watch\(\);\s*this\.syncAdapter\(true\);\s*this\.listen\(\);/', $engine);
+        $this->assertMatchesRegularExpression('/this\.watch\(\);\s*this\.syncAdapter\(true\);/', $engine);
+        $this->assertDoesNotMatchRegularExpression('/async start\(\) \{.*?this\.listen\(\)/s', $engine);
         $this->assertSame(1, substr_count($engine, "document.addEventListener('livewire:navigated'"));
         // The chat's reply listener is still attached once only.
         $this->assertStringContainsString('if (this.terpasang) return;', $this->js('voice/adapters.js'));
@@ -142,9 +143,9 @@ class VoiceModeNaturalSpeechTest extends TestCase
         $this->page('/bantuan');
 
         $this->get('/bantuan')->assertOk()
-            ->assertSee('"tes obrolan"', false)
+            ->assertSee('buka ngobrol', false)
+            ->assertSee('buka buku saku', false)
             ->assertSee('Saya dengar: …')
-            ->assertSee('satu atau dua')
             ->assertSee('Belum diuji dengan pengguna tunanetra.');
     }
 }
