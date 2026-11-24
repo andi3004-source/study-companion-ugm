@@ -1,0 +1,12 @@
+# Tugas QA-D1 (semua agent, terpisah): QA desain halaman Bab 1 + jalur menjadi app
+Baca `docs/orchestra/00-konteks-bersama.md`, `docs/orchestra/mockup-figma.md`, dan lihat gambar `docs/orchestra/qa/bab1-desktop.png` (utama), `beranda-desktop.png`, `beranda-mobile.png`, `daftar-isi-desktop.png`. Sumber: Figma `tuturnusa` page "Tuturnusa — Tunanetra v1" (kalau kamu punya akses figma-console, boleh dibaca; JANGAN mengubah file Figma).
+
+Urutan DOM halaman Bab 1 (atas ke bawah): skip link → tombol Mode suara → logo → `main#konten`: tautan Beranda, tautan Daftar isi, teks "Bab 1 dari 15 · Bagian 1…", `<h1>`, kotak audio (`<audio controls preload="none">` + durasi + kalimat penjelasan), `<h2>` Alat dan bahan + paragraf, `<h2>` Langkah-langkah + `<ol>`, `<h2>` Patokan indra + kotak catatan, tautan Daftar isi + Bab berikutnya → footer Bantuan. Kolom baca 720px pada layar 1440px; latar putih.
+
+Masukan user: "negative space-nya masih banyak" (kanan kosong ±640px di desktop).
+
+Tulis HANYA `docs/research/qa-desain-bab1-<namamu>.md` (namamu: codex / cursor / antigravity). Isi:
+1. **Pengguna buta total (NVDA/JAWS/TalkBack/VoiceOver):** telusuri halaman seperti pembaca layar (Tab, H, daftar landmark, swipe). Apa yang dibacakan, apa yang membingungkan atau berlebihan, apakah urutan (meta sebelum h1, dua tautan "Daftar isi") baik, apakah kotak audio jelas, apakah "Patokan indra" dipahami anak. Usul perbaikan konkret.
+2. **Low vision:** ukuran teks, kontras, panjang baris, zoom 200–400%, reflow 320px, fokus, dan **negative space**. Usulkan layout desktop konkret yang memakai ruang lebih baik TANPA merusak panjang baris dan urutan baca (sertakan sketsa ASCII dan ukuran px). Pertimbangkan juga apakah kolom yang lebih lebar dengan teks lebih besar lebih baik untuk low vision.
+3. **Jalur menjadi app** (user ingin suatu saat jadi aplikasi): bandingkan PWA (installable, offline untuk MP3 Buku Saku), Trusted Web Activity (Play Store), Capacitor, dan Tauri 2 (desktop + mobile). Fokus pada: kompatibilitas pembaca layar di WebView (TalkBack di Android WebView, VoiceOver di WKWebView, NVDA di WebView2), izin mikrofon untuk Ucapan/Ngobrol, mode offline, ukuran, biaya pemeliharaan, distribusi. Beri rekomendasi dan apa yang perlu disiapkan SEKARANG di arsitektur Laravel agar jalur itu tidak tertutup.
+Setiap klaim teknis disertai URL sumber. Akhiri dengan "Rekomendasi" bernomor, diurutkan dari dampak terbesar. Jangan ubah file lain. Jangan commit.
