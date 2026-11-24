@@ -79,6 +79,30 @@
         <p class="text-ink">Animasi dikurangi otomatis bila sistem operasimu diatur untuk mengurangi gerakan.</p>
     </section>
 
+    <section id="pasang" aria-labelledby="bantuan-pasang" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
+        <h2 id="bantuan-pasang" class="font-display font-600 text-lg text-ink">Memasang Tuturnusa sebagai aplikasi</h2>
+        <p class="text-ink">Langkah-langkah berikut bisa dibacakan kepada siswa atau pengajar. Setelah dipasang, Buku Saku tetap bisa dipakai tanpa internet untuk halaman dan audio yang sudah pernah dibuka.</p>
+        <h3 class="font-700 text-ink">iPhone atau iPad (Safari)</h3>
+        <ol class="list-decimal pl-6 text-ink space-y-1">
+            <li>Buka tuturnusa di Safari.</li>
+            <li>Ketuk ikon <strong>Bagikan</strong>.</li>
+            <li>Pilih <strong>Tambahkan ke Layar Utama</strong>, lalu ketuk <strong>Tambah</strong>.</li>
+        </ol>
+        <h3 class="font-700 text-ink">Android (Chrome atau Edge)</h3>
+        <ol class="list-decimal pl-6 text-ink space-y-1">
+            <li>Buka beranda Tuturnusa.</li>
+            <li>Jika browser menawarkan, ketuk <strong>Pasang aplikasi</strong> atau <strong>Tambahkan ke layar utama</strong>.</li>
+            <li>Jika tidak muncul, buka menu browser (titik tiga) lalu pilih <strong>Pasang aplikasi</strong> atau <strong>Tambahkan ke layar utama</strong>.</li>
+        </ol>
+        <h3 class="font-700 text-ink">Windows atau macOS (Chrome atau Edge)</h3>
+        <ol class="list-decimal pl-6 text-ink space-y-1">
+            <li>Buka beranda Tuturnusa.</li>
+            <li>Di bilah alamat, ketuk ikon pemasangan atau buka menu lalu pilih <strong>Pasang Tuturnusa</strong>.</li>
+            <li>Konfirmasi pemasangan. Aplikasi akan terbuka di jendela sendiri.</li>
+        </ol>
+        <p class="text-ink">Ngobrol dan Ucapan tetap membutuhkan koneksi internet.</p>
+    </section>
+
     <section aria-labelledby="bantuan-privasi" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-privasi" class="font-display font-600 text-lg text-ink">Privasi dan data</h2>
         <p class="text-ink">Percakapan Ngobrol disimpan di database sementara dan dihapus otomatis setiap jam setelah sekitar 24 jam sejak dimulai (pemangkasan bisa menyisakan data mendekati 25 jam).</p>

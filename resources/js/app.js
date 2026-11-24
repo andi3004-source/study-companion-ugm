@@ -1,4 +1,5 @@
 import './bootstrap';
+import './pwa';
 import '@fontsource-variable/inter';
 import '@fontsource/caveat/600.css';
 import './voice/engine';

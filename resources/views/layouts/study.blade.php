@@ -6,6 +6,8 @@
     <meta name="color-scheme" content="only light">
     <meta name="theme-color" content="#14294D">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
     <title>{{ $title ?? 'Tuturnusa' }}</title>
     {{-- Applies saved display settings before first paint (see displaySettings() in app.js). --}}
     <script>

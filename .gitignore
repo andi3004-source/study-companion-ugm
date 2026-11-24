@@ -15,6 +15,7 @@
 /node_modules
 /public/build
 /public/hot
+/public/sw.js
 /public/storage
 /storage/*.key
 /storage/pail
