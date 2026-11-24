@@ -15,6 +15,10 @@ grep -q '^APP_KEY=base64' .env || php artisan key:generate --ansi
 # Merged branches add new classes; a stale optimized classmap would hide them.
 composer dump-autoload -q 2>/dev/null
 
+# Views use @vite, so the manifest must exist before the tests render pages.
+echo "== Build aset"
+npm run build
+
 echo "== PHPUnit"
 php artisan test --compact
 
@@ -22,5 +26,3 @@ echo "== Pint (file yang berubah terhadap ${CI_BASE:-main})"
 changed=$( { git diff --name-only --diff-filter=ACMR "${CI_BASE:-main}"...HEAD -- '*.php'; git diff --name-only --diff-filter=ACMR HEAD -- '*.php'; git ls-files --others --exclude-standard -- '*.php'; } 2>/dev/null | grep -v '/\._' | sort -u || true)
 [ -z "$changed" ] || vendor/bin/pint --test $changed
 
-echo "== Build aset"
-npm run build
