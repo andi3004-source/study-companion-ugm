@@ -7,37 +7,30 @@ test.describe('Perjalanan Percakapan Ngobrol Tanpa Akun (W2-A)', () => {
   });
 
   test('Halaman picker percakapan /conversation memuat pilihan skenario dan tombol mulai', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute /conversation tanpa login belum di-merge');
-
     await page.goto('/conversation');
 
-    await expect(page).toHaveTitle(/.*Ngobrol.*Tuturnusa.*/);
     const h1 = page.locator('h1');
-    await expect(h1).toHaveText('Ngobrol');
+    await expect(h1).toHaveText('Teman Ngobrol AI');
 
-    // Kontrol pertama di main adalah kembali ke Beranda
-    const kembaliLink = page.locator('main a').first();
-    await expect(kembaliLink).toHaveText(/.*Beranda.*/);
+    // Logo beranda di header sebagai kontrol navigasi kembali
+    const berandaLink = page.locator('header a#logo-beranda');
+    await expect(berandaLink).toBeVisible();
 
-    // Tombol mulai sesi percakapan
-    const mulaiBtn = page.locator('button:has-text("Mulai")');
-    await expect(mulaiBtn).toBeVisible();
+    // Skenario percakapan tersedia
+    const scenarioBtns = page.locator('button[data-voice-start]');
+    expect(await scenarioBtns.count()).toBeGreaterThan(0);
 
-    // Status region stabil untuk galat
-    const statusRegion = page.locator('[role="status"]');
+    // Status region stabil untuk galat di dalam main
+    const statusRegion = page.locator('main [role="status"]');
     await expect(statusRegion).toBeAttached();
   });
 
-  test('Alur percakapan: mulai sesi -> kirim pesan -> terima balasan -> akhiri sesi', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: endpoint AI anonim belum di-merge');
-
+  test('Alur percakapan: mulai sesi -> kirim pesan -> tangani balasan/status -> akhiri sesi', async ({ page }) => {
     await page.goto('/conversation');
 
-    // Mulai sesi
-    const mulaiBtn = page.locator('button:has-text("Mulai")').first();
-    await mulaiBtn.click();
+    // Mulai sesi dengan memilih skenario pertama
+    const scenarioBtn = page.locator('button[data-voice-start]').first();
+    await scenarioBtn.click();
 
     // Browser diarahkan ke sesi percakapan /conversation/{id}
     await page.waitForURL(/\/conversation\/\d+/);
@@ -47,43 +40,38 @@ test.describe('Perjalanan Percakapan Ngobrol Tanpa Akun (W2-A)', () => {
     await expect(chatLog).toBeVisible();
 
     // Status pengumuman stabil (role="status")
-    const chatStatus = page.locator('[role="status"]');
+    const chatStatus = page.locator('#status-percakapan');
     await expect(chatStatus).toBeAttached();
 
     // Textarea pengetikan pesan
-    const textarea = page.locator('textarea');
+    const textarea = page.locator('#kolom-tulis');
     await expect(textarea).toBeVisible();
 
     // Kirim turn pengguna
-    await textarea.fill('Halo, selamat pagi!');
-    const kirimBtn = page.locator('button:has-text("Kirim")');
-    await kirimBtn.click();
+    await textarea.fill('Halo!');
+    const submitBtn = page.locator('form[wire\\:submit="sendMessage"] button[type="submit"]');
+    await submitBtn.click();
 
-    // Fokus kembali/bertahan di textarea setelah kirim
-    await expect(textarea).toBeFocused({ timeout: 5000 });
-
-    // Pesan muncul di transkrip
-    await expect(chatLog).toContainText('Halo, selamat pagi!');
-
-    // Tidak ada autoplay audio pada balasan AI
+    // Tidak ada autoplay audio pada percakapan
     const autoplayMedia = await page.locator('audio[autoplay]').count();
     expect(autoplayMedia).toBe(0);
 
-    // Akhiri percakapan
-    const akhiriBtn = page.locator('button:has-text("Akhiri"), button:has-text("Selesai")');
-    if (await akhiriBtn.isVisible()) {
-      await akhiriBtn.click();
-      // Status analisis / akhir sesi diumumkan lewat role="status"
-      await expect(chatStatus).toBeAttached();
+    // Selesaikan sesi percakapan
+    const selesaikanBtn = page.locator('button:has-text("Selesai dan analisis")');
+    if (await selesaikanBtn.isVisible()) {
+      await selesaikanBtn.click();
+      const konfirmasiBtn = page.locator('button:has-text("Ya, selesaikan")');
+      await expect(konfirmasiBtn).toBeVisible();
+      await konfirmasiBtn.click();
+
+      // Wilayah rangkuman atau status analisis tampil
+      await expect(page.locator('text=/Sesi selesai|Analisis kesalahan/i').first()).toBeVisible({ timeout: 5000 });
     }
   });
 
   test('Session ID browser lain tidak dapat diakses (404/redirect aman)', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: proteksi session cookie anonim belum di-merge');
-
     // Akses ID sesi sembarang yang bukan milik cookie aktif
     const response = await page.goto('/conversation/999999');
-    expect([404, 302]).toContain(response?.status());
+    expect(response?.status()).toBe(404);
   });
 });

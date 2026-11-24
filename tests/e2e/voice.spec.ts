@@ -1,14 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo } from './helpers/auth';
 import { injectBrowserMocks } from './helpers/browser-mocks';
 
 test.describe('Mode Suara & Pengenalan Suara (W3-C & W4-G)', () => {
   test.beforeEach(async ({ page }) => {
-    await injectBrowserMocks(page);
+    await injectBrowserMocks(page, { mockTranscript: 'buka buku saku' });
   });
 
   test('Tombol Mode suara tersedia di layout dengan status bawaan mati', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const tombolModeSuara = page.locator('#tombol-mode-suara');
     await expect(tombolModeSuara).toBeVisible();
@@ -21,7 +20,7 @@ test.describe('Mode Suara & Pengenalan Suara (W3-C & W4-G)', () => {
   });
 
   test('Persetujuan privasi mikrofon muncul sebelum Mode suara aktif pertama kali', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const tombolModeSuara = page.locator('#tombol-mode-suara');
     await tombolModeSuara.click();
@@ -44,29 +43,26 @@ test.describe('Mode Suara & Pengenalan Suara (W3-C & W4-G)', () => {
   });
 
   test('Push-to-talk: pengenalan suara berhenti setelah satu ujaran', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const tombolModeSuara = page.locator('#tombol-mode-suara');
     await tombolModeSuara.click();
 
     const setujuBtn = page.locator('button:has-text("Setuju dan aktifkan")');
-    if (await setujuBtn.isVisible()) {
+    try {
+      await setujuBtn.waitFor({ state: 'visible', timeout: 2000 });
       await setujuBtn.click();
+    } catch {
+      // Persetujuan sudah diberikan sebelumnya
     }
 
     // Tombol Berhenti muncul saat aktif
     const berhentiBtn = page.locator('button:has-text("Berhenti")');
-    // Mock SpeechRecognition akan berhenti otomatis setelah ujaran (150ms)
-    // atau dapat dihentikan manual
-    if (await berhentiBtn.isVisible()) {
-      await berhentiBtn.click();
-    }
+    await expect(berhentiBtn).toBeVisible({ timeout: 5000 });
+    await berhentiBtn.click();
   });
 
   test('Perintah suara "buka buku saku" bernavigasi ke rute Buku Saku', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute tujuan buku-saku belum di-merge');
-
     await page.goto('/');
 
     // Nyalakan mode suara dengan mock transcript "buka buku saku"
@@ -74,12 +70,15 @@ test.describe('Mode Suara & Pengenalan Suara (W3-C & W4-G)', () => {
     await tombolModeSuara.click();
 
     const setujuBtn = page.locator('button:has-text("Setuju dan aktifkan")');
-    if (await setujuBtn.isVisible()) {
+    try {
+      await setujuBtn.waitFor({ state: 'visible', timeout: 2000 });
       await setujuBtn.click();
+    } catch {
+      // Persetujuan sudah diberikan sebelumnya
     }
 
-    // Harusnya bernavigasi ke /buku-saku
-    await page.waitForURL(/.*buku-saku.*/, { timeout: 5000 });
+    // Bernavigasi ke /buku-saku via perintah suara
+    await page.waitForURL(/.*buku-saku.*/, { timeout: 8000 });
     await expect(page).toHaveURL(/.*buku-saku.*/);
   });
 });

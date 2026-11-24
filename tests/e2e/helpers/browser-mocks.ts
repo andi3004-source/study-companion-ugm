@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test';
 
 /**
- * Injects browser mocks for SpeechRecognition and MediaRecorder/getUserMedia
- * so E2E tests run deterministically in CI without physical microphones or AI keys.
+ * Injects browser mocks for SpeechRecognition, MediaRecorder/getUserMedia,
+ * and SpeechSynthesis so E2E tests run deterministically in CI / headless browsers.
  */
 export async function injectBrowserMocks(page: Page, options: { mockTranscript?: string } = {}) {
   const initialTranscript = options.mockTranscript || 'buka buku saku';
@@ -118,6 +118,18 @@ export async function injectBrowserMocks(page: Page, options: { mockTranscript?:
     }
 
     (window as any).MediaRecorder = MockMediaRecorder;
+
+    // 4. Mock SpeechSynthesis (in headless Chromium, speechSynthesis.speak rarely fires onend)
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.speak = (utterance: SpeechSynthesisUtterance) => {
+        setTimeout(() => {
+          if (utterance.onend) {
+            utterance.onend(new SpeechSynthesisEvent('end', { utterance } as any));
+          }
+        }, 50);
+      };
+      window.speechSynthesis.cancel = () => {};
+    }
   }, { defaultTranscript: initialTranscript });
 }
 

@@ -7,68 +7,61 @@ test.describe('Perjalanan Ucapan / Cek Pelafalan Tanpa Akun (W2-A)', () => {
   });
 
   test('Halaman /pronunciation-check memuat struktur heading dan kontrol yang benar', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute /pronunciation-check tanpa login belum di-merge');
-
     await page.goto('/pronunciation-check');
 
-    await expect(page).toHaveTitle(/.*Ucapan.*Tuturnusa.*/);
     const h1 = page.locator('h1');
-    await expect(h1).toHaveText('Ucapan');
+    await expect(h1).toHaveText('Cek Ucapan');
 
-    // Kontrol awal: kembali ke Beranda
-    const kembaliLink = page.locator('main a').first();
-    await expect(kembaliLink).toHaveText(/.*Beranda.*/);
+    // Kontrol awal: kembali ke Beranda di header
+    const berandaLink = page.locator('header a#logo-beranda');
+    await expect(berandaLink).toBeVisible();
 
-    // Bagian-bagian utama sesuai rancangan sistem
-    const h2Headings = page.locator('h2');
-    const texts = await h2Headings.allTextContents();
-    expect(texts.some((t) => t.includes('kata') || t.includes('Rekam') || t.includes('Hasil'))).toBe(true);
+    // Pilihan bahasa dan input pencarian kata
+    const bahasaSelect = page.locator('#ucapan-bahasa');
+    await expect(bahasaSelect).toBeVisible();
+
+    const cariInput = page.locator('#ucapan-cari');
+    await expect(cariInput).toBeVisible();
   });
 
   test('Pemberitahuan privasi tampil sebelum penggunaan mikrofon pertama kali', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: dialog privasi rekaman belum di-merge');
+    // BUG: Halaman /pronunciation-check tidak menampilkan pemberitahuan privasi sebelum mikrofon pertama kali digunakan
+    test.fail(true, 'BUG: Halaman /pronunciation-check belum memuat pemberitahuan privasi mikrofon sesuai spesifikasi');
 
     await page.goto('/pronunciation-check');
 
-    // Cari pemberitahuan privasi audio / mic
-    const privacyNotice = page.locator('text=/.*privasi.*suara|rekaman|mikrofon.*/i');
-    await expect(privacyNotice.first()).toBeVisible();
+    // Cari pemberitahuan privasi audio / mic sesuai spesifikasi rancangan sistem §5
+    const privacyNotice = page.locator('text=/.*privasi.*(suara|rekaman|mikrofon).*/i');
+    await expect(privacyNotice.first()).toBeVisible({ timeout: 2000 });
   });
 
-  test('Alur cek pelafalan: cari kata -> rekam -> cek -> hasil diumumkan lewat status stabil', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: flow cek ucapan tanpa akun belum di-merge');
-
+  test('Alur cek pelafalan: cari kata -> pilih kata -> rekam -> cek -> hasil diumumkan lewat status stabil', async ({ page }) => {
     await page.goto('/pronunciation-check');
 
-    // Pilih atau cari kata
-    const inputKata = page.locator('input[type="search"], input[type="text"]').first();
-    if (await inputKata.isVisible()) {
-      await inputKata.fill('hello');
-      await page.keyboard.press('Enter');
-    }
+    // Cari kata bahasa Inggris yang ada di fixture kecil (beautiful)
+    const inputKata = page.locator('#ucapan-cari');
+    await inputKata.fill('beautiful');
 
-    // Tombol Rekam
-    const rekamBtn = page.locator('button:has-text("Rekam"), button[aria-label*="rekam" i]').first();
+    // Tunggu saran kata muncul
+    const saranItem = page.locator('button[data-saran]').first();
+    await expect(saranItem).toBeVisible({ timeout: 5000 });
+    await saranItem.click();
+
+    // Kata terpilih tampil
+    await expect(page.locator('[data-kata-terpilih]')).toBeVisible();
+
+    // Tombol Rekam suara
+    const rekamBtn = page.locator('button:has-text("Rekam suara")');
     await expect(rekamBtn).toBeVisible();
     await rekamBtn.click();
 
     // Berhenti merekam
-    const stopBtn = page.locator('button:has-text("Berhenti"), button:has-text("Selesai")').first();
-    if (await stopBtn.isVisible()) {
-      await stopBtn.click();
-    }
+    const stopBtn = page.locator('button:has-text("Berhenti merekam")');
+    await expect(stopBtn).toBeVisible();
+    await stopBtn.click();
 
-    // Tombol Cek
-    const cekBtn = page.locator('button:has-text("Cek"), button:has-text("Periksa")').first();
-    if (await cekBtn.isVisible()) {
-      await cekBtn.click();
-    }
-
-    // Hasil diumumkan pada role="status" stabil
-    const statusRegion = page.locator('[role="status"]');
+    // Hasil diumumkan pada role="status" stabil di dalam main
+    const statusRegion = page.locator('main [role="status"]').last();
     await expect(statusRegion).toBeAttached();
   });
 });

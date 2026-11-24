@@ -7,9 +7,6 @@ test.describe('Beranda Tiga Fitur & PWA (W2-A & W3-P)', () => {
   });
 
   test('Beranda memuat tepat 3 kartu fitur dalam <ul> dan tautan bantuan', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: route beranda 3 kartu tanpa login belum di-merge');
-
     await page.goto('/');
 
     // Heading utama
@@ -39,47 +36,48 @@ test.describe('Beranda Tiga Fitur & PWA (W2-A & W3-P)', () => {
     const nestedButtons = await page.locator('ul.daftar-kartu-beranda a button').count();
     expect(nestedButtons).toBe(0);
 
-    // Tautan Bantuan tersedia
+    // Tautan Bantuan tersedia di halaman
     const linkBantuan = page.locator('a[href*="bantuan"]');
     await expect(linkBantuan.first()).toBeVisible();
   });
 
   test('Section PWA Pasang Aplikasi tersembunyi secara default', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: beranda baru dan PWA belum di-merge');
+    // BUG: tombol #tombol-pasang-aplikasi memiliki atribut hidden tapi tetap tampil (visible) karena ditimpa CSS inline-flex
+    test.fail(true, 'BUG: tombol-pasang-aplikasi memiliki atribut hidden tapi tetap tampil (visible) karena ditimpa utility class inline-flex');
 
     await page.goto('/');
 
-    const installBtn = page.locator('button:has-text("Pasang aplikasi")');
-    // Tombol pasang aplikasi harus hidden sebelum event beforeinstallprompt
-    if (await installBtn.count() > 0) {
-      await expect(installBtn).toBeHidden();
-    }
+    const installBtn = page.locator('#tombol-pasang-aplikasi');
+    await expect(installBtn).toBeAttached();
+    await expect(installBtn).toBeHidden();
   });
 
   test('Section PWA menampilkan tombol setelah event sintetis beforeinstallprompt', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: komponen PWA belum di-merge');
-
     await page.goto('/');
+
+    const installBtn = page.locator('#tombol-pasang-aplikasi');
+    await expect(installBtn).toBeAttached();
 
     // Kirim event sintetis beforeinstallprompt
     await page.evaluate(() => {
       const event = new Event('beforeinstallprompt');
-      (event as any).prompt = () => Promise.resolve({ outcome: 'accepted' });
+      (event as any).prompt = () => Promise.resolve();
+      (event as any).userChoice = Promise.resolve({ outcome: 'accepted' });
       window.dispatchEvent(event);
     });
 
-    const installBtn = page.locator('button:has-text("Pasang aplikasi")');
-    await expect(installBtn).toBeVisible({ timeout: 3000 });
+    await expect(installBtn).toBeVisible();
+
+    // Klik pasang aplikasi dan periksa pengumuman status
+    await installBtn.click();
+    const status = page.locator('#mode-suara-status');
+    await expect(status).toHaveText('Tuturnusa sedang dipasang');
   });
 
   test('Tautan Cara Memasang mengarah ke /bantuan#pasang', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: bagian bantuan PWA belum di-merge');
-
     await page.goto('/');
-    const caraPasangLink = page.locator('a[href*="/bantuan#pasang"]');
+    const caraPasangLink = page.locator('a[href*="bantuan#pasang"]');
     await expect(caraPasangLink).toBeAttached();
+    await expect(caraPasangLink).toBeVisible();
   });
 });

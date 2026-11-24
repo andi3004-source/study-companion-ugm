@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { checkA11y } from './helpers/axe';
-import { navigateTo } from './helpers/auth';
 import { injectBrowserMocks } from './helpers/browser-mocks';
 
 test.describe('Aksesibilitas Global & Layout (WCAG 2.1 / 2.2 AA)', () => {
@@ -9,12 +8,12 @@ test.describe('Aksesibilitas Global & Layout (WCAG 2.1 / 2.2 AA)', () => {
   });
 
   test('Halaman /bantuan memenuhi standar WCAG AA dengan axe-core', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
     await checkA11y(page, '/bantuan');
   });
 
   test('Skip link adalah elemen fokus pertama dan melompat ke konten utama', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     // Tab once to focus the skip link
     await page.keyboard.press('Tab');
@@ -40,7 +39,7 @@ test.describe('Aksesibilitas Global & Layout (WCAG 2.1 / 2.2 AA)', () => {
   });
 
   test('Landmark struktural <header>, <main id="konten">, dan <footer> tersedia', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const header = page.locator('header');
     const main = page.locator('main#konten');
@@ -52,7 +51,7 @@ test.describe('Aksesibilitas Global & Layout (WCAG 2.1 / 2.2 AA)', () => {
   });
 
   test('Meta color-scheme only light terpasang dan latar body putih', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const metaColorScheme = page.locator('meta[name="color-scheme"]');
     await expect(metaColorScheme).toHaveAttribute('content', 'only light');
@@ -65,14 +64,14 @@ test.describe('Aksesibilitas Global & Layout (WCAG 2.1 / 2.2 AA)', () => {
   });
 
   test('Tidak ada media audio yang autoplay pada halaman', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const autoplayAudio = await page.locator('audio[autoplay]').count();
     expect(autoplayAudio).toBe(0);
   });
 
   test('Reflow dan responsivitas pada viewport 1440, 390, dan 320 tanpa scroll horizontal', async ({ page }) => {
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     const viewports = [
       { width: 1440, height: 900 },
@@ -93,7 +92,7 @@ test.describe('Aksesibilitas Global & Layout (WCAG 2.1 / 2.2 AA)', () => {
 
   test('Mode forced-colors (tema kontras tinggi OS) didukung', async ({ page }) => {
     await page.emulateMedia({ forcedColors: 'active', colorScheme: 'light' });
-    await navigateTo(page, '/bantuan');
+    await page.goto('/bantuan');
 
     // In forced-colors, the operating system overrides foreground and background colors.
     await checkA11y(page, '/bantuan (forced-colors)', { disabledRules: ['color-contrast'] });
@@ -106,44 +105,37 @@ test.describe('Aksesibilitas Halaman Fitur Final (W2)', () => {
   });
 
   test('Beranda 3 kartu / memenuhi standar axe', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: beranda 3 kartu belum di-merge');
     await page.goto('/');
     await checkA11y(page, 'Beranda 3 kartu');
   });
 
   test('Picker Ngobrol /conversation memenuhi standar axe', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute percakapan publik belum di-merge');
     await page.goto('/conversation');
     await checkA11y(page, 'Picker Ngobrol');
   });
 
   test('Sesi Ngobrol /conversation/{session} memenuhi standar axe', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: sesi percakapan publik belum di-merge');
     await page.goto('/conversation');
+    // Start session
+    const scenarioBtn = page.locator('button[data-voice-start]').first();
+    await scenarioBtn.click();
+    await page.waitForURL(/\/conversation\/\d+/);
+
     await checkA11y(page, 'Sesi Ngobrol');
   });
 
   test('Ucapan /pronunciation-check memenuhi standar axe', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute ucapan publik belum di-merge');
     await page.goto('/pronunciation-check');
     await checkA11y(page, 'Ucapan');
   });
 
   test('Katalog Buku Saku /buku-saku memenuhi standar axe', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute buku-saku belum di-merge');
     await page.goto('/buku-saku');
     await checkA11y(page, 'Katalog Buku Saku');
   });
 
   test('Bab Buku Saku /buku-saku/{buku}/{bab} memenuhi standar axe', async ({ page }) => {
-    // aktif setelah W2
-    test.fixme(true, 'aktif setelah W2: rute bab buku saku belum di-merge');
-    await page.goto('/buku-saku/buku-saku-mandiri/bab-1');
+    await page.goto('/buku-saku/buku-saku-mandiri/01-cara-menyikat-gigi-mandiri');
     await checkA11y(page, 'Bab Buku Saku');
   });
 });
