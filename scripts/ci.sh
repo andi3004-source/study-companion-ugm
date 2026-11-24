@@ -12,6 +12,9 @@ cd "$(dirname "$0")/.."
 [ -f .env ] || cp .env.example .env
 grep -q '^APP_KEY=base64' .env || php artisan key:generate --ansi
 
+# Merged branches add new classes; a stale optimized classmap would hide them.
+composer dump-autoload -q 2>/dev/null
+
 echo "== PHPUnit"
 php artisan test --compact
 
