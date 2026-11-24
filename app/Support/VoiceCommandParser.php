@@ -105,7 +105,7 @@ class VoiceCommandParser
         return trim(preg_replace('/\s+/u', ' ', $text));
     }
 
-    /** A short phrase for a result, to offer in a spoken choice ("ujian", "nomor 3", "kembali"). */
+    /** A short phrase for a result, to offer in a spoken choice ("buka ngobrol", "nomor 3", "kembali"). */
     public static function label(array $result): string
     {
         if ($result['type'] === 'choose_number') {

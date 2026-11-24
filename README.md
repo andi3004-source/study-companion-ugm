@@ -1,18 +1,32 @@
-# Web Belajar Bahasa
+# Tuturnusa
 
-Aplikasi belajar mandiri Mandarin (HSK) dan Inggris (IELTS) dengan kurikulum
-harian. Dibangun dengan Laravel 12, Livewire 3 (Volt), Tailwind, dan SQLite.
+Aplikasi web belajar untuk tunanetra: tiga fitur tanpa akun (Ngobrol, Ucapan,
+Buku Saku). Dibangun dengan Laravel 12, Livewire 3, Tailwind, dan SQLite.
 
 ## Fitur
 
-- **Dashboard harian**: checklist per hari dari kurikulum HSK1 (150 kata dalam batch) dan topik IELTS.
-- **Kartu**: flashcard Mandarin (HSK1-6), irregular verbs, dan kosakata IELTS, dengan tanda "sudah hafal".
-- **Kamus**: pencarian Mandarin (hanzi, pinyin tanpa nada, arti) dan Inggris (CEFR + irregular verbs).
-- **Latihan Isian**: isi pinyin, hanzi, atau arti; pinyin dinilai tanpa memperhatikan nada.
-- **Ujian**: kuis yang dibuat dari kosakata.
-- **Ngobrol (Conversation Partner)**: percakapan dengan AI (Gemini).
-- **Cek Pelafalan**: lewat microservice `pronunciation-service/`, atau STT lokal sebagai cadangan.
-- **Progres**: ringkasan kemajuan belajar.
+- **Ngobrol**: percakapan dengan AI (Gemini/Langflow).
+- **Ucapan**: cek pelafaran kata (layanan pengucapan + STT cadangan).
+- **Buku Saku**: panduan kegiatan mandiri dan senam (Markdown + narasi MP3).
+- **PWA**: pasang dari beranda; Buku Saku dapat dipakai offline setelah dibuka.
+
+
+
+## Ngobrol
+
+Percakapan dengan AI lewat `/conversation` (tanpa akun). Terbatas `DAILY_MESSAGE_LIMIT` pesan per hari per sesi.
+
+## Ucapan
+
+Cek pelafaran di `/pronunciation-check` (layanan ML atau cadangan STT).
+
+## Buku Saku
+
+Bacaan dan audio narasi di `/buku-saku` (Markdown + MP3 di repo). Bisa dipasang sebagai PWA dan dipakai offline untuk bab yang pernah dibuka.
+
+## PWA
+
+`public/manifest.json`, service worker, dan tombol pasang di beranda (hanya saat browser menawarkan). Detail di Bantuan bagian memasang aplikasi.
 
 ## Menjalankan secara lokal
 
@@ -36,6 +50,7 @@ Terjemahan arti lewat AI tidak berjalan otomatis. Jalankan
 
 ```bash
 php artisan test
+bash scripts/ci.sh   # build Vite, PHPUnit, Pint pada perubahan
 ```
 
 Tes memakai SQLite in-memory (lihat `phpunit.xml`), jadi database lokal tidak tersentuh.
@@ -50,7 +65,7 @@ Lihat `.env.example` untuk keterangan dan nilai bawaan. Variabel utama:
 | `APP_LOCALE`, `APP_FALLBACK_LOCALE`, `APP_FAKER_LOCALE` | Bahasa aplikasi |
 | `DB_CONNECTION` | `sqlite` |
 | `SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE` | Driver sesi, antrean, dan cache |
-| `MAIL_*` | Pengiriman email (verifikasi, reset password) |
+| `MAIL_*` | Pengiriman email sistem (opsional) |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Provider AI bawaan: percakapan dan `translate:meanings` |
 | `AI_PROVIDER` | `gemini` (bawaan), `anthropic`, atau `openai_compatible` |
 | `OPENAI_COMPATIBLE_API_KEY`, `OPENAI_COMPATIBLE_MODEL`, `OPENAI_COMPATIBLE_BASE_URL` | Endpoint OpenAI-compatible (`/chat/completions`) bila `AI_PROVIDER=openai_compatible`: router lokal (9router, LiteLLM, Ollama, llama.cpp, vLLM) atau OpenRouter. Nama model harus sama dengan yang disajikan endpoint (`curl $OPENAI_COMPATIBLE_BASE_URL/models`) |
@@ -76,9 +91,6 @@ OPENAI_COMPATIBLE_API_KEY=<key 9router>
 OPENAI_COMPATIBLE_MODEL=<nama model di 9router>
 OPENAI_COMPATIBLE_BASE_URL=http://127.0.0.1:20128/v1
 ```
-
-Catatan: "Raba lalu dengar" (visi) tetap memakai Gemini langsung, jadi tanpa
-`GEMINI_API_KEY` ia selalu menjawab "tidak yakin".
 
 ## Deploy ke Laravel Cloud
 
@@ -112,13 +124,11 @@ php artisan queue:work --tries=3
 
 ```
 php artisan app:seed-content
-# hanya di staging, bila akun demo dipakai:
-php artisan db:seed --class=DemoUserSeeder --force
 ```
 
-`app:seed-content` membutuhkan tiga berkas besar yang tidak di-commit (lihat
+`app:seed-content` membutuhkan berkas besar yang tidak di-commit (lihat
 "Mengisi konten"). Tanpa berkas itu, perintah melewati seeder terkait dan
-keluar dengan status gagal. `DemoUserSeeder` selalu menolak bila `APP_ENV` bernilai production.
+keluar dengan status gagal.
 
 **Variabel lingkungan** (nama saja; nilai diisi di dasbor Laravel Cloud, jangan
 di-commit):
@@ -135,11 +145,7 @@ di-commit):
   `ANTHROPIC_MODEL`, `LANGFLOW_URL`, `LANGFLOW_FLOW_ID`, `LANGFLOW_API_KEY`,
   `LANGFLOW_TIMEOUT`, `PRONUNCIATION_SERVICE_URL`,
   `PRONUNCIATION_CHECKER_DRIVER`, `DAILY_MESSAGE_LIMIT`
-- Fitur: `HSK_LEVEL_LOCK`, `HSK_CORRECTIONS_PATH`, `GAME_ITEMS_PATH`,
-  `KATABICARA_PATH`, `SCAN_BENDA_ENABLED`, `SCAN_BENDA_MAX_IMAGE_BYTES`,
-  `SCAN_BENDA_RATE_LIMIT_PER_MINUTE`, `SCAN_BENDA_TIMEOUT`
-- Akses: `REGISTRATION_ENABLED`, `REGISTRATION_INVITE_CODE`,
-  `DEMO_ACCOUNT_ENABLED`, `DEMO_ACCOUNT_EMAIL`, `DEMO_ACCOUNT_PASSWORD`
+- Lainnya: `HSK_LEVEL_LOCK`, `HSK_CORRECTIONS_PATH`, `PRONUNCIATION_SERVICE_URL`
 
 Wajib di produksi: `APP_KEY`, `APP_ENV`, `APP_URL` (dengan `https://`), `APP_DEBUG`
 (harus `false`), kredensial DB, `QUEUE_CONNECTION` (`database`), dan kunci AI
@@ -153,15 +159,9 @@ Analisis kesalahan memakai Langflow lalu Gemini sebagai cadangan.
   Pencarian Kamus memakai `JSON_UNQUOTE`/`CONCAT` di MySQL dan sintaks SQLite
   di lokal/tes. Tes otomatis hanya berjalan di SQLite. Perbedaan yang tersisa
   ada di "Keterbatasan data".
-- **Disk lokal** di server bersifat sementara. Aplikasi tidak menyimpan unggahan
-  pengguna; foto Raba lalu dengar tidak disimpan. `php artisan langflow:ping`
-  menulis `storage/app/langflow-last-response.json` (diagnostik saja).
 - **HTTPS di belakang proxy:** isi `TRUSTED_PROXIES` dengan `*` dan aktifkan
   `APP_FORCE_HTTPS` supaya aplikasi memercayai header `X-Forwarded-*` dari
   proxy Laravel Cloud dan selalu membuat tautan `https://` (lihat daftar uji).
-- **Pendaftaran:** untuk demo publik, pertimbangkan mematikan `REGISTRATION_ENABLED`
-  atau `REGISTRATION_INVITE_CODE`.
-
 **Peringatan biaya dan kuota:**
 
 - Pasang **batas pengeluaran** (spending limit) di Laravel Cloud dan di
@@ -176,13 +176,8 @@ Analisis kesalahan memakai Langflow lalu Gemini sebagai cadangan.
 **Daftar uji setelah deploy:**
 
 1. `GET /up` mengembalikan 200.
-2. Halaman login terbuka lewat `https://`, dan tautan "Lupa kata sandi?" juga
-   `https://`.
-3. Kamus: cari "makan" dan "eat"; hasil Inggris menampilkan arti Indonesia
-   tanpa tanda kutip.
-4. Selesaikan satu sesi Ngobrol Mandarin; analisis muncul setelah pekerja
-   antrean memprosesnya.
-5. Jalankan ulang `php artisan app:seed-content`; jumlah baris tidak berubah.
+2. Buka beranda dan ketiga fitur utama lewat HTTPS.
+3. Selesaikan satu sesi Ngobrol; analisis muncul setelah pekerja antrean memprosesnya.
 
 ## Deploy ke satu server
 
@@ -228,13 +223,6 @@ docker compose cp english_vocab_cefr_10674.json app:/data/storage/app/seed-data/
 docker compose exec app php artisan app:seed-content
 ```
 
-Akun demo (hanya bila `APP_ENV=staging`; isi `DEMO_ACCOUNT_ENABLED` dan
-`DEMO_ACCOUNT_PASSWORD` di `.env`, lalu `docker compose up -d` supaya terbaca):
-
-```
-docker compose exec app php artisan db:seed --class=DemoUserSeeder --force
-```
-
 **Pembaruan:**
 
 ```
@@ -272,9 +260,7 @@ salin berkas cadangan ke `/data/database/database.sqlite`, lalu nyalakan lagi.
 - AI: `GEMINI_API_KEY`, `GEMINI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`,
   `LANGFLOW_URL`, `LANGFLOW_FLOW_ID`, `LANGFLOW_API_KEY`, `LANGFLOW_TIMEOUT`,
   `DAILY_MESSAGE_LIMIT`
-- Fitur: `PRONUNCIATION_CHECKER_DRIVER`, `HSK_LEVEL_LOCK`, `SCAN_BENDA_ENABLED`
-- Akses: `REGISTRATION_ENABLED`, `REGISTRATION_INVITE_CODE`,
-  `DEMO_ACCOUNT_ENABLED`, `DEMO_ACCOUNT_EMAIL`, `DEMO_ACCOUNT_PASSWORD`
+- Lainnya: `PRONUNCIATION_CHECKER_DRIVER`, `HSK_LEVEL_LOCK`
 
 Layanan cek pelafalan ML (`pronunciation-service`) tidak ikut; contoh `.env`
 memakai `PRONUNCIATION_CHECKER_DRIVER=stt_match`.
@@ -285,10 +271,6 @@ memakai `PRONUNCIATION_CHECKER_DRIVER=stt_match`.
   Gemini, Anthropic, dan Langflow sebelum mengisi kuncinya. Aplikasi membatasi
   50 pesan Ngobrol per pengguna per hari (`DAILY_MESSAGE_LIMIT`), tetapi tidak
   ada batas global.
-- **Pendaftaran:** server yang bisa diakses publik sebaiknya memakai
-  `REGISTRATION_ENABLED` bernilai false atau `REGISTRATION_INVITE_CODE`
-  (contoh `.env` menutup pendaftaran). Tanpa itu siapa pun bisa membuat akun
-  dan memakai kuota AI.
 - `.env` berisi rahasia: jangan di-commit dan jangan disalin ke image
   (`.dockerignore` sudah mengecualikannya).
 
@@ -296,169 +278,13 @@ memakai `PRONUNCIATION_CHECKER_DRIVER=stt_match`.
 
 1. `docker compose ps`: `app` berstatus healthy, `worker` dan `proxy` running.
 2. `https://<DOMAIN>/up` mengembalikan 200 dengan sertifikat yang sah.
-3. Tautan di halaman login memakai `https://`.
+3. Buka beranda lewat HTTPS.
 4. Selesaikan satu sesi Ngobrol; analisis muncul (berarti `worker` jalan).
-5. `docker compose restart`: data dan akun tetap ada.
+5. `docker compose restart`: data di volume tetap ada.
 
-## Partner percakapan (Ngobrol)
 
-- **Suara**: input suara (mic) memakai Web Speech API bawaan browser, jadi hanya
-  berjalan di **Chrome atau Edge**. Di browser lain, tetap bisa mengetik. Setiap
-  pesan user dicatat asalnya di `conversation_turns.input_mode` (`text` atau `voice`).
-- **Kunci level HSK 1** (`HSK_LEVEL_LOCK=true`, bawaan): sesi Mandarin mendapat
-  daftar 150 hanzi HSK 1 beserta instruksi untuk hanya memakai kata dari daftar
-  itu, dan menulis kalimat Mandarin tanpa pinyin, kurung, atau terjemahan (karena
-  dibacakan text-to-speech). Halaman chat menampilkan lencana "Level: HSK 1 (terkunci)".
-  - **Biaya**: tiap pesan Mandarin menambah sekitar **1.074 karakter atau ±440 token
-    input** (daftarnya sendiri 378 karakter, ±270 token). Ini perkiraan kasar, bukan
-    hitungan tokenizer; cek ulang dengan `php artisan hsk:prompt-stats`. Token input
-    yang sebenarnya per panggilan tercatat di `conversation_api_calls.tokens_in`.
-  - `HSK_LEVEL_LOCK=false` mematikan fitur ini, dan biaya tambahan itu ikut hilang.
-  - **Keterbatasan**: kunci ini bekerja lewat instruksi di prompt. Sifatnya imbauan
-    kuat, **bukan jaminan**; model tetap bisa sesekali memakai kata di luar HSK 1.
 
-## Analisis kesalahan ("Kesalahan terbanyakmu")
 
-Saat sesi percakapan **Mandarin** diselesaikan, transkripnya dianalisis AI di
-latar belakang (`AnalyzeSessionJob`). Tiap kesalahan diberi satu kategori tetap
-(urutan kata, 是 dengan kata sifat, 不 atau 没, kata penggolong, nada,
-pelafalan, pilihan kata, lainnya). Hasilnya tampil di ringkasan sesi, dan tiga
-kategori teratas 7 hari terakhir tampil di halaman Progress.
-
-- **Analyzer**: memakai flow IBM Langflow bila `LANGFLOW_URL` dan
-  `LANGFLOW_FLOW_ID` terisi. Kalau Langflow error, timeout, atau mengembalikan
-  JSON rusak, analisis otomatis jatuh ke Gemini. Tanpa Langflow, langsung Gemini.
-  Kalau keduanya tidak terkonfigurasi, analisis tidak dijalankan dan bagiannya
-  tidak ditampilkan. Setiap analisis memakai satu panggilan AI.
-- **Sumber**: `error_analysis.sumber` berisi `langflow` atau `gemini`, yaitu
-  analyzer yang benar-benar menghasilkan jawaban (jadi hasil cadangan tercatat
-  sebagai `gemini`). Ringkasan sesi menampilkan "Dianalisis oleh IBM Langflow"
-  atau "Dianalisis oleh Gemini (cadangan)". Sesi lama tanpa kunci ini tidak
-  menampilkan label.
-- **Permintaan Langflow**: sama dengan contoh di panel *API access* Langflow,
-  yaitu `POST {LANGFLOW_URL}/api/v1/run/{LANGFLOW_FLOW_ID}?stream=false` dengan
-  header `x-api-key` dan body `output_type`, `input_type`, `input_value`,
-  `session_id`. `LANGFLOW_URL` cukup URL dasar; garis miring di akhir atau
-  akhiran `/api` dibuang otomatis. Tiap analisis memakai `session_id` baru
-  (`analisis-{id sesi}-{waktu}-{acak}`) supaya riwayat chat Langflow tidak
-  tercampur antarsesi. `LANGFLOW_API_KEY` wajib untuk Langflow yang memakai
-  autentikasi; header `x-api-key` hanya dikirim bila key terisi.
-- **Timeout**: `LANGFLOW_TIMEOUT` (detik, bawaan 120). Satu analisis transkrip
-  dengan banyak kesalahan pernah memakan sekitar 74 detik. Job punya batas
-  waktu 180 detik: cukup untuk Langflow lalu cadangan Gemini.
-- **Error Langflow di log**: respons non-2xx dicatat sebagai
-  `Langflow HTTP {status}: {500 karakter pertama isi respons}`. Sebelum
-  dipotong, isi itu disamarkan (`[REDACTED]`): nilai `LANGFLOW_API_KEY` dan
-  `GEMINI_API_KEY`, serta apa pun yang mirip `sk-…`, `AIza…`, `AstraCS:…`.
-  Header dan key tidak pernah dicatat.
-- **Retry**: dengan worker antrean, kegagalan Langflow yang sementara (HTTP 429,
-  502, 503, 504, atau teks "high demand"/"overloaded") diulang sampai 3
-  percobaan dengan jeda 15 lalu 45 detik. Kegagalan permanen (401, 403, 422,
-  kuota habis, JSON rusak, timeout koneksi) tidak diulang dan langsung jatuh ke
-  Gemini. Percobaan terakhir juga jatuh ke Gemini. Dengan `QUEUE_CONNECTION=sync`
-  tidak ada retry: langsung Langflow lalu Gemini, sehingga sesi tidak menggantung.
-- **Gagal**: sesi dengan analisis gagal bisa dijalankan ulang dengan
-  `php artisan analysis:retry-failed` (pakai `--dry-run` untuk melihat daftarnya dulu).
-
-### Mendiagnosis Langflow (`langflow:ping`)
-
-```bash
-php artisan langflow:ping --config          # tanpa jaringan: apa yang terisi, timeout, URL akhir
-php artisan langflow:ping                   # SATU panggilan sungguhan: status, waktu, teks hasil
-php artisan langflow:ping --dump-structure  # + pohon kunci JSON respons, simpan respons tersamarkan
-```
-
-- `--config` tidak memanggil jaringan dan tidak pernah mencetak key (hanya
-  "terisi, panjang N" atau "kosong").
-- Tanpa `--config`, perintah ini mengirim transkrip pendek tetap ke Langflow dan
-  **memakai kuota model**. Error ditampilkan dengan status HTTP dan isi respons
-  yang sudah disamarkan, beserta jenisnya (sementara atau permanen).
-- `--dump-structure` mencetak nama kunci dan nilai string (dipotong 80 karakter,
-  disamarkan), lalu menyimpan seluruh respons yang sudah disamarkan ke
-  `storage/app/langflow-last-response.json` (tidak ikut git). Periksa isinya,
-  lalu salin ke `tests/Fixtures/langflow_response.json` sebagai fixture tes.
-
-### Menjalankan analisis saat demo
-
-Analisis berjalan sebagai job antrean. Ada dua cara:
-
-1. **Disarankan:** `QUEUE_CONNECTION=database` (bawaan) dengan worker di terminal terpisah:
-
-   ```bash
-   php artisan queue:work
-   ```
-
-   Tanpa worker, job hanya menumpuk di tabel `jobs`. Ringkasan sesi berhenti
-   menunggu setelah 150 detik dan menampilkan tombol **Muat ulang**; hasilnya
-   juga muncul di Progress setelah worker selesai memprosesnya.
-   `composer run dev` sudah menjalankan worker (`queue:listen`).
-
-   **Anjuran: `DB_QUEUE_RETRY_AFTER=200`.** Nilai bawaannya 90 detik, padahal
-   job analisis boleh berjalan sampai 180 detik. Antrean menganggap job yang
-   belum selesai setelah `retry_after` detik sebagai macet dan menyerahkannya
-   lagi ke worker, sehingga analisis yang lambat bisa jalan dua kali (dua
-   panggilan AI). `retry_after` harus selalu lebih besar dari timeout job.
-
-2. **`QUEUE_CONNECTION=sync`:** job dijalankan setelah respons dikirim
-   (`afterResponse`), tanpa worker. Catatan: `php artisan serve` hanya
-   memproses **satu permintaan sekaligus** kecuali `PHP_CLI_SERVER_WORKERS`
-   diatur (misalnya `PHP_CLI_SERVER_WORKERS=4`). Jadi selama analisis berjalan
-   (bisa sampai puluhan detik), polling dan halaman lain bisa tertahan.
-
-## Mengisi konten (`app:seed-content`)
-
-Semua berkas data dibaca dari `storage/app/seed-data`:
-
-- `reference/*.json` (di-commit): kurikulum HSK1, minggu, tips, tautan, dan
-  data referensi lain (`ReferenceDataSeeder`);
-- `mandarin_hsk1to6_complete.json`, `irregular_verbs_183_complete.json`,
-  `english_vocab_cefr_10674.json` (**tidak** di-commit, karena besar; salin
-  sendiri ke server);
-- `kesalahan_game.json`, `daftar_benda_tertutup.json`,
-  `hsk1to3_kosakata_id.json` (di-commit; dibaca saat aplikasi berjalan).
-
-Setelah `php artisan migrate`, jalankan sekali:
-
-```
-php artisan app:seed-content
-```
-
-Perintah ini hanya mengisi tabel konten (tidak membuat pengguna) dan aman
-dijalankan ulang: tabel referensi yang sudah berisi dilewati (id-nya dipakai
-progres pengguna, jadi tidak pernah dihapus), sedangkan HSK, kata kerja, dan
-kosakata memakai upsert. Bila berkas sumber tidak ada, seeder itu dilewati
-dengan pesan, lalu perintah keluar dengan status gagal supaya terlihat di log
-deploy.
-
-## Data HSK dan koreksinya
-
-Kosakata HSK1-6 diimpor dari `storage/app/seed-data/mandarin_hsk1to6_complete.json`.
-Untuk sebagian kata, dataset ini memilih homograf yang keliru, misalnya 都
-"Dū, surname Du" (seharusnya dōu) atau 听 "yǐn, smile (archaic)" (seharusnya tīng).
-
-- **HSK1 (kurikulum, `mandarin_words`)**: pinyin dan arti diambil dari data kurasi
-  `storage/app/seed-data/reference/`. Seeder HSK hanya menambah kolom pelengkap.
-  Basis data yang sudah terlanjur tertimpa dipulihkan dengan
-  `php artisan hsk:repair-curriculum` (pakai `--dry-run` untuk melihat perubahan dulu).
-- **HSK2-3 (`mandarin_hsk_words`)**: dikoreksi dari
-  `storage/app/seed-data/hsk1to3_kosakata_id.json` dengan
-  `php artisan hsk:apply-corrections` (juga ada `--dry-run`). Baris yang dikoreksi
-  ditandai `data_status = corrected_draft` dan tampil dengan lencana
-  "Data dikoreksi (draf)" di Kamus dan Kartu.
-- Glos Inggris yang **arti pertamanya** (bagian sebelum `;` pertama) diawali
-  "surname" atau "(slang)" tidak dipakai sebagai arti utama dan tidak
-  diterjemahkan otomatis. Arti slang di urutan berikutnya tidak berpengaruh,
-  misalnya 机场 "airport; …(slang)…". Jika arti Indonesia belum ada, tampil
-  "Arti belum tersedia". Terjemahan lama dari glos seperti itu bisa dikosongkan
-  dengan `php artisan hsk:clear-unreliable-translations` (ada `--dry-run`).
-- `translate:meanings` mengirim hanzi dan pinyin bersama glos Inggris, supaya
-  model menerjemahkan makna HSK yang dimaksud.
-
-**Keterbatasan:**
-
-- Data terkoreksi masih berstatus **draf** dan belum ditinjau ulang.
-- **HSK4-6 belum dikoreksi**, jadi masih bisa memuat homograf atau glos yang keliru.
-- Arti Indonesia hasil `translate:meanings` adalah terjemahan mesin dari glos Inggris.
 
 ## Keterbatasan data
 
@@ -493,239 +319,30 @@ MySQL `hǎo` sama dengan `hào`, dan `Dū` sama dengan `dū`.
   8.0.13 ke atas; MariaDB tidak mendukungnya, jadi di sana dipakai indeks biasa
   pada `word` (collation-nya sudah tidak membedakan huruf besar-kecil).
 
-## Aksesibilitas
 
-Status per butir di cabang `fitur-aksesibilitas`. **Selesai** berarti sudah dikerjakan dan markup HTML-nya dites otomatis (`AccessibilityChatTest`, `DisplaySettingsTest`, `BantuanPageTest`, `KataBicaraTest`). Itu belum berarti sudah diverifikasi dengan pembaca layar: pengujian manual oleh tim dengan Narator sedang berlangsung.
 
-Pedoman menulis teks untuk pengguna pembaca layar (judul yang menyebut bagiannya, simbol yang dibacakan sebagai kata, penandaan bahasa, teks alt, dan lainnya) ada di [`docs/pedoman-teks-pembaca-layar.md`](docs/pedoman-teks-pembaca-layar.md). Halaman awal sudah mengikutinya.
-
-| Butir | Status | Catatan |
-|---|---|---|
-| `lang="id"`, tautan "Lewati ke konten" / "Lewati ke kolom tulis" | Selesai | Tautan tampil saat mendapat fokus. |
-| Landmark header, nav (berlabel), main `#konten`, footer; satu `h1` | Sebagian | Ada di layout halaman belajar. Layout `app`/`guest` (profil, login) hanya mendapat `lang="id"`. |
-| Kolom tulis chat: label, `aria-describedby`, Enter / Shift+Enter, IME | Selesai | Fokus tetap di kolom setelah kirim. |
-| Percakapan `role="log"` + `aria-live="polite"`, nama pengirim, `lang` zh-Hans/en/id | Selesai | Pesan pengguna berhanzi diberi `zh-Hans`; pinyin tidak. |
-| Daerah `role="status"` (Terkirim, membalas, analisis) | Selesai | Polling tidak memindahkan fokus. |
-| Tombol bicara `aria-pressed`, tombol putar per balasan, konfirmasi "Selesai dan analisis" sebaris | Selesai | |
-| Pengaturan tampilan: ukuran teks (3 tingkat), kontras tinggi, mode pembaca layar | Selesai | Disimpan di `localStorage`, diterapkan sebagai kelas pada `<html>`. Hanya di layout halaman belajar. |
-| Teks dasar 18 px, fokus 3 px, target 44 px, `prefers-reduced-motion` | Sebagian | Aturan CSS global sudah ada; belum dicek visual di setiap halaman. |
-| Kontras teks ≥ 4,5:1 | Sebagian | Warna `ink-soft`, `ink-faint`, `mandarin`, `english` digelapkan (≥ 5:1 di latar cream/putih). Halaman lain belum diaudit satu per satu. |
-| Informasi tidak hanya lewat warna | Sebagian | Halaman aktif di navigasi diberi garis bawah + `aria-current`. Halaman lain belum diaudit. |
-| Halaman Bantuan (`/bantuan`) dan pernyataan aksesibilitas (draf) | Selesai | |
-| Kata bicara (`/kata-bicara`) | Selesai | Katalog `storage/app/seed-data/daftar_benda_tertutup.json` sudah ada di repo (di-commit). Jika berkas itu hilang atau rusak, halaman menampilkan "Katalog belum tersedia". Skema yang diharapkan ada di `config/katabicara.php`. |
-| Halaman lain (Kartu, Kamus, Ujian, Isian, Game, Ucapan, Progress) | Belum diaudit | Hanya mendapat perubahan layout dan warna global. |
-| Uji manual oleh tim dengan pembaca layar Narator | Sedang berlangsung | Belum selesai untuk butir mana pun di atas. |
-| Uji dengan pengguna tunanetra | Belum dilakukan | |
-
-**Batas:**
-
-- Dirancang untuk pembaca layar. Pengujian oleh tim dengan Narator **sedang berlangsung**; **belum** dilakukan dengan pengguna tunanetra.
-- Input dan output suara memakai Web Speech API dan hanya berjalan di **Chrome atau Edge**.
-- Tes otomatis memeriksa markup HTML, bukan pengalaman nyata dengan pembaca layar.
-
-## Game inklusif
-
-Halaman `/game` berisi kartu permainan (`App\Livewire\Games\Hub`; tambah game
-dengan menambah satu entri di `games()`). Tautan "Game" di navigasi membuka
-halaman ini. Semua game tanpa panggilan AI.
-
-- **Dengar & Pilih** (`/game/dengar-pilih`): 5 soal per sesi. Kata diambil dari
-  kosakata HSK 1 yang punya arti bahasa Indonesia (tabel yang sama dengan
-  Kartu, satu baris per hanzi) dan, bila ada, daftar benda tertutup
-  (`ikut_prompt: true`). Hanzi dan pinyin selalu tampil sebagai teks; kata
-  diucapkan dengan suara browser (tidak otomatis bila Mode pembaca layar
-  aktif), ada tombol "Dengarkan lagi" dan pilihan kecepatan suara. Empat
-  pilihan arti (pengecoh dari level yang sama). Jawaban tidak disimpan ke
-  basis data: `game_attempts` dipakai Progress sebagai kategori kesalahan
-  Pemburu Kesalahan, jadi jawaban kosakata tidak dicampur ke sana.
-- **Pemburu Kesalahan** (`/game/pemburu-kesalahan`): alur dan penyimpanan
-  jawaban tidak berubah; pilihan kini berupa radio dalam fieldset dan ada
-  tombol "Dengarkan kalimat". Soalnya dibaca dari
-  `storage/app/seed-data/kesalahan_game.json` (`GAME_ITEMS_PATH`; soal masih
-  draf). Bila berkas itu tidak ada, halaman hanya menampilkan pesan bahwa soal
-  belum tersedia.
-
-**Dirancang agar dapat dimainkan dengan keyboard, suara, dan tampilan
-diperbesar:** pilihan berupa radio berlabel dalam fieldset (panah untuk
-memilih, Enter untuk menjawab), tanpa batas waktu dan tanpa seret-lepas,
-umpan balik berupa teks dengan simbol ✓/✗ yang diumumkan (`role="status"`),
-fokus pindah ke tombol berikutnya setelah menjawab, hanzi berukuran 4rem dan
-tombol jawaban minimal 3,5rem yang ikut membesar mengikuti ukuran teks, satu
-kolom, serta opsi "Jarak baris dan huruf lebih lega" di panel Tampilan.
-
-**Batas:**
-
-- **Belum** diuji dengan pengguna tunanetra atau pengguna lemah penglihatan.
-  Tes otomatis hanya memeriksa markup HTML.
-- Hasil Dengar & Pilih **tidak masuk halaman Progress**. Ini disengaja: Progress
-  membaca `game_attempts` sebagai kategori kesalahan Pemburu Kesalahan, dan
-  jawaban kosakata akan mencemari kategori itu.
-- Suara memakai suara bawaan browser (Web Speech API); kualitasnya bervariasi
-  antarperangkat, dan suara Mandarin harus terpasang di perangkat agar kata
-  Mandarin terdengar benar.
-- Panel Tampilan masih punya tiga tingkat ukuran teks (Normal, Besar, Sangat
-  besar). Tingkat keempat belum ditambahkan.
-- Rencana: tahap benar atau salah sebelum memilih kategori, untuk mengurangi
-  beban metabahasa; belum dibangun.
-
-## Raba lalu dengar
-
-Pelajar memotret satu benda yang dipegang dengan kamera bawaan perangkat, lalu
-aplikasi menampilkan dan membacakan namanya dalam bahasa Indonesia, Inggris,
-dan Mandarin (`/scan-benda`).
-
-- **Dimatikan secara default.** Aktifkan dengan `SCAN_BENDA_ENABLED=true`.
-  Selama mati, `/scan-benda` dan `POST /scan-benda/kenali` menjawab 404 dan
-  tautannya tidak tampil di navigasi. Pengaturan lain ada di `config/scan.php`
-  (`SCAN_BENDA_MAX_IMAGE_BYTES`, `SCAN_BENDA_RATE_LIMIT_PER_MINUTE`,
-  `SCAN_BENDA_TIMEOUT`).
-- **Daftar tertutup.** Model visi hanya boleh memilih `benda_id` dari entri `ikut_prompt: true`
-  di `storage/app/seed-data/daftar_benda_tertutup.json` (lewat
-  `KataBicaraCatalog`), atau menjawab "tidak yakin" atau "perlu foto ulang".
-  Nama Indonesia, Inggris, hanzi, pinyin, dan IPA selalu diambil dari katalog,
-  tidak pernah dari teks model. `benda_id` di luar daftar dianggap "tidak
-  yakin". Penyedianya dipilih otomatis: Gemini langsung bila `GEMINI_API_KEY`
-  terisi (`GEMINI_MODEL`), kalau tidak, endpoint OpenAI-compatible bila
-  `OPENAI_COMPATIBLE_API_KEY` terisi (`OPENAI_COMPATIBLE_VISION_MODEL`, cth.
-  `gemini/gemini-3.6-flash` di 9router). Tanpa keduanya, aplikasi selalu
-  menjawab "tidak yakin".
-- **Hanya keyakinan tinggi yang diumumkan pasti.** Keyakinan sedang atau rendah
-  diumumkan sebagai "Mungkin …" dengan tawaran foto ulang.
-- **Foto tidak disimpan.** Foto dikompres di browser (sisi terpanjang sekitar
-  1024 px, JPEG), dikirim sebagai base64 di badan JSON, diproses di memori,
-  lalu dibuang. Tidak ada berkas gambar di storage, tidak ada kolom basis
-  data, tidak memakai unggahan sementara Livewire, dan gambar maupun teks
-  model tidak ditulis ke log. Foto memang dikirim ke layanan pengenal visi
-  (Gemini langsung, atau router di `OPENAI_COMPATIBLE_BASE_URL`) untuk
-  dikenali; pengguna harus mencentang persetujuan dulu.
-- **Pratinjau foto hanya tampil di layar.** Foto yang sama (versi sekitar
-  1024 px) ditampilkan di samping hasil lewat object URL di browser, dengan
-  keterangan bahwa foto tidak disimpan. Foto tidak ditulis ke localStorage,
-  sessionStorage, IndexedDB, atau state Livewire, dan object URL dilepas saat
-  "Foto lagi", saat foto baru dipilih, saat galat, dan saat meninggalkan
-  halaman. Kotak centang "Tampilkan foto di layar" (bawaan aktif) bisa
-  dimatikan untuk menyembunyikan foto yang berisi hal pribadi; yang disimpan di
-  localStorage (`scanBenda`) hanya pilihan kotak centang itu, bukan fotonya.
-- **Lembar catatan uji di browser belum dibuat.** Rencananya hanya di memori
-  halaman dan tanpa foto, tetapi membutuhkan `benda_id` dan keyakinan dalam
-  jawaban endpoint, yang belum dikirim.
-- **Bukan alat keselamatan atau medis.** Jangan dipakai untuk obat atau benda
-  berbahaya; peringatan ini tampil di halaman.
-- **Deskripsi bentuk adalah perkiraan** dari foto dan mungkin tidak persis
-  dengan perabaan.
-- **Status uji:** baru diuji dengan tes otomatis memakai pengenal palsu dan
-  `Http::fake`. **Belum** diuji dengan foto sungguhan maupun dengan model visi
-  yang benar-benar terhubung, dan **belum diuji dengan pengguna tunanetra**.
 
 ## Mode suara
 
-Lapisan suara bersama untuk seluruh aplikasi (`resources/js/voice/engine.js`
-dan `resources/js/voice/adapters.js`), memakai Web Speech API bawaan browser
-tanpa biaya. **Pelengkap, bukan pengganti:** markup semantik, keyboard, dan
-pembaca layar tetap jalur utama dan tidak diubah. Mati secara bawaan.
+Lapisan suara bersama (`resources/js/voice/engine.js` dan
+`resources/js/voice/adapters.js`) memakai Web Speech API bawaan browser.
+**Pelengkap, bukan pengganti:** markup semantik, keyboard, dan pembaca layar
+tetap jalur utama. Mati secara bawaan.
 
-- **Kontrol:** tombol "Mode suara" (`aria-pressed`) adalah kontrol pertama
-  setelah tautan lewati; tombol "Berhenti" tampil selama mode aktif. Tidak ada
-  pintasan tombol tunggal. Mode suara dan Mode pembaca layar saling
-  meniadakan.
-- **Alur:** aplikasi berbicara (antrean dengan bahasa per segmen: id-ID, en-US,
-  zh-CN), lalu bunyi pendek, lalu mikrofon dibuka (id-ID, 3 alternatif).
-  Mikrofon tidak pernah terbuka saat aplikasi berbicara. Ketiga alternatif
-  dikirim dalam satu `POST /voice/command` dan masing-masing diurai
-  (`App\Support\VoiceAlternatives`); teks mentahnya tidak dibandingkan.
-  Alternatif teratas dikenal dan tidak ada alternatif lain yang dikenal
-  sebagai perintah berbeda: langsung dijalankan (juga untuk jawaban game).
-  Dua alternatif dikenal sebagai perintah berbeda: aplikasi bertanya "satu,
-  ujian, atau dua, isian?". Hanya alternatif lain yang dikenal: "Saya dengar:
-  … Benar?". Keyakinan di bawah 0,5 hanya memicu "Saya dengar: … Benar?" bila
-  nomor yang dipilih menekan tindakan yang tidak bisa dibatalkan, dan
-  tindakan itu tetap ditanya "Yakin?". Diam 8 detik diingatkan sampai dua
-  kali, lalu mode berhenti.
-- **Perintah** dikenali oleh `App\Support\VoiceCommandParser` lewat
-  `POST /voice/command`, yang hanya mengembalikan `{type, target, index}`
-  (ditambah dua kandidat untuk `clarify`): buka (nama halaman), mulai,
-  kembali, ulangi, baca halaman, daftar tindakan, nomor 1–12 atau a–d, lanjut,
-  ya/tidak, berhenti, perintah, isi/selesai isi. Pengurainya toleran terhadap
-  ucapan alami:
-  - kata pengisi di mana saja dibuang ("buka", "bukakan", "masuk ke",
-    "pergi ke", "tolong", "mau", "ingin", "aku", "saya", "halaman", "menu",
-    "fitur", "coba", "ayo", "yuk", "dong", "deh", "tes", …), jadi "masuk ke
-    game" dan "tes obrolan" dikenali;
-  - alias halaman: game/gim/permainan/main game, ngobrol/obrolan/percakapan/
-    chat/ngomong, ucapan/pengucapan/cek pengucapan, kata bicara/kamus bicara,
-    kartu/flashcard, ujian/kuis, progress/kemajuan, bantuan/bantu, dan raba
-    lalu dengar/kamera/potret (hanya bila fiturnya aktif, selain itu "belum
-    tersedia");
-  - salah dengar umum pengenalan id-ID untuk "game": gem, geim, gaim, gam;
-  - satu huruf salah (jarak Levenshtein 1) untuk kata 5 huruf atau lebih; bila
-    dua perintah berbeda sama dekat ("usian": ujian atau isian), hasilnya
-    `clarify` dan aplikasi bertanya "satu atau dua", tidak menebak;
-  - `start`: "mulai", "main", "ayo mulai", "mulai main", "mulai pemburu
-    kesalahan", "main dengar dan pilih". "Main" saja berarti mulai; "main game"
-    membuka halaman Game;
-  - jawaban: "pilih satu", "jawaban dua", "jawab tiga", "opsi empat", "nomor
-    tiga", "yang pertama".
+- **Kontrol:** tombol "Mode suara" (`aria-pressed`) pertama setelah tautan
+  lewati; tombol "Berhenti" saat mode aktif. Tidak ada pintasan tombol tunggal.
+  **Satu ujaran per tekan:** nyalakan mode, lalu tekan lagi untuk membuka
+  mikrofon; setelah satu perintah diproses, mikrofon tertutup hingga tekan
+  berikutnya.
+- **Alur:** narasi/audio aplikasi dan TTS dihentikan, bunyi pendek, lalu
+  mikrofon (`SpeechRecognition.continuous=false`, id-ID, 3 alternatif).
+  Alternatif dikirim ke `POST /voice/command` dan diurai lewat
+  `App\Support\VoiceAlternatives`. Status diumumkan lewat `role="status"`.
+- **Halaman:** beranda, ngobrol, ucapan, buku saku, bantuan. Adapter untuk
+  chat, pemilih skenario Ngobrol, Ucapan, dan Bantuan (`data-voice-page`).
+- **Data:** tidak menyimpan audio atau transkrip. Hanya tanda persetujuan di
+  localStorage dan status aktif di sessionStorage.
 
-  Ucapan yang memuat dua perintah, dua angka berbeda, atau perintah yang
-  bertabrakan tetap dianggap tidak dikenali. Saat tidak dikenali, aplikasi
-  membacakan dan menampilkan (lewat `role="status"`) "Saya dengar: …" serta
-  perintah yang bisa dipakai di halaman itu; "perintah" membacakan daftar yang
-  disesuaikan dengan halaman aktif. Tindakan yang tidak bisa dibatalkan (Hapus,
-  Reset, Selesai dan analisis, Keluar) selalu dikonfirmasi.
-- **Mulai:** di hub Game dan pemilihan skenario Ngobrol, "mulai" menekan
-  kontrol bertanda `data-voice-start`; bila ada lebih dari satu, pilihannya
-  dibacakan bernomor. Di dalam game, "mulai" membacakan soal atau menekan "Main
-  lagi".
-- **Mode debug** (mati secara bawaan): tambahkan `?voicedebug=1` pada alamat
-  untuk melihat panel kecil berisi teks terdengar, alternatif, confidence, dan
-  hasil parse terakhir. Isinya hanya di memori dan tidak disimpan.
-- **Adapter halaman** (`data-voice-page`, dicari ulang dari DOM pada setiap
-  ucapan; satu MutationObserver pada `<main>` dan event `livewire:navigated`
-  memanggil `onActivate` saat halaman berganti, tanpa pendengar ganda): hub
-  Game, pemilihan skenario Ngobrol, Kata bicara ("cari …",
-  "dengarkan inggris"), Dengar & Pilih dan Pemburu Kesalahan (soal dan pilihan
-  bernomor; jawaban lewat radio dan tombol Jawab yang sudah ada), Ngobrol
-  (balasan dibacakan, ucapan dikirim lewat formulir yang sudah ada, "selesai"
-  dengan konfirmasi), Kartu ("balik", "berikutnya", "dengarkan"), Hari Ini,
-  Progress, dan Raba lalu dengar ("ambil foto" hanya memfokuskan tombol, karena
-  browser tidak mengizinkan kamera dibuka lewat suara). Game "Pilih yang
-  Benar" belum ada, jadi perintah itu dijawab "belum tersedia".
-- **Data:** tidak ada audio, gambar, atau transkrip yang disimpan. localStorage
-  hanya menyimpan tanda persetujuan sekali pakai; sessionStorage hanya
-  menyimpan bahwa mode aktif supaya bisa dilanjutkan setelah pindah halaman.
-  Endpoint tidak menulis transkrip ke log atau basis data. Teks terakhir yang
-  terdengar hanya ada di memori halaman (untuk "Saya dengar" dan panel debug)
-  dan dihapus saat mode berhenti.
+Hanya **Chrome atau Edge**, **butuh internet**. Suaramu diproses oleh
+penyedia pengenalan suara browser. Akurasi bervariasi; suara Mandarin harus terpasang di perangkat. Belum diuji dengan pengguna tunanetra. Pembaca layar tetap jalur utama.
 
-**Batas (jujur):**
-
-- Hanya Chrome atau Edge, dan butuh internet: audio diproses oleh penyedia
-  pengenalan suara browser, bukan oleh aplikasi ini.
-- Akurasi bervariasi; suara Mandarin harus terpasang di perangkat.
-- Setiap pindah halaman adalah muat ulang penuh, jadi mikrofon perlu satu
-  ketukan atau Enter pada tombol Mode suara untuk aktif lagi.
-- Tes otomatis hanya memeriksa pengurai, endpoint, markup, dan teks kode JS;
-  JS-nya belum diuji otomatis di browser. **Belum diuji dengan pengguna
-  tunanetra.** Pembaca layar tetap jalur utama.
-
-## Akun demo
-
-Akun siap pakai untuk peninjau di lingkungan **lokal atau staging** (`APP_ENV=local` atau `staging`). Akun ini mati secara bawaan dan tidak pernah tersedia di `APP_ENV=production`.
-
-1. Di `.env`, isi:
-
-   ```
-   DEMO_ACCOUNT_ENABLED=true
-   DEMO_ACCOUNT_PASSWORD=<kata sandi khusus demo>
-   # opsional, bawaan demo@studycompanion.test
-   DEMO_ACCOUNT_EMAIL=demo@studycompanion.test
-   ```
-
-2. Jalankan `php artisan db:seed --class=DemoUserSeeder`. Perintah ini membuat atau memperbarui pengguna "Akun Demo" dengan email terverifikasi dan onboarding selesai. Tidak ada data sesi atau latihan palsu. Bila akun demo aktif, `php artisan db:seed` juga memanggil seeder ini.
-3. Halaman login menampilkan kotak "Akun demo (lokal dan staging, bukan production)" berisi email, kata sandi, dan tombol **Isi otomatis**. Tombol itu hanya mengisi kolom, tidak mengirim formulir.
-
-**Peringatan:**
-
-- Hanya untuk lokal dan staging. Seeder menolak berjalan di `APP_ENV=production`, dan kotak login hanya dirender bila `DEMO_ACCOUNT_ENABLED=true`, kata sandi terisi, **dan** environment bukan production. Bila akun demo mati, kotak itu tidak meninggalkan jejak di HTML.
-- Kata sandi tampil apa adanya di halaman login. Pakai kata sandi **khusus demo** dan **jangan pernah** dipakai di tempat lain.
-- Kata sandi hanya dibaca dari `.env`; tidak ada nilai bawaan di kode. Bila kosong, seeder berhenti dengan pesan galat.

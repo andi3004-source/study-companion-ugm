@@ -18,7 +18,6 @@ class BerandaViewTest extends TestCase
 
         Route::get('/_test-beranda', fn () => view('layouts.study', [
             'title' => 'Tuturnusa',
-            'navRingkas' => true,
             'slot' => new HtmlString(view('home')->render()),
         ]))->name('home');
 

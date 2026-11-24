@@ -11,7 +11,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Throwable;
 
-#[Layout('layouts.study', ['navRingkas' => true])]
+#[Layout('layouts.study')]
 class Chat extends Component
 {
     /**

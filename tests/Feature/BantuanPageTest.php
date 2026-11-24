@@ -45,5 +45,21 @@ class BantuanPageTest extends TestCase
         $footer = substr($html, strpos($html, '<footer'), strpos($html, '</footer>') - strpos($html, '<footer'));
         $this->assertStringContainsString($link, $footer);
         $this->assertStringContainsString('Bantuan dan aksesibilitas', $footer);
+        $this->assertStringContainsString(route('bantuan').'#tampilan', $footer);
+        $this->assertStringContainsString('Ukuran teks', $footer);
+    }
+
+    public function test_bantuan_has_text_size_fieldset_with_three_choices(): void
+    {
+        $html = $this->get('/bantuan')->assertOk()->getContent();
+
+        $this->assertStringContainsString('id="tampilan"', $html);
+        $this->assertStringContainsString('<fieldset', $html);
+        $this->assertStringContainsString('Ukuran teks', $html);
+        $this->assertStringContainsString('value="normal"', $html);
+        $this->assertStringContainsString('value="besar"', $html);
+        $this->assertStringContainsString('value="sangat-besar"', $html);
+        $this->assertStringContainsString('min-h-[3.5rem]', $html);
+        $this->assertStringContainsString('x-data="displaySettings()"', $html);
     }
 }

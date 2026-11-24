@@ -42,41 +42,42 @@
 
     <section aria-labelledby="bantuan-mode-suara" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-mode-suara" class="font-display font-600 text-lg text-ink">Mode suara</h2>
-        <p class="text-ink">Mode suara adalah pelengkap untuk memakai aplikasi dengan perintah lisan. Pembaca layar dan keyboard tetap jalur utama. Mode ini mati secara bawaan; nyalakan dengan tombol <strong>Mode suara</strong> di bagian paling atas halaman, dan matikan dengan tombol <strong>Berhenti</strong> atau perintah "berhenti". Mode suara dan Mode pembaca layar tidak bisa aktif bersamaan.</p>
+        <p class="text-ink">Mode suara adalah pelengkap untuk memakai aplikasi dengan perintah lisan. Pembaca layar dan keyboard tetap jalur utama. Mode ini mati secara bawaan; nyalakan dengan tombol <strong>Mode suara</strong> di bagian paling atas halaman. Setiap perintah butuh tekan tombol itu sekali lagi (satu ujaran per tekan). Matikan dengan tombol <strong>Berhenti</strong> atau perintah "berhenti". Mode suara dan Mode pembaca layar tidak bisa aktif bersamaan.</p>
         <h3 class="font-700 text-ink">Perintah</h3>
         <ul class="list-disc pl-6 text-ink space-y-1">
-            <li>Nama halaman, boleh dengan kata seperti "buka", "masuk ke", "mau", "tolong", atau "dong": hari ini, kartu (flashcard), kamus, ujian (kuis), isian, game (gim, permainan, main game), pemburu kesalahan, dengar dan pilih, ngobrol (obrolan, percakapan, chat), ucapan (pengucapan), kata bicara (kamus bicara), progress (kemajuan), bantuan (dan raba lalu dengar, kamera, potret bila fitur itu aktif). Contoh: "masuk ke game", "tes obrolan".</li>
-            <li>"Mulai" (atau "main", "ayo mulai"): di halaman Game membuka satu-satunya game, atau membacakan pilihan bernomor; "mulai pemburu kesalahan" atau "main dengar dan pilih" langsung membuka game itu. Di pemilihan skenario Ngobrol, skenario dibacakan bernomor. Di dalam game, membacakan soal atau menekan "Main lagi".</li>
-            <li>"Baca halaman", "daftar tindakan", lalu "nomor satu" sampai "nomor dua belas" (juga "pilih satu", "jawab tiga", "opsi empat", "yang pertama", atau "pilihan a" sampai "d"); "lanjut" untuk daftar berikutnya.</li>
-            <li>"Kembali", "ulangi", "perintah" (daftar perintah untuk halaman ini), "berhenti"; "ya" atau "tidak" untuk konfirmasi.</li>
-            <li>Di kolom isian: "isi" untuk mulai mendikte dan "selesai isi" untuk berhenti. Teks tidak dikirim otomatis.</li>
-            <li>Kata bicara: "cari" lalu kata, "dengarkan inggris". Game: "satu" sampai "empat", "ulangi", "lanjut", "penjelasan". Kartu: "balik", "berikutnya", "dengarkan". Ngobrol: ucapkan pesanmu; "selesai" untuk menyelesaikan sesi.</li>
-            <li>Kamus: "cari" lalu kata; hasil dibacakan tiga-tiga, "lanjut" untuk berikutnya, "nomor dua" untuk mendengar satu hasil; "bahasa mandarin", "bahasa inggris", "level HSK satu".</li>
-            <li>Ujian: sebut "mandarin", "inggris", atau "tes hari ini" untuk mulai. Saat mengerjakan: "satu" sampai "empat" untuk menjawab, "lanjut", "sebelumnya", "soal lima", "belum dijawab", lalu "kumpulkan" (selalu ditanya dulu). Jawaban tidak bisa diubah setelah dikumpulkan; "coba lagi" untuk ujian baru.</li>
-            <li>Latihan Isian: "isi" lalu pinyinnya (misalnya "isi ni hao"), atau "isi hanzi" lalu ucapkan jawabannya dalam bahasa Mandarin; "lanjut", "soal tiga", "analisis", "reset" (ditanya dulu), "mode hanzi", "jumlah sepuluh", "urutan acak".</li>
-            <li>Cek Ucapan: "cari" lalu kata, "nomor satu" untuk memilih, "dengarkan" untuk contoh, "rekam" (setelah bunyi, ucapkan katanya; sekitar tiga detik), "coba lagi", "ganti kata".</li>
-            <li>Bantuan: "baca halaman" untuk daftar bagian, "nomor tiga" untuk satu bagian. Halaman awal setelah daftar: "tanggal hari ini", "jalur mandarin", "mulai belajar".</li>
-            <li>Bila perintah tidak dikenali, aplikasi mengatakan apa yang terdengar ("Saya dengar: …") dan perintah yang bisa dipakai di halaman itu. Satu huruf yang salah dengar masih dikenali; bila ada dua kemungkinan, aplikasi bertanya "satu atau dua".</li>
+            <li>Buka halaman: "buka beranda", "buka ngobrol", "buka ucapan", "buka buku saku", atau "buka bantuan" (boleh dengan kata masuk, mau, tolong, dong).</li>
+            <li>Umum: "baca halaman", "daftar tindakan", nomor satu sampai dua belas, "lanjut", "kembali", "ulangi", "perintah", "berhenti"; "ya" atau "tidak" untuk konfirmasi.</li>
+            <li>Ngobrol: ucapkan pesanmu langsung; "selesai" untuk menyelesaikan sesi; di pemilihan skenario, "mulai" lalu nomor skenario.</li>
+            <li>Ucapan: "cari" lalu kata, nomor saran, "rekam" (setelah bunyi ucapkan katanya), "dengarkan", "coba lagi", "ganti kata".</li>
+            <li>Bantuan: "baca halaman" untuk daftar bagian, nomor bagian untuk mendengar satu bagian.</li>
+            <li>Kolom isian: "isi" untuk mendikte, "selesai isi" untuk berhenti. Teks tidak dikirim otomatis.</li>
+            <li>Bila perintah tidak dikenali, aplikasi mengatakan apa yang terdengar ("Saya dengar: …") dan perintah yang bisa dipakai di halaman itu.</li>
         </ul>
         <h3 class="font-700 text-ink">Batas</h3>
         <ul class="list-disc pl-6 text-ink space-y-1">
             <li>Hanya berjalan di Chrome atau Edge dan butuh internet.</li>
             <li>Suaramu diproses oleh penyedia pengenalan suara browser. Aplikasi ini hanya menerima teksnya untuk dikenali sebagai perintah dan tidak menyimpan suara maupun teks itu.</li>
             <li>Akurasi pengenalan bervariasi. Suara Mandarin harus terpasang di perangkat agar teks Mandarin terbaca benar.</li>
-            <li>Setelah pindah halaman, mikrofon perlu satu ketukan atau Enter pada tombol Mode suara untuk aktif lagi.</li>
+            <li>Setelah setiap perintah, mikrofon tertutup. Tekan tombol Mode suara lagi untuk perintah berikutnya. Audio narasi atau suara aplikasi berhenti otomatis sebelum mikrofon dibuka.</li>
             <li>Belum diuji dengan pengguna tunanetra.</li>
         </ul>
     </section>
 
-    <section aria-labelledby="bantuan-tampilan" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
+    <section id="tampilan" aria-labelledby="bantuan-tampilan" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-4" x-data="displaySettings()">
         <h2 id="bantuan-tampilan" class="font-display font-600 text-lg text-ink">Mengatur tampilan</h2>
-        <p class="text-ink">Buka tombol <strong>Tampilan</strong> di header. Pilihan tersimpan di browser ini:</p>
-        <ul class="list-disc pl-6 text-ink space-y-1">
-            <li><strong>Ukuran teks</strong>: Normal, Besar, atau Sangat besar.</li>
-            <li><strong>Mode pembaca layar</strong>: balasan tidak diputar otomatis; suara hanya diputar saat kamu menekan tombol putar.</li>
-            <li><strong>Kontras di perangkat</strong>: gunakan setelan kontras atau inversi warna di sistem operasi (Windows <em>forced colors</em>, Smart Invert iOS, dll.). Aplikasi tidak lagi memiliki mode kontras tinggi sendiri.</li>
-        </ul>
-        <p class="text-ink">Animasi dikurangi otomatis bila sistem operasimu diatur untuk mengurangi gerakan.</p>
+        <fieldset class="border-0 p-0 m-0">
+            <legend class="font-700 text-ink mb-2">Ukuran teks</legend>
+            <div class="space-y-1">
+                @foreach (['normal' => 'Normal', 'besar' => 'Besar', 'sangat-besar' => 'Sangat besar'] as $value => $label)
+                    <label class="flex items-center gap-3 text-lg text-ink min-h-[3.5rem] cursor-pointer">
+                        <input type="radio" name="ukuran-teks-bantuan" value="{{ $value }}" class="w-6 h-6 shrink-0"
+                               x-model="ukuran" x-on:change="simpan()">
+                        {{ $label }}
+                    </label>
+                @endforeach
+            </div>
+        </fieldset>
+        <p class="text-ink">Pilihan tersimpan di browser ini dan langsung berlaku di semua halaman. Perbesaran teks browser (zoom) dan setelan kontras di sistem operasi tetap bisa dipakai.</p>
     </section>
 
     <section id="pasang" aria-labelledby="bantuan-pasang" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">

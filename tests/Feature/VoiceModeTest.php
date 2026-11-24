@@ -134,7 +134,7 @@ class VoiceModeTest extends TestCase
         $engine = $this->js('voice/engine.js');
 
         $this->assertStringContainsString("sessionStorage.setItem(SESSION_KEY, 'aktif')", $engine);
-        $this->assertStringContainsString('Mode suara aktif. Ketuk atau tekan Enter pada tombol Mode suara untuk melanjutkan mikrofon', $engine);
+        $this->assertStringContainsString('Mode suara aktif. Tekan tombol Mode suara untuk satu perintah.', $engine);
         $this->assertStringContainsString("document.getElementById('tombol-mode-suara')?.focus();", $engine);
     }
 
@@ -198,6 +198,17 @@ class VoiceModeTest extends TestCase
         foreach (['chat', 'chat-picker', 'ucapan', 'bantuan'] as $name) {
             $this->assertStringContainsString('data-voice-page="'.$name.'"', $views, $name);
         }
+    }
+
+    public function test_push_to_talk_does_not_reopen_mic_after_one_utterance(): void
+    {
+        $engine = $this->js('voice/engine.js');
+
+        $this->assertStringContainsString('rec.continuous = false;', $engine);
+        $this->assertStringContainsString('pauseAppAudio()', $engine);
+        $this->assertDoesNotMatchRegularExpression('/async start\(\) \{.*?this\.listen\(\)/s', $engine);
+        $this->assertDoesNotMatchRegularExpression('/async onUtterance\(alternatives\) \{.*?this\.listen\(\)/s', $engine);
+        $this->assertDoesNotMatchRegularExpression('/async onSilence\(\) \{.*?this\.listen\(\)/s', $engine);
     }
 
     public function test_voice_route_allowlist_contains_only_active_pages(): void
