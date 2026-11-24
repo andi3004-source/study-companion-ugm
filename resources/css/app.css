@@ -29,6 +29,10 @@ body {
     display: none !important;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 html {
     font-size: 112.5%;
 }
