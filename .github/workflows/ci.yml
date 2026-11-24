@@ -19,6 +19,8 @@ jobs:
           cache: npm
       - run: composer install --no-interaction --prefer-dist
       - run: npm ci
+      # Ucapan checks recording duration with ffprobe; production gets it from the Dockerfile.
+      - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
       - run: bash scripts/ci.sh
         env:
           CI_BASE: origin/main
