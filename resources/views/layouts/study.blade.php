@@ -31,24 +31,38 @@
         $voiceRoutes = collect(['home', 'conversation', 'pronunciation-check', 'buku-saku', 'bantuan'])
             ->mapWithKeys(fn ($name) => [$name => route($name)]);
     @endphp
-    <div x-data="voiceModeBar({{ \Illuminate\Support\Js::from(route('voice.command')) }}, {{ \Illuminate\Support\Js::from($voiceRoutes) }})"
-         class="bg-card border-b border-line-card px-4 py-2 flex flex-wrap items-center gap-3">
-        <button type="button" id="tombol-mode-suara" x-ref="tombol" x-on:click="toggle()"
-                aria-pressed="false" x-bind:aria-pressed="aktif ? 'true' : 'false'"
-                x-bind:aria-disabled="didukung ? 'false' : 'true'" aria-describedby="mode-suara-catatan"
-                class="min-h-[3.5rem] min-w-[3.5rem] px-5 rounded-full border-2 border-navy bg-white text-navy font-600 aria-disabled:opacity-60">
-            <svg class="o-ic w-5 h-5 inline-block align-middle mr-1" aria-hidden="true"><use href="#i-mic"/></svg>
-            Mode suara: <span x-text="aktif ? 'nyala' : 'mati'"></span>
-        </button>
-        <button type="button" x-show="aktif" x-cloak x-on:click="berhenti()"
-                class="min-h-[44px] px-5 rounded-xl border-2 border-red-700 text-red-700 font-700">Berhenti</button>
-        <p id="mode-suara-catatan" class="text-sm text-ink-soft">
-            <span x-show="!didukung">Mode suara membutuhkan Chrome atau Edge</span>
-            <span x-show="didukung">Tekan tombol Mode suara sekali lagi untuk satu perintah. Pelengkap pembaca layar; mati secara bawaan.</span>
-        </p>
-        <p id="mode-suara-status" role="status" class="w-full text-sm text-ink empty:hidden"></p>
+    <header class="px-4 border-b-2 border-navy bg-white"
+            x-data="voiceModeBar({{ \Illuminate\Support\Js::from(route('voice.command')) }}, {{ \Illuminate\Support\Js::from($voiceRoutes) }})">
+        <div class="flex flex-row-reverse flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 max-w-[75rem] mx-auto w-full">
+            <div class="flex flex-col items-end gap-1 min-w-0">
+                <div class="flex flex-wrap items-center justify-end gap-2">
+                    <button type="button" id="tombol-mode-suara" x-ref="tombol" x-on:click="toggle()"
+                            aria-pressed="false" x-bind:aria-pressed="aktif ? 'true' : 'false'"
+                            x-bind:aria-disabled="didukung ? 'false' : 'true'" aria-describedby="mode-suara-catatan"
+                            class="min-h-[3.5rem] min-w-[3.5rem] px-5 rounded-full border-2 border-navy bg-white text-navy font-600 aria-disabled:opacity-60 inline-flex items-center gap-1">
+                        <svg class="o-ic w-5 h-5 shrink-0" aria-hidden="true"><use href="#i-mic"/></svg>
+                        Mode suara: <span x-text="aktif ? 'nyala' : 'mati'"></span>
+                    </button>
+                    <button type="button" x-show="aktif" x-cloak x-on:click="berhenti()"
+                            class="min-h-[3.5rem] px-5 rounded-full border-2 border-red-700 text-red-700 font-700">Berhenti</button>
+                </div>
+                <p id="mode-suara-catatan" class="text-xs text-secondary text-right max-w-xs">
+                    <span x-show="!didukung">Mode suara membutuhkan Chrome atau Edge</span>
+                    <span x-show="didukung" x-cloak>Tekan lagi untuk satu perintah. Mati secara bawaan.</span>
+                </p>
+                <p id="mode-suara-status" role="status" class="text-xs text-ink empty:hidden text-right max-w-xs"></p>
+            </div>
+            <a id="logo-beranda" href="{{ route('home') }}" aria-label="Tuturnusa, beranda"
+               class="inline-flex items-center gap-3 no-underline text-navy font-display font-600 text-2xl shrink-0">
+                <span class="inline-flex items-center justify-center w-12 h-12 rounded-[12px] bg-navy shrink-0" aria-hidden="true">
+                    <svg class="o-ic w-7 h-7 text-orange" aria-hidden="true"><use href="#i-book"/></svg>
+                </span>
+                TUTURNUSA
+            </a>
+        </div>
 
-        <div x-show="mintaSetuju" x-cloak role="group" aria-labelledby="mode-suara-setuju-judul" class="w-full rounded-xl border-2 border-navy p-4 space-y-3">
+        <div x-show="mintaSetuju" x-cloak role="group" aria-labelledby="mode-suara-setuju-judul"
+             class="max-w-[75rem] mx-auto w-full rounded-xl border-2 border-navy p-4 space-y-3 mb-4">
             <p id="mode-suara-setuju-judul" class="font-700 text-ink">Sebelum memakai Mode suara</p>
             <p class="text-ink">Mode suara memakai pengenalan suara bawaan browser (Chrome atau Edge). Suaramu dikirim ke penyedia browser untuk diubah menjadi teks. Aplikasi ini tidak menyimpan suara.</p>
             <div class="flex flex-wrap gap-2">
@@ -56,16 +70,6 @@
                 <button type="button" x-on:click="batal()" class="min-h-[44px] px-5 rounded-xl border border-line-card text-ink font-700">Batal</button>
             </div>
         </div>
-    </div>
-
-    <header class="px-4 py-4 border-b-2 border-navy bg-white">
-        <a id="logo-beranda" href="{{ route('home') }}" aria-label="Tuturnusa, beranda"
-           class="inline-flex items-center gap-3 no-underline text-navy font-display font-600 text-2xl">
-            <span class="inline-flex items-center justify-center w-12 h-12 rounded-[12px] bg-navy shrink-0" aria-hidden="true">
-                <svg class="o-ic w-7 h-7 text-orange" aria-hidden="true"><use href="#i-book"/></svg>
-            </span>
-            TUTURNUSA
-        </a>
     </header>
 
     <main id="konten" tabindex="-1" class="pb-8 focus:outline-none">
@@ -79,8 +83,6 @@
             <a href="{{ route('bantuan') }}#tampilan" class="underline text-navy">Ukuran teks</a>
         </p>
     </footer>
-
     @livewireScripts
-    @stack('scripts')
 </body>
 </html>

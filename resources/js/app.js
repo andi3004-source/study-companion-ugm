@@ -163,16 +163,22 @@ window.screenReaderMode = function () {
  * the inline <head> script in layouts/study.blade.php applies on page load).
  */
 /** Alpine: kontrol audio bab Buku Saku (tanpa kontrol native). */
-window.chapterAudio = function (src) {
+window.chapterAudio = function (src, durasiAwal = '0:00') {
     return {
         memutar: false,
         status: '',
         posisiTeks: '',
+        progres: 0,
+        durasiAwal,
         init() {
             const el = this.$refs.pemutar;
             const perbarui = () => {
-                this.posisiTeks = `${this.format(el.currentTime)} / ${this.format(el.duration || 0)}`;
+                const total = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : 0;
+                const totalTeks = total > 0 ? this.format(total) : this.durasiAwal;
+                this.posisiTeks = `${this.format(el.currentTime)} dari ${totalTeks}`;
+                this.progres = total > 0 ? Math.min(100, (el.currentTime / total) * 100) : 0;
             };
+            this.posisiTeks = `0:00 dari ${this.durasiAwal}`;
             el.addEventListener('timeupdate', perbarui);
             el.addEventListener('loadedmetadata', perbarui);
             el.addEventListener('play', () => {

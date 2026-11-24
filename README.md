@@ -260,7 +260,7 @@ salin berkas cadangan ke `/data/database/database.sqlite`, lalu nyalakan lagi.
 - AI: `GEMINI_API_KEY`, `GEMINI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`,
   `LANGFLOW_URL`, `LANGFLOW_FLOW_ID`, `LANGFLOW_API_KEY`, `LANGFLOW_TIMEOUT`,
   `DAILY_MESSAGE_LIMIT`
-- Lainnya: `PRONUNCIATION_CHECKER_DRIVER`, `HSK_LEVEL_LOCK`
+- Lainnya: `PRONUNCIATION_CHECKER_DRIVER`, `HSK_LEVEL_LOCK`, `REGISTRATION_INVITE_CODE`
 
 Layanan cek pelafalan ML (`pronunciation-service`) tidak ikut; contoh `.env`
 memakai `PRONUNCIATION_CHECKER_DRIVER=stt_match`.

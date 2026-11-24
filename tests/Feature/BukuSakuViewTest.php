@@ -49,7 +49,8 @@ class BukuSakuViewTest extends TestCase
                     'judul' => 'Bab 1. Cara Menyikat Gigi Mandiri',
                     'bagian' => 'Bagian 1: Kebersihan',
                     'urutan' => 1,
-                    'html' => '<h2>Alat dan bahan</h2><p>Sikat gigi.</p><h2>Langkah-langkah</h2><ol><li>Basahi.</li></ol>',
+                    'html' => '<h2>Alat dan bahan</h2><p>Sikat gigi.</p><h2>Langkah-langkah</h2><ol><li>Basahi.</li></ol>'
+                        .'<aside class="kotak-patokan-bab" aria-label="Cara tahu sudah benar"><h2>Cara tahu sudah benar</h2><p>Patokan.</p></aside>',
                 ],
                 'previous' => null,
                 'next' => ['slug' => '02', 'judul' => 'Bab 2. Botol sabun'],
@@ -105,6 +106,13 @@ class BukuSakuViewTest extends TestCase
         $this->assertStringContainsString('role="status"', $html);
         $this->assertStringContainsString('aria-label=', $html);
         $this->assertStringNotContainsString('autoplay', $html);
+        $this->assertStringContainsString('#i-play', $html);
+        $this->assertStringContainsString('#i-rotate-ccw', $html);
+        $this->assertStringContainsString('#i-rotate-cw', $html);
+        $this->assertStringContainsString('bg-navy text-white', $html);
+        $this->assertStringContainsString('dari', $html);
+        $this->assertStringContainsString('kotak-patokan-bab', $html);
+        $this->assertStringContainsString('Cara tahu sudah benar', $html);
     }
 
     public function test_pengantar_has_no_position_count(): void

@@ -40,7 +40,7 @@ class VoiceModeTest extends TestCase
         $this->assertNotFalse($button);
         $this->assertDoesNotMatchRegularExpression('#<(a|button|input|select|textarea|summary)\b#', $between);
         $this->assertLessThan($button, strpos($html, 'Lewati ke konten'));
-        $this->assertLessThan(strpos($html, '<header'), $button);
+        $this->assertLessThan(strpos($html, 'id="logo-beranda"'), $button);
     }
 
     public function test_global_controls_markup(): void

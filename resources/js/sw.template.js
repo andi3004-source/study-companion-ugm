@@ -7,6 +7,9 @@ const SHELL_CACHE = `tuturnusa-shell-${CACHE_VERSION}`;
 const BUKU_CACHE = `tuturnusa-buku-${CACHE_VERSION}`;
 const AUDIO_CACHE = `tuturnusa-audio-${CACHE_VERSION}`;
 
+const NAV_TIMEOUT_MS = 3000;
+const AUDIO_CACHE_PREFIX = 'tuturnusa-audio-';
+
 const PRECACHE = [
     '/',
     '/offline.html',
@@ -25,6 +28,35 @@ function isBukuSakuAudio(url) {
     return url.pathname.startsWith('/audio/buku-saku/');
 }
 
+function isBuildAsset(url) {
+    return url.pathname.startsWith('/build/');
+}
+
+function acceptsHtml(request) {
+    const accept = request.headers.get('Accept') || '';
+
+    return accept.includes('text/html');
+}
+
+/** Halaman dokumen yang di-cache network-first (hindari HTML lama setelah deploy). */
+function isCachedNavigation(request, url) {
+    const p = url.pathname;
+
+    if (request.mode === 'navigate') {
+        return (
+            p === '/'
+            || p === '/bantuan'
+            || isBukuSakuPage(url)
+        );
+    }
+
+    if (!acceptsHtml(request)) {
+        return false;
+    }
+
+    return p === '/' || p === '/bantuan' || isBukuSakuPage(url);
+}
+
 function mustBypassCache(url, request) {
     if (request.method !== 'GET') {
         return true;
@@ -35,6 +67,10 @@ function mustBypassCache(url, request) {
         || p.startsWith('/pronunciation-check')
         || p.startsWith('/livewire')
     );
+}
+
+function isLegacyAudioCacheName(name) {
+    return name.startsWith(AUDIO_CACHE_PREFIX);
 }
 
 /**
@@ -128,6 +164,7 @@ async function fetchFullAudio(request) {
     return fetch(request.url, { credentials: request.credentials });
 }
 
+/** Cache-first untuk MP3 Buku Saku (dukungan Range/206). */
 async function audioStrategy(request) {
     const cache = await caches.open(AUDIO_CACHE);
     const key = request.url;
@@ -152,45 +189,49 @@ async function audioStrategy(request) {
     }
 }
 
-async function bukuPageStrategy(request, waitUntil) {
-    const cache = await caches.open(BUKU_CACHE);
+/** Cache-first untuk aset Vite ber-hash di /build/ (nama file berubah tiap build). */
+async function buildAssetStrategy(request) {
+    const cache = await caches.open(SHELL_CACHE);
     const cached = await cache.match(request);
-
-    const refresh = fetch(request)
-        .then((response) => {
-            if (response.ok) {
-                return cache.put(request, response.clone());
-            }
-            return null;
-        })
-        .catch(() => null);
-
     if (cached) {
-        waitUntil(refresh);
         return cached;
     }
 
     try {
-        const network = await fetch(request);
-        if (network.ok) {
-            await cache.put(request, network.clone());
+        const response = await fetch(request);
+        if (response.ok) {
+            await cache.put(request, response.clone());
         }
-        return network;
+        return response;
     } catch {
-        const offline = await caches.match('/offline.html');
-        return offline || Response.error();
+        return Response.error();
     }
 }
 
-async function navigationFallback(request) {
+/**
+ * Network-first untuk navigasi/HTML: hindari layanan HTML lama yang merujuk CSS/JS usang.
+ * Jatuh ke cache hanya saat jaringan gagal/timeout, lalu offline.html.
+ */
+async function networkFirstNavigation(request) {
+    const cache = await caches.open(BUKU_CACHE);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), NAV_TIMEOUT_MS);
+
     try {
-        return await fetch(request);
+        const response = await fetch(request, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (response.ok) {
+            await cache.put(request, response.clone());
+        }
+        return response;
     } catch {
-        const cached = await caches.match(request);
+        clearTimeout(timeoutId);
+        const cached = await cache.match(request);
         if (cached) {
             return cached;
         }
-        return (await caches.match('/offline.html')) || Response.error();
+        const offline = await caches.match('/offline.html');
+        return offline || Response.error();
     }
 }
 
@@ -204,7 +245,7 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => Promise.all(
             keys
-                .filter((name) => !name.endsWith(`-${CACHE_VERSION}`))
+                .filter((name) => !name.endsWith(`-${CACHE_VERSION}`) && !isLegacyAudioCacheName(name))
                 .map((name) => caches.delete(name))
         )).then(() => self.clients.claim())
     );
@@ -230,12 +271,17 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    if (isBukuSakuPage(url)) {
-        event.respondWith(bukuPageStrategy(request, (p) => event.waitUntil(p)));
+    if (isBuildAsset(url)) {
+        event.respondWith(buildAssetStrategy(request));
+        return;
+    }
+
+    if (isCachedNavigation(request, url)) {
+        event.respondWith(networkFirstNavigation(request));
         return;
     }
 
     if (request.mode === 'navigate') {
-        event.respondWith(navigationFallback(request));
+        event.respondWith(networkFirstNavigation(request));
     }
 });

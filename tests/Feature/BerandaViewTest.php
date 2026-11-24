@@ -39,7 +39,7 @@ class BerandaViewTest extends TestCase
         $this->assertStringContainsString('Mau belajar apa hari ini?', $html);
         $this->assertSame(3, substr_count($html, 'class="kartu-fitur block'));
         $this->assertMatchesRegularExpression('/<ul[^>]*class="[^"]*daftar-kartu-beranda/', $html);
-        $this->assertSame(3, substr_count($html, '<li class="kartu-fitur-item">'));
+        $this->assertSame(3, preg_match_all('/<li class="kartu-fitur-item/', $html));
     }
 
     public function test_each_card_is_one_link_with_heading_and_description(): void
@@ -62,5 +62,24 @@ class BerandaViewTest extends TestCase
         $this->assertNotFalse($posSuara);
         $this->assertNotFalse($posLogo);
         $this->assertLessThan($posLogo, $posSuara);
+    }
+
+    public function test_desktop_three_column_grid_and_wider_content_column(): void
+    {
+        $html = $this->homeHtml();
+
+        $this->assertStringContainsString('lg:grid-cols-3', $html);
+        $this->assertStringContainsString('max-w-[75rem]', $html);
+        $this->assertStringContainsString('mt-auto', $html);
+    }
+
+    public function test_ucapan_card_uses_mic_icon(): void
+    {
+        $html = $this->homeHtml();
+        $ucapan = strpos($html, 'Ucapan');
+        $this->assertNotFalse($ucapan);
+        $kartu = substr($html, max(0, $ucapan - 600), 700);
+        $this->assertStringContainsString('#i-mic', $kartu);
+        $this->assertStringNotContainsString('#i-volume-2', $kartu);
     }
 }

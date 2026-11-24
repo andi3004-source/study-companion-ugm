@@ -128,6 +128,19 @@ class PwaTest extends TestCase
         $this->assertStringContainsString('/audio/buku-saku/', $template);
     }
 
+    public function test_service_worker_template_uses_network_first_for_navigation(): void
+    {
+        $template = file_get_contents(resource_path('js/sw.template.js'));
+
+        $this->assertStringContainsString('networkFirstNavigation', $template);
+        $this->assertStringContainsString('NAV_TIMEOUT_MS', $template);
+        $this->assertStringContainsString('isCachedNavigation', $template);
+        $this->assertStringNotContainsString('bukuPageStrategy', $template);
+        $this->assertStringNotContainsString('stale', $template);
+        $this->assertStringContainsString('buildAssetStrategy', $template);
+        $this->assertStringContainsString('isLegacyAudioCacheName', $template);
+    }
+
     public function test_built_service_worker_exists_after_build_and_replaces_placeholders(): void
     {
         $path = public_path('sw.js');
