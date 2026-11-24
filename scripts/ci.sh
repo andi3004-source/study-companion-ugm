@@ -19,6 +19,10 @@ composer dump-autoload -q 2>/dev/null
 echo "== Build aset"
 npm run build
 
+echo "== Konfigurasi produksi aman"
+grep -q "^APP_DEBUG=false" .env.production.example || { echo "APP_DEBUG harus false di .env.production.example"; exit 1; }
+grep -q "^TRUSTED_PROXIES=\*" .env.production.example && { echo "TRUSTED_PROXIES tidak boleh *"; exit 1; }
+
 echo "== PHPUnit"
 php artisan test --compact
 

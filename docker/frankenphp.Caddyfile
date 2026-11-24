@@ -9,5 +9,8 @@
 :80 {
 	root * /var/www/html/public
 	encode zstd gzip
+	request_body {
+		max_size 3MB
+	}
 	php_server
 }
