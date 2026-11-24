@@ -1,7 +1,7 @@
 # Mockup Figma (acuan UI W1-C/W3-C)
 File: https://www.figma.com/design/rmrzsfxcFAakWCD7mljbxP/tuturnusa — page "Tuturnusa — Tunanetra v1".
 
-- Latar halaman cream `#FBF8F3`. Header: logo kiri (kotak navy 48px radius 12 berisi ikon buku oranye + "TUTURNUSA" Inter SemiBold 24 navy), tombol "Mode suara: mati" kanan (pill, border 2px navy, ikon mic, 18px SemiBold, tinggi ≥56px). Urutan DOM: tombol Mode suara sebelum logo.
+- Latar halaman **putih `#FFFFFF`** (keputusan user: bukan cream/pastel). Ketiga kartu beranda identik strukturnya: ikon, h2, deskripsi, ruang kosong, "Buka ›" selalu di dasar kartu (desktop tinggi sama 300px). Header: logo kiri (kotak navy 48px radius 12 berisi ikon buku oranye + "TUTURNUSA" Inter SemiBold 24 navy), tombol "Mode suara: mati" kanan (pill, border 2px navy, ikon mic, 18px SemiBold, tinggi ≥56px). Urutan DOM: tombol Mode suara sebelum logo.
 - Beranda: h1 "Mau belajar apa hari ini?" 48px SemiBold (mobile 34px). Kalimat petunjuk 20px ink-soft `#4F5968`. `<ul>` 3 kartu: putih, border 2px navy, radius 24, padding 32, gap 32 (mobile ditumpuk, gap 20, tinggi mengikuti isi, min 160). Isi kartu: lingkaran oranye berisi ikon navy 32px (aria-hidden), h2 30px SemiBold, deskripsi 18px ink-soft, baris "Buka ›" 18px SemiBold. Seluruh kartu adalah satu `<a>`. Fokus: cincin putih 3px + biru `#1D4ED8` sampai 6px.
   Teks kartu: Ngobrol — "Bercakap dengan teman AI. Ketik atau bicara." · Ucapan — "Ucapkan satu kata. Dengarkan apakah sudah tepat." · Buku Saku — "Dengarkan panduan kegiatan sehari-hari dan senam."
 - Footer: ikon help + tautan bergaris bawah "Bantuan dan aksesibilitas".
