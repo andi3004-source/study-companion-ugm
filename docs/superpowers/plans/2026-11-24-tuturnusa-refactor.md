@@ -52,6 +52,8 @@ Sebelum mulai setiap tugas: baca file yang akan disentuh, cari semua pemakai dan
 
 **Hasil QA-D1 untuk halaman bab (wajib):** kolom tengah 800px, teks 22px, h1 "Bab N. Judul" lalu meta, section audio dengan tombol asli (Putar/Jeda `aria-pressed`, Mundur/Maju 10 detik, ≥56px) dan `<audio preload="none">` tanpa `controls`, tautan bawah "Kembali ke daftar isi", tombol Mode suara bernama tetap dengan `aria-pressed`. Detail di bagian "Hasil QA desain Bab 1" pada rancangan.
 
+**Warna halaman putih (keputusan user, wajib):** `resources/views/layouts/study.blade.php:23` sekarang `<body class="bg-cream ...">` dengan token `cream: '#FBF8F3'` di `tailwind.config.js:44`. Ganti latar halaman menjadi **putih `#FFFFFF`** (`bg-white`, atau ubah nilai token latar ke `#FFFFFF`), dan pastikan tidak ada lagi latar krem/pastel di layar mana pun (cek `rg -n 'bg-cream|cream|card-alt|yellow-soft|mandarin-soft|english-soft' resources`). Sesuaikan juga aturan `html.kontras-tinggi .bg-cream` di `resources/css/app.css:75`. Tambahkan assertion di `StudyLayoutTest` bahwa `<body>` tidak memakai `bg-cream`.
+
 **Acuan visual (tambahan Claude):** mockup Figma file `tuturnusa` (key `rmrzsfxcFAakWCD7mljbxP`), page "Tuturnusa — Tunanetra v1": Beranda desktop/mobile, Buku Saku daftar isi, dan Bab 1. Ikuti ukuran, jarak, warna variabel `Tuturnusa tokens`, dan nama layer (berisi aturan aksesibilitas). Lihat juga ringkasan di `docs/orchestra/mockup-figma.md`.
 
 **Selesai bila** template siap menerima kontrak W1-A, Ngobrol/Ucapan/Bantuan aktif masih jalan pada rute lama, hasil build memuat Inter Variable, dan CI worktree hijau. Pemeriksaan pembaca layar manual adalah QA setelah W4.
