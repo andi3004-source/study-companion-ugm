@@ -6,6 +6,7 @@ use App\Models\MandarinHskWord;
 use Database\Seeders\MandarinHskSeeder;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\WithSmallVocabularyFixtures;
 use Tests\TestCase;
 
 /**
@@ -16,7 +17,19 @@ use Tests\TestCase;
  */
 class HskCorrectionsTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithSmallVocabularyFixtures;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->useSmallVocabularyFixtures();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeSmallVocabularyFixtures();
+        parent::tearDown();
+    }
 
     private function useFixture(): void
     {
@@ -133,7 +146,8 @@ class HskCorrectionsTest extends TestCase
         $this->seed(MandarinHskSeeder::class);
         $this->seed(MandarinHskSeeder::class); // re-seeding must not bring the wrong row back
 
-        $this->assertSame(4841, MandarinHskWord::count());
+        $expectedCount = static::hasFullMandarinCorpus() ? 4841 : 10;
+        $this->assertSame($expectedCount, MandarinHskWord::count());
         $this->assertNull($this->word('也', 'Yě'));
 
         $ye = $this->word('也', 'yě');
@@ -156,13 +170,14 @@ class HskCorrectionsTest extends TestCase
         $this->seed(MandarinHskSeeder::class);
 
         // The wrong row is left for hsk:apply-corrections; no second (也, yě) row is inserted next to it.
-        $this->assertSame(4841, MandarinHskWord::count());
+        $expectedCount = static::hasFullMandarinCorpus() ? 4841 : 10;
+        $this->assertSame($expectedCount, MandarinHskWord::count());
         $this->assertNull($this->word('也', 'yě'));
 
         $this->artisan('hsk:apply-corrections')
             ->expectsOutputToContain('updated: 5, collisions: 0, not found: 1.')
             ->assertSuccessful();
 
-        $this->assertSame(4841, MandarinHskWord::count());
+        $this->assertSame($expectedCount, MandarinHskWord::count());
     }
 }

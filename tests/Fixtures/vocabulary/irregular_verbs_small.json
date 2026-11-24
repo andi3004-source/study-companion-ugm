@@ -1,0 +1,47 @@
+[
+  {
+    "base": "be",
+    "past": "was/were",
+    "past_participle": "been",
+    "ing_form": "being",
+    "frequency_rank_raw": 2398724162,
+    "meaning_id": "menjadi/adalah",
+    "rank": 1
+  },
+  {
+    "base": "see",
+    "past": "saw",
+    "past_participle": "seen",
+    "ing_form": "seeing",
+    "frequency_rank_raw": 681410380,
+    "meaning_id": "melihat",
+    "rank": 4
+  },
+  {
+    "base": "go",
+    "past": "went",
+    "past_participle": "gone",
+    "ing_form": "going",
+    "frequency_rank_raw": 421086358,
+    "meaning_id": "pergi",
+    "rank": 7
+  },
+  {
+    "base": "eat",
+    "past": "ate",
+    "past_participle": "eaten",
+    "ing_form": "eating",
+    "frequency_rank_raw": 29237400,
+    "meaning_id": "makan",
+    "rank": 72
+  },
+  {
+    "base": "dwell",
+    "past": "dwelt",
+    "past_participle": "dwelt",
+    "ing_form": "dwelling",
+    "frequency_rank_raw": 2014411,
+    "meaning_id": "tinggal/berdiam",
+    "rank": 154
+  }
+]
