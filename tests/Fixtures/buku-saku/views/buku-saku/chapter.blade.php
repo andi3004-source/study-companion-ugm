@@ -1,0 +1,1 @@
+{{ $chapter['judul'] }}: {{ $durationSeconds }} detik
