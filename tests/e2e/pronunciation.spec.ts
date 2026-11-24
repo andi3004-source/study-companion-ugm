@@ -24,13 +24,22 @@ test.describe('Perjalanan Ucapan / Cek Pelafalan Tanpa Akun (W2-A)', () => {
     await expect(cariInput).toBeVisible();
   });
 
-  test('Pemberitahuan privasi tampil sebelum penggunaan mikrofon pertama kali', async ({ page }) => {
-
+  test('Pemberitahuan privasi muncul saat Rekam pertama kali, dan Batal tidak menyalakan mikrofon', async ({ page }) => {
     await page.goto('/pronunciation-check');
+    await page.locator('#ucapan-cari').fill('beautiful');
+    await page.locator('button[data-saran]').first().click();
 
-    // Cari pemberitahuan privasi audio / mic sesuai spesifikasi rancangan sistem §5
-    const privacyNotice = page.locator('text=/.*privasi.*(suara|rekaman|mikrofon).*/i');
-    await expect(privacyNotice.first()).toBeVisible({ timeout: 2000 });
+    await page.locator('button:has-text("Rekam suara")').click();
+    const dialog = page.locator('dialog[aria-labelledby="privasi-mikrofon-judul"]');
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toContainText('Sebelum mikrofon dipakai');
+    await expect(dialog).toContainText('24 jam');
+
+    await dialog.locator('button:has-text("Batal")').click();
+    await expect(dialog).toBeHidden();
+    // Nama aksesibel tombol tetap "Rekam suara": mikrofon tidak menyala.
+    await expect(page.getByRole('button', { name: 'Rekam suara' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Berhenti merekam' })).toHaveCount(0);
   });
 
   test('Alur cek pelafalan: cari kata -> pilih kata -> rekam -> cek -> hasil diumumkan lewat status stabil', async ({ page }) => {
@@ -52,6 +61,9 @@ test.describe('Perjalanan Ucapan / Cek Pelafalan Tanpa Akun (W2-A)', () => {
     const rekamBtn = page.locator('button:has-text("Rekam suara")');
     await expect(rekamBtn).toBeVisible();
     await rekamBtn.click();
+
+    // Pertama kali: setujui pemberitahuan privasi mikrofon dulu.
+    await page.locator('button:has-text("Saya mengerti, nyalakan mikrofon")').click();
 
     // Berhenti merekam
     const stopBtn = page.locator('button:has-text("Berhenti merekam")');
