@@ -1,0 +1,9 @@
+# Mockup Figma (acuan UI W1-C/W3-C)
+File: https://www.figma.com/design/rmrzsfxcFAakWCD7mljbxP/tuturnusa — page "Tuturnusa — Tunanetra v1".
+
+- Latar halaman cream `#FBF8F3`. Header: logo kiri (kotak navy 48px radius 12 berisi ikon buku oranye + "TUTURNUSA" Inter SemiBold 24 navy), tombol "Mode suara: mati" kanan (pill, border 2px navy, ikon mic, 18px SemiBold, tinggi ≥56px). Urutan DOM: tombol Mode suara sebelum logo.
+- Beranda: h1 "Mau belajar apa hari ini?" 48px SemiBold (mobile 34px). Kalimat petunjuk 20px ink-soft `#4F5968`. `<ul>` 3 kartu: putih, border 2px navy, radius 24, padding 32, gap 32 (mobile ditumpuk, gap 20, tinggi mengikuti isi, min 160). Isi kartu: lingkaran oranye berisi ikon navy 32px (aria-hidden), h2 30px SemiBold, deskripsi 18px ink-soft, baris "Buka ›" 18px SemiBold. Seluruh kartu adalah satu `<a>`. Fokus: cincin putih 3px + biru `#1D4ED8` sampai 6px.
+  Teks kartu: Ngobrol — "Bercakap dengan teman AI. Ketik atau bicara." · Ucapan — "Ucapkan satu kata. Dengarkan apakah sudah tepat." · Buku Saku — "Dengarkan panduan kegiatan sehari-hari dan senam."
+- Footer: ikon help + tautan bergaris bawah "Bantuan dan aksesibilitas".
+- Buku Saku daftar isi: kolom baca 720px. Tautan "← Beranda", h1 judul buku 44px, ringkasan 20px, h2 per Bagian 26px, lalu `<ol>` baris bab: putih, border 2px navy, radius 16, min tinggi 64, lingkaran nomor oranye 44px, "Bab N. Judul" 20px SemiBold, chevron.
+- Halaman bab: nav "← Beranda" dan "Daftar isi", meta "Bab 1 dari 15 · Bagian …" 18px, h1 44px, kotak audio (putih, border 2px, radius 20): judul "Audio narasi · durasi X menit Y detik", `<audio controls preload="none">`, kalimat "Dengarkan narasi, atau baca teks di bawah dengan pembaca layarmu. Audio tidak diputar sendiri." Lalu h2 28px "Alat dan bahan", "Langkah-langkah" (`<ol>` 20px, line-height 1.6), "Patokan indra" dalam kotak kuning lembut `#FDEBC0` + border 2px navy. Di bawah: tombol pill "Daftar isi" dan "Bab N+1: …".
