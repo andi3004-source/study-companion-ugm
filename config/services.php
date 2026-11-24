@@ -50,6 +50,26 @@ return [
         'model' => env('GEMINI_MODEL', 'gemini-3.6-flash'),
     ],
 
+    // Any OpenAI-compatible /chat/completions endpoint: a local router
+    // (9router, LiteLLM, Ollama, llama.cpp, vLLM) or hosted OpenRouter.
+    // Selected with AI_PROVIDER=openai_compatible (see the AiClient binding
+    // in AppServiceProvider). The model name must match what the endpoint
+    // serves — list them with: curl $BASE_URL/models -H "Authorization:
+    // Bearer $OPENAI_COMPATIBLE_API_KEY".
+    'openai_compatible' => [
+        'key' => env('OPENAI_COMPATIBLE_API_KEY'),
+        'model' => env('OPENAI_COMPATIBLE_MODEL', 'default'),
+        // Vision model for "Raba lalu dengar" (must be vision-capable;
+        // the text model above is often text-only, e.g. 9router-combo1).
+        'vision_model' => env('OPENAI_COMPATIBLE_VISION_MODEL', 'gemini/gemini-3.6-flash'),
+        'base_url' => env('OPENAI_COMPATIBLE_BASE_URL', 'http://127.0.0.1:20128/v1'),
+    ],
+
+    // Active Conversation Partner LLM provider: gemini (default),
+    // anthropic, or openai_compatible. Only the binding + model change —
+    // nothing in ConversationService needs to change.
+    'ai_provider' => env('AI_PROVIDER', 'gemini'),
+
     // IBM Langflow flow for the end-of-session error analysis ("Kesalahan
     // terbanyakmu"). Used only when url AND flow_id are set; otherwise, and
     // whenever a Langflow call fails, the analysis goes through Gemini (see

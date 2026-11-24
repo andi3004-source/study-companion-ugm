@@ -51,7 +51,9 @@ Lihat `.env.example` untuk keterangan dan nilai bawaan. Variabel utama:
 | `DB_CONNECTION` | `sqlite` |
 | `SESSION_DRIVER`, `QUEUE_CONNECTION`, `CACHE_STORE` | Driver sesi, antrean, dan cache |
 | `MAIL_*` | Pengiriman email (verifikasi, reset password) |
-| `GEMINI_API_KEY`, `GEMINI_MODEL` | Provider AI aktif: percakapan dan `translate:meanings` |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Provider AI bawaan: percakapan dan `translate:meanings` |
+| `AI_PROVIDER` | `gemini` (bawaan), `anthropic`, atau `openai_compatible` |
+| `OPENAI_COMPATIBLE_API_KEY`, `OPENAI_COMPATIBLE_MODEL`, `OPENAI_COMPATIBLE_BASE_URL` | Endpoint OpenAI-compatible (`/chat/completions`) bila `AI_PROVIDER=openai_compatible`: router lokal (9router, LiteLLM, Ollama, llama.cpp, vLLM) atau OpenRouter. Nama model harus sama dengan yang disajikan endpoint (`curl $OPENAI_COMPATIBLE_BASE_URL/models`) |
 | `DAILY_MESSAGE_LIMIT` | Pesan Ngobrol per pengguna per hari (bawaan 50; bilangan bulat 1-1000, nilai lain kembali ke 50) |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Provider AI alternatif (tidak aktif) |
 | `PRONUNCIATION_SERVICE_URL`, `PRONUNCIATION_CHECKER_DRIVER` | Layanan cek pelafalan (`ml` atau `stt_match`) |
@@ -59,6 +61,24 @@ Lihat `.env.example` untuk keterangan dan nilai bawaan. Variabel utama:
 | `HSK_LEVEL_LOCK` | `true`/`false`: kunci percakapan Mandarin ke kosakata HSK 1 |
 
 Jangan commit `.env`.
+
+### Provider AI lewat router lokal
+
+Bila `AI_PROVIDER=openai_compatible`, Ngobrol, analisis kesalahan (jalur
+cadangan Gemini), dan `translate:meanings` semuanya lewat endpoint di
+`OPENAI_COMPATIBLE_BASE_URL` dengan key `OPENAI_COMPATIBLE_API_KEY` — tanpa
+perubahan kode, karena ketiganya memakai kontrak `AiClient` yang sama.
+Contoh untuk 9router di mesin yang sama:
+
+```
+AI_PROVIDER=openai_compatible
+OPENAI_COMPATIBLE_API_KEY=<key 9router>
+OPENAI_COMPATIBLE_MODEL=<nama model di 9router>
+OPENAI_COMPATIBLE_BASE_URL=http://127.0.0.1:20128/v1
+```
+
+Catatan: "Raba lalu dengar" (visi) tetap memakai Gemini langsung, jadi tanpa
+`GEMINI_API_KEY` ia selalu menjawab "tidak yakin".
 
 ## Deploy ke Laravel Cloud
 
@@ -559,21 +579,24 @@ dan Mandarin (`/scan-benda`).
   tautannya tidak tampil di navigasi. Pengaturan lain ada di `config/scan.php`
   (`SCAN_BENDA_MAX_IMAGE_BYTES`, `SCAN_BENDA_RATE_LIMIT_PER_MINUTE`,
   `SCAN_BENDA_TIMEOUT`).
-- **Daftar tertutup.** Model visi (Gemini, memakai `GEMINI_API_KEY` dan
-  `GEMINI_MODEL`) hanya boleh memilih `benda_id` dari entri `ikut_prompt: true`
+- **Daftar tertutup.** Model visi hanya boleh memilih `benda_id` dari entri `ikut_prompt: true`
   di `storage/app/seed-data/daftar_benda_tertutup.json` (lewat
   `KataBicaraCatalog`), atau menjawab "tidak yakin" atau "perlu foto ulang".
   Nama Indonesia, Inggris, hanzi, pinyin, dan IPA selalu diambil dari katalog,
   tidak pernah dari teks model. `benda_id` di luar daftar dianggap "tidak
-  yakin". Tanpa `GEMINI_API_KEY`, aplikasi selalu menjawab "tidak yakin"
-  (catatan: model visi belum terhubung).
+  yakin". Penyedianya dipilih otomatis: Gemini langsung bila `GEMINI_API_KEY`
+  terisi (`GEMINI_MODEL`), kalau tidak, endpoint OpenAI-compatible bila
+  `OPENAI_COMPATIBLE_API_KEY` terisi (`OPENAI_COMPATIBLE_VISION_MODEL`, cth.
+  `gemini/gemini-3.6-flash` di 9router). Tanpa keduanya, aplikasi selalu
+  menjawab "tidak yakin".
 - **Hanya keyakinan tinggi yang diumumkan pasti.** Keyakinan sedang atau rendah
   diumumkan sebagai "Mungkin …" dengan tawaran foto ulang.
 - **Foto tidak disimpan.** Foto dikompres di browser (sisi terpanjang sekitar
   1024 px, JPEG), dikirim sebagai base64 di badan JSON, diproses di memori,
   lalu dibuang. Tidak ada berkas gambar di storage, tidak ada kolom basis
   data, tidak memakai unggahan sementara Livewire, dan gambar maupun teks
-  model tidak ditulis ke log. Foto memang dikirim ke layanan Gemini untuk
+  model tidak ditulis ke log. Foto memang dikirim ke layanan pengenal visi
+  (Gemini langsung, atau router di `OPENAI_COMPATIBLE_BASE_URL`) untuk
   dikenali; pengguna harus mencentang persetujuan dulu.
 - **Pratinjau foto hanya tampil di layar.** Foto yang sama (versi sekitar
   1024 px) ditampilkan di samping hasil lewat object URL di browser, dengan

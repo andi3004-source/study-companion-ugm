@@ -6,13 +6,16 @@ use App\Contracts\AiClient;
 use App\Contracts\ObjectRecognizer;
 use App\Contracts\PronunciationChecker;
 use App\Contracts\SessionAnalyzer;
+use App\Services\AnthropicClient;
 use App\Services\FallbackSessionAnalyzer;
 use App\Services\GeminiClient;
 use App\Services\GeminiSessionAnalyzer;
 use App\Services\LangflowSessionAnalyzer;
 use App\Services\MlPronunciationChecker;
+use App\Services\OpenAiCompatibleClient;
 use App\Services\Scan\GeminiObjectRecognizer;
 use App\Services\Scan\NullObjectRecognizer;
+use App\Services\Scan\OpenAiVisionRecognizer;
 use App\Services\SttMatchPronunciationChecker;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Middleware\TrustProxies;
@@ -30,11 +33,23 @@ class AppServiceProvider extends ServiceProvider
     {
         // Active Conversation Partner LLM provider + its model name, set together
         // so ConversationService (config('services.active_ai_model')) never has to
-        // hardcode a provider-specific config key. Swap both lines to
-        // AnthropicClient::class / 'services.anthropic.model' to go back to Claude
-        // — nothing in ConversationService needs to change.
-        $this->app->bind(AiClient::class, GeminiClient::class);
-        config(['services.active_ai_model' => config('services.gemini.model')]);
+        // hardcode a provider-specific config key. AI_PROVIDER=openai_compatible
+        // talks to any OpenAI-compatible endpoint (local 9router, LiteLLM,
+        // Ollama, ...); AI_PROVIDER=anthropic goes back to Claude — nothing in
+        // ConversationService needs to change either way.
+        $provider = config('services.ai_provider', 'gemini');
+        $client = match ($provider) {
+            'anthropic' => AnthropicClient::class,
+            'openai_compatible' => OpenAiCompatibleClient::class,
+            default => GeminiClient::class,
+        };
+        $modelKey = match ($provider) {
+            'anthropic' => 'services.anthropic.model',
+            'openai_compatible' => 'services.openai_compatible.model',
+            default => 'services.gemini.model',
+        };
+        $this->app->bind(AiClient::class, $client);
+        config(['services.active_ai_model' => config($modelKey)]);
 
         // End-of-session error analysis: the Langflow flow when it's configured
         // (falling back to Gemini on any Langflow failure), otherwise Gemini.
@@ -57,11 +72,17 @@ class AppServiceProvider extends ServiceProvider
             };
         });
 
-        // "Raba lalu dengar": Gemini vision when a key is set, otherwise a
-        // recognizer that always answers tidak_yakin instead of guessing.
+        // "Raba lalu dengar": Gemini vision when a key is set, otherwise the
+        // OpenAI-compatible vision endpoint when ITS key is set (local
+        // 9router, OpenRouter, ...), otherwise a recognizer that always
+        // answers tidak_yakin instead of guessing.
         $this->app->bind(ObjectRecognizer::class, function ($app) {
-            return filled(config('services.gemini.key'))
-                ? $app->make(GeminiObjectRecognizer::class)
+            if (filled(config('services.gemini.key'))) {
+                return $app->make(GeminiObjectRecognizer::class);
+            }
+
+            return filled(config('services.openai_compatible.key'))
+                ? $app->make(OpenAiVisionRecognizer::class)
                 : $app->make(NullObjectRecognizer::class);
         });
     }

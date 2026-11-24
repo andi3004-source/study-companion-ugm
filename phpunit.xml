@@ -33,6 +33,11 @@
         <env name="GEMINI_MODEL" value="gemini-3.6-flash" force="true"/>
         <env name="ANTHROPIC_API_KEY" value="" force="true"/>
         <env name="ANTHROPIC_MODEL" value="claude-haiku-4-5-20251001" force="true"/>
+        <env name="AI_PROVIDER" value="gemini" force="true"/>
+        <env name="OPENAI_COMPATIBLE_API_KEY" value="" force="true"/>
+        <env name="OPENAI_COMPATIBLE_MODEL" value="default" force="true"/>
+        <env name="OPENAI_COMPATIBLE_BASE_URL" value="http://127.0.0.1:20128/v1" force="true"/>
+        <env name="OPENAI_COMPATIBLE_VISION_MODEL" value="vision-model-uji" force="true"/>
         <env name="LANGFLOW_URL" value="" force="true"/>
         <env name="LANGFLOW_FLOW_ID" value="" force="true"/>
         <env name="LANGFLOW_API_KEY" value="" force="true"/>
@@ -58,6 +63,11 @@
         <server name="GEMINI_MODEL" value="gemini-3.6-flash" force="true"/>
         <server name="ANTHROPIC_API_KEY" value="" force="true"/>
         <server name="ANTHROPIC_MODEL" value="claude-haiku-4-5-20251001" force="true"/>
+        <server name="AI_PROVIDER" value="gemini" force="true"/>
+        <server name="OPENAI_COMPATIBLE_API_KEY" value="" force="true"/>
+        <server name="OPENAI_COMPATIBLE_MODEL" value="default" force="true"/>
+        <server name="OPENAI_COMPATIBLE_BASE_URL" value="http://127.0.0.1:20128/v1" force="true"/>
+        <server name="OPENAI_COMPATIBLE_VISION_MODEL" value="vision-model-uji" force="true"/>
         <server name="LANGFLOW_URL" value="" force="true"/>
         <server name="LANGFLOW_FLOW_ID" value="" force="true"/>
         <server name="LANGFLOW_API_KEY" value="" force="true"/>
