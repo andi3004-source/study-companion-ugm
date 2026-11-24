@@ -140,3 +140,4 @@ Reviewer: Claude, Codex, Cursor (`docs/research/qa-desain-bab1-*.md`). Antigravi
 - **Tautan bawah** bernama "Kembali ke daftar isi" (beda dengan "Daftar isi" di atas).
 - **Istilah (keputusan user):** judul bagian "Patokan indra" (Buku Saku Mandiri) menjadi **"Cara tahu sudah benar"**; "Patokan rasa dan napas" (Senam Dasar) menjadi **"Yang kamu rasakan"**. Isi tetap dari buku. Catatan: di PDF Senam Dasar hanya 11 dari 12 gerakan memuat "Patokan rasa dan napas" — W1-G wajib memeriksa gerakan yang tidak punya.
 - Teks penjelasan minimal 18px.
+- **Semua permukaan putih** (keputusan user): tidak ada latar pastel/berwarna di layar maupun kotak catatan; blok dibedakan dengan border navy 2px, oranye hanya aksen.
