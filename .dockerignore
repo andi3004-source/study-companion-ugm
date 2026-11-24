@@ -22,7 +22,6 @@ storage/app/public/*
 storage/app/langflow-last-response.json
 bootstrap/cache/*.php
 tests
-files (1)
 pronunciation-service
 hasil-tes.txt
 *.log

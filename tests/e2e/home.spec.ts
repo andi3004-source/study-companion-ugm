@@ -42,8 +42,6 @@ test.describe('Beranda Tiga Fitur & PWA (W2-A & W3-P)', () => {
   });
 
   test('Section PWA Pasang Aplikasi tersembunyi secara default', async ({ page }) => {
-    // BUG: tombol #tombol-pasang-aplikasi memiliki atribut hidden tapi tetap tampil (visible) karena ditimpa CSS inline-flex
-    test.fail(true, 'BUG: tombol-pasang-aplikasi memiliki atribut hidden tapi tetap tampil (visible) karena ditimpa utility class inline-flex');
 
     await page.goto('/');
 

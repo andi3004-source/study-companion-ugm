@@ -42,7 +42,7 @@ trait WithSmallVocabularyFixtures
     protected function skipWithoutFullVocabularyCorpus(string $reason = ''): void
     {
         if (! static::hasFullVocabularyCorpus()) {
-            $msg = 'Berkas korpus penuh storage/app/seed-data/{mandarin_hsk1to6_complete,irregular_verbs_183_complete,english_vocab_cefr_10674}.json tidak ditemukan. Sediakan berkas lengkap dari files (1)/ ke storage/app/seed-data/ untuk menguji seluruh korpus.';
+            $msg = 'Berkas korpus penuh storage/app/seed-data/{mandarin_hsk1to6_complete,irregular_verbs_183_complete,english_vocab_cefr_10674}.json tidak ditemukan. Ambil berkas dari riwayat git ke storage/app/seed-data/ (lihat README, bagian app:seed-content) untuk menguji seluruh korpus.';
             if ($reason !== '') {
                 $msg .= ' ('.$reason.')';
             }
@@ -53,7 +53,7 @@ trait WithSmallVocabularyFixtures
     protected function skipWithoutFullMandarinCorpus(string $reason = ''): void
     {
         if (! static::hasFullMandarinCorpus()) {
-            $msg = 'Berkas korpus penuh storage/app/seed-data/mandarin_hsk1to6_complete.json tidak ditemukan. Sediakan berkas lengkap dari files (1)/ ke storage/app/seed-data/ untuk menguji seluruh korpus Mandarin.';
+            $msg = 'Berkas korpus penuh storage/app/seed-data/mandarin_hsk1to6_complete.json tidak ditemukan. Ambil berkas dari riwayat git ke storage/app/seed-data/ (lihat README, bagian app:seed-content) untuk menguji seluruh korpus Mandarin.';
             if ($reason !== '') {
                 $msg .= ' ('.$reason.')';
             }
@@ -64,7 +64,7 @@ trait WithSmallVocabularyFixtures
     protected function skipWithoutFullVerbCorpus(string $reason = ''): void
     {
         if (! static::hasFullVerbCorpus()) {
-            $msg = 'Berkas korpus penuh storage/app/seed-data/irregular_verbs_183_complete.json tidak ditemukan. Sediakan berkas lengkap dari files (1)/ ke storage/app/seed-data/ untuk menguji seluruh korpus kata kerja tak beraturan.';
+            $msg = 'Berkas korpus penuh storage/app/seed-data/irregular_verbs_183_complete.json tidak ditemukan. Ambil berkas dari riwayat git ke storage/app/seed-data/ (lihat README, bagian app:seed-content) untuk menguji seluruh korpus kata kerja tak beraturan.';
             if ($reason !== '') {
                 $msg .= ' ('.$reason.')';
             }
@@ -75,7 +75,7 @@ trait WithSmallVocabularyFixtures
     protected function skipWithoutFullEnglishCorpus(string $reason = ''): void
     {
         if (! static::hasFullEnglishCorpus()) {
-            $msg = 'Berkas korpus penuh storage/app/seed-data/english_vocab_cefr_10674.json tidak ditemukan. Sediakan berkas lengkap dari files (1)/ ke storage/app/seed-data/ untuk menguji seluruh korpus kosakata bahasa Inggris.';
+            $msg = 'Berkas korpus penuh storage/app/seed-data/english_vocab_cefr_10674.json tidak ditemukan. Ambil berkas dari riwayat git ke storage/app/seed-data/ (lihat README, bagian app:seed-content) untuk menguji seluruh korpus kosakata bahasa Inggris.';
             if ($reason !== '') {
                 $msg .= ' ('.$reason.')';
             }

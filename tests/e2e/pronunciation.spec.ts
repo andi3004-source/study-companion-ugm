@@ -25,8 +25,6 @@ test.describe('Perjalanan Ucapan / Cek Pelafalan Tanpa Akun (W2-A)', () => {
   });
 
   test('Pemberitahuan privasi tampil sebelum penggunaan mikrofon pertama kali', async ({ page }) => {
-    // BUG: Halaman /pronunciation-check tidak menampilkan pemberitahuan privasi sebelum mikrofon pertama kali digunakan
-    test.fail(true, 'BUG: Halaman /pronunciation-check belum memuat pemberitahuan privasi mikrofon sesuai spesifikasi');
 
     await page.goto('/pronunciation-check');
 

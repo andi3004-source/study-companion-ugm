@@ -126,9 +126,20 @@ php artisan queue:work --tries=3
 php artisan app:seed-content
 ```
 
-`app:seed-content` membutuhkan berkas besar yang tidak di-commit (lihat
-"Mengisi konten"). Tanpa berkas itu, perintah melewati seeder terkait dan
-keluar dengan status gagal.
+`app:seed-content` membutuhkan tiga berkas kosakata besar (kamus Ucapan) di
+`storage/app/seed-data/`: `mandarin_hsk1to6_complete.json`,
+`irregular_verbs_183_complete.json`, `english_vocab_cefr_10674.json`. Berkas itu
+tidak lagi ada di pohon repo (folder lama `files (1)/` sudah dihapus); ambil dari
+riwayat git:
+
+```
+git show 9d2584b:"files (1)/mandarin_hsk1to6_complete.json" > storage/app/seed-data/mandarin_hsk1to6_complete.json
+git show 9d2584b:"files (1)/irregular_verbs_183_complete.json" > storage/app/seed-data/irregular_verbs_183_complete.json
+git show 9d2584b:"files (1)/english_vocab_cefr_10674.json" > storage/app/seed-data/english_vocab_cefr_10674.json
+```
+
+Tanpa berkas itu, perintah melewati seeder terkait dan keluar dengan status gagal.
+CI tidak membutuhkannya (tes memakai fixture kecil di `tests/Fixtures/vocabulary/`).
 
 **Variabel lingkungan** (nama saja; nilai diisi di dasbor Laravel Cloud, jangan
 di-commit):
