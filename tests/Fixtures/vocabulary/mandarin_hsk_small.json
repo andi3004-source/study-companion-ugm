@@ -1,0 +1,288 @@
+{
+  "1": [
+    {
+      "hanzi": "个",
+      "traditional": "個",
+      "pinyin": "gě",
+      "meaning_en": "used in 自个儿",
+      "pos": [
+        "q",
+        "g"
+      ],
+      "radical": "丨",
+      "frequency": 19,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "都",
+      "traditional": "都",
+      "pinyin": "Dū",
+      "meaning_en": "surname Du",
+      "pos": [
+        "d",
+        "g"
+      ],
+      "radical": "阝",
+      "frequency": 25,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "看",
+      "traditional": "看",
+      "pinyin": "kān",
+      "meaning_en": "to look after; to take care of; to watch; to guard",
+      "pos": [
+        "v",
+        "u"
+      ],
+      "radical": "目",
+      "frequency": 52,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "吗",
+      "traditional": "嗎",
+      "pinyin": "má",
+      "meaning_en": "(coll.) what?",
+      "pos": [
+        "y"
+      ],
+      "radical": "口",
+      "frequency": 83,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "爱",
+      "traditional": "愛",
+      "pinyin": "ài",
+      "meaning_en": "to love; to be fond of; to like; affection; to be inclined (to do sth); to tend to (happen)",
+      "pos": [
+        "v",
+        "vn",
+        "b"
+      ],
+      "radical": "爫",
+      "frequency": 130,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "听",
+      "traditional": "听",
+      "pinyin": "yǐn",
+      "meaning_en": "smile (archaic)",
+      "pos": [
+        "v"
+      ],
+      "radical": "口",
+      "frequency": 190,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "读",
+      "traditional": "讀",
+      "pinyin": "dòu",
+      "meaning_en": "comma; phrase marked by pause",
+      "pos": [
+        "v"
+      ],
+      "radical": "讠",
+      "frequency": 1013,
+      "hsk_level_old": 1,
+      "hsk_level_new": 1,
+      "classifiers": []
+    }
+  ],
+  "2": [
+    {
+      "hanzi": "也",
+      "traditional": "也",
+      "pinyin": "Yě",
+      "meaning_en": "surname Ye",
+      "pos": [
+        "d",
+        "y",
+        "u",
+        "b"
+      ],
+      "radical": "乚",
+      "frequency": 23,
+      "hsk_level_old": 2,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "高",
+      "traditional": "高",
+      "pinyin": "Gāo",
+      "meaning_en": "surname Gao",
+      "pos": [
+        "a",
+        "ad",
+        "v",
+        "g"
+      ],
+      "radical": "高",
+      "frequency": 290,
+      "hsk_level_old": 2,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "张",
+      "traditional": "張",
+      "pinyin": "Zhāng",
+      "meaning_en": "surname Zhang",
+      "pos": [
+        "q",
+        "nr",
+        "v",
+        "g"
+      ],
+      "radical": "弓",
+      "frequency": 316,
+      "hsk_level_old": 2,
+      "hsk_level_new": 3,
+      "classifiers": []
+    },
+    {
+      "hanzi": "白",
+      "traditional": "白",
+      "pinyin": "Bái",
+      "meaning_en": "surname Bai",
+      "pos": [
+        "a",
+        "nr",
+        "d",
+        "b",
+        "v",
+        "g"
+      ],
+      "radical": "白",
+      "frequency": 930,
+      "hsk_level_old": 2,
+      "hsk_level_new": 1,
+      "classifiers": []
+    }
+  ],
+  "3": [
+    {
+      "hanzi": "花",
+      "traditional": "花",
+      "pinyin": "Huā",
+      "meaning_en": "surname Hua",
+      "pos": [
+        "v",
+        "n",
+        "a"
+      ],
+      "radical": "艹",
+      "frequency": 435,
+      "hsk_level_old": 3,
+      "hsk_level_new": 1,
+      "classifiers": []
+    },
+    {
+      "hanzi": "照片",
+      "traditional": "照片",
+      "pinyin": "zhào piàn",
+      "meaning_en": "photograph; picture",
+      "pos": [
+        "n"
+      ],
+      "radical": "灬",
+      "frequency": 766,
+      "hsk_level_old": 3,
+      "hsk_level_new": 2,
+      "classifiers": [
+        "张",
+        "套",
+        "幅"
+      ]
+    },
+    {
+      "hanzi": "爱好",
+      "traditional": "愛好",
+      "pinyin": "ài hào",
+      "meaning_en": "to like; to be fond of; to take pleasure in; to be keen on; interest; hobby",
+      "pos": [
+        "n",
+        "v"
+      ],
+      "radical": "爫",
+      "frequency": 4902,
+      "hsk_level_old": 3,
+      "hsk_level_new": 1,
+      "classifiers": [
+        "个"
+      ]
+    }
+  ],
+  "4": [
+    {
+      "hanzi": "对",
+      "traditional": "對",
+      "pinyin": "duì",
+      "meaning_en": "right; correct; towards; at; for; concerning; regarding; to treat (sb a certain way); to face; (bound form) opposite; facing; matching; to match together; to adjust; to fit; to suit; to answer; to reply; to add; to pour in (a fluid); to check; to compare; classifier: couple; pair",
+      "pos": [
+        "p",
+        "v",
+        "q",
+        "a"
+      ],
+      "radical": "寸",
+      "frequency": 28,
+      "hsk_level_old": 4,
+      "hsk_level_new": 1,
+      "classifiers": []
+    }
+  ],
+  "5": [
+    {
+      "hanzi": "所",
+      "traditional": "所",
+      "pinyin": "suǒ",
+      "meaning_en": "actually; place; classifier for houses, small buildings, institutions etc; that which; particle introducing a relative clause or passive",
+      "pos": [
+        "u",
+        "q",
+        "n"
+      ],
+      "radical": "户",
+      "frequency": 159,
+      "hsk_level_old": 5,
+      "hsk_level_new": 3,
+      "classifiers": [
+        "个"
+      ]
+    }
+  ],
+  "6": [
+    {
+      "hanzi": "哦",
+      "traditional": "哦",
+      "pinyin": "é",
+      "meaning_en": "to chant",
+      "pos": [
+        "o",
+        "e"
+      ],
+      "radical": "口",
+      "frequency": 186,
+      "hsk_level_old": 6,
+      "hsk_level_new": 7,
+      "classifiers": []
+    }
+  ]
+}

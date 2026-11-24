@@ -9,11 +9,12 @@ use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Tests\Concerns\WithSmallVocabularyFixtures;
 use Tests\TestCase;
 
 class SeedContentCommandTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithSmallVocabularyFixtures;
 
     private const TABLES = [
         'mandarin_words', 'irregular_verbs', 'ielts_vocab', 'week_topics', 'past_tense_steps', 'mandarin_week_grammar',
@@ -73,6 +74,27 @@ class SeedContentCommandTest extends TestCase
 
         $this->assertSame($before, $this->counts($content));
         $this->assertSame(0, User::count());
+    }
+
+    public function test_command_seeds_content_with_fixtures_and_is_idempotent(): void
+    {
+        $this->useSmallVocabularyFixtures();
+
+        try {
+            $content = [...self::TABLES, 'mandarin_hsk_words', 'irregular_verbs_reference', 'english_vocab'];
+
+            $this->artisan('app:seed-content')->expectsOutputToContain('Konten siap.')->assertSuccessful();
+            $before = $this->counts($content);
+            $this->assertGreaterThan(0, $before['english_vocab']);
+            $this->assertGreaterThan(0, $before['mandarin_hsk_words']);
+            $this->assertGreaterThan(0, $before['irregular_verbs_reference']);
+            $this->artisan('app:seed-content')->assertSuccessful();
+
+            $this->assertSame($before, $this->counts($content));
+            $this->assertSame(0, User::count());
+        } finally {
+            $this->removeSmallVocabularyFixtures();
+        }
     }
 
     public function test_command_is_registered_with_the_expected_name(): void

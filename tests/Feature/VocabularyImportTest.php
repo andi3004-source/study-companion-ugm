@@ -14,11 +14,24 @@ use Database\Seeders\MandarinHskSeeder;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
+use Tests\Concerns\WithSmallVocabularyFixtures;
 use Tests\TestCase;
 
 class VocabularyImportTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithSmallVocabularyFixtures;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->useSmallVocabularyFixtures();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeSmallVocabularyFixtures();
+        parent::tearDown();
+    }
 
     public function test_migrations_add_expected_schema(): void
     {
@@ -36,6 +49,8 @@ class VocabularyImportTest extends TestCase
 
     public function test_seeders_import_expected_row_counts(): void
     {
+        $this->skipWithoutFullVocabularyCorpus('menguji jumlah baris korpus penuh 10.674/183/4.841');
+
         $this->seed(ReferenceDataSeeder::class);
         $this->seed(MandarinHskSeeder::class);
         $this->seed(IrregularVerbSeeder::class);
@@ -61,14 +76,18 @@ class VocabularyImportTest extends TestCase
         $this->seed(IrregularVerbSeeder::class);
         $this->seed(EnglishVocabSeeder::class);
 
+        $expectedHsk = static::hasFullMandarinCorpus() ? 4841 : MandarinHskWord::count();
+        $expectedVerb = static::hasFullVerbCorpus() ? 183 : IrregularVerbReference::count();
+        $expectedEnglish = static::hasFullEnglishCorpus() ? 10674 : EnglishVocab::count();
+
         $this->seed(MandarinHskSeeder::class);
         $this->seed(IrregularVerbSeeder::class);
         $this->seed(EnglishVocabSeeder::class);
 
         $this->assertSame(150, MandarinWord::count());
-        $this->assertSame(4841, MandarinHskWord::count());
-        $this->assertSame(183, IrregularVerbReference::count());
-        $this->assertSame(10674, EnglishVocab::count());
+        $this->assertSame($expectedHsk, MandarinHskWord::count());
+        $this->assertSame($expectedVerb, IrregularVerbReference::count());
+        $this->assertSame($expectedEnglish, EnglishVocab::count());
     }
 
     public function test_hsk1_curriculum_rows_keep_identity_but_get_enriched_content(): void

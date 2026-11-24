@@ -14,20 +14,29 @@ use Database\Seeders\MandarinHskSeeder;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\WithSmallVocabularyFixtures;
 use Tests\TestCase;
 
 class CardsDeckTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithSmallVocabularyFixtures;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->useSmallVocabularyFixtures();
+
         $this->seed(ReferenceDataSeeder::class);
         $this->seed(MandarinHskSeeder::class);
         $this->seed(IrregularVerbSeeder::class);
         $this->seed(EnglishVocabSeeder::class);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeSmallVocabularyFixtures();
+        parent::tearDown();
     }
 
     protected function onboardedUser(): User
@@ -48,6 +57,8 @@ class CardsDeckTest extends TestCase
 
     public function test_mandarin_deck_hsk4_shows_only_hsk4_words(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji jumlah lengkap 598 kartu HSK4');
+
         $component = Livewire::actingAs($this->onboardedUser())->test(Deck::class, ['deck' => 'mandarin'])
             ->call('setMandarinLevel', '4');
 
@@ -61,6 +72,8 @@ class CardsDeckTest extends TestCase
 
     public function test_mandarin_deck_semua_shows_the_full_union(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji jumlah lengkap 4.991 kartu HSK semua level');
+
         $component = Livewire::actingAs($this->onboardedUser())->test(Deck::class, ['deck' => 'mandarin'])
             ->call('setMandarinLevel', 'all');
 
@@ -81,6 +94,8 @@ class CardsDeckTest extends TestCase
 
     public function test_setting_the_mandarin_level_clears_a_batch_filter(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji jumlah lengkap 147 kartu HSK2');
+
         $component = Livewire::actingAs($this->onboardedUser())->test(Deck::class, ['deck' => 'mandarin'])
             ->set('batch', 1)
             ->call('setMandarinLevel', '2');
@@ -105,6 +120,8 @@ class CardsDeckTest extends TestCase
 
     public function test_verb_deck_shows_183_cards_from_the_reference_table(): void
     {
+        $this->skipWithoutFullVerbCorpus('menguji jumlah lengkap 183 kartu kata kerja');
+
         Livewire::actingAs($this->onboardedUser())->test(Deck::class, ['deck' => 'verb'])
             ->assertCount('cards', 183)
             ->assertSee('1 / 183', false);
@@ -141,6 +158,8 @@ class CardsDeckTest extends TestCase
 
     public function test_hide_known_on_one_level_does_not_hide_cards_on_another_level(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji jumlah lengkap 1.298 kartu HSK5');
+
         $user = $this->onboardedUser();
 
         $component = Livewire::actingAs($user)->test(Deck::class, ['deck' => 'mandarin'])

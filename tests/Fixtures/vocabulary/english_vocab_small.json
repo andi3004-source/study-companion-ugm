@@ -1,0 +1,275 @@
+[
+  {
+    "word": "beautiful",
+    "pos": "adj.",
+    "definition": "pleasing to the senses or mind",
+    "hint": "very pretty",
+    "level": "A1",
+    "cats": [
+      "city",
+      "weather",
+      "family",
+      "shopping"
+    ],
+    "examples": [
+      {
+        "en": "The city looks beautiful at night.",
+        "translations": {
+          "th": "เมืองสวยงามในเวลากลางคืน",
+          "zh": "城市在夜晚看起来很美。",
+          "es": "La ciudad se ve hermosa de noche.",
+          "fr": "La ville est belle la nuit.",
+          "ja": "街は夜美しいです。",
+          "ko": "도시가 밤에 아름답습니다."
+        }
+      }
+    ],
+    "translations": {
+      "th": "สวยงาม",
+      "zh": "美丽的",
+      "es": "hermoso",
+      "fr": "beau",
+      "ja": "美しい",
+      "ko": "아름다운"
+    },
+    "ipa": "ˈbjuː.tɪ.fəl",
+    "id": 3977,
+    "synonyms": [
+      "lovely",
+      "gorgeous",
+      "stunning"
+    ],
+    "oxford": 3000
+  },
+  {
+    "id": 429,
+    "word": "eat",
+    "pos": "v.",
+    "definition": "put food in mouth",
+    "hint": "food",
+    "level": "A1",
+    "cats": [
+      "daily",
+      "food"
+    ],
+    "examples": [
+      {
+        "en": "I eat rice.",
+        "translations": {
+          "th": "ฉันกินข้าว",
+          "zh": "我吃米饭。",
+          "es": "Como arroz.",
+          "fr": "Je mange du riz.",
+          "ja": "ご飯を食べる。",
+          "ko": "밥을 먹는다."
+        }
+      }
+    ],
+    "translations": {
+      "th": "กิน",
+      "zh": "吃",
+      "es": "comer",
+      "fr": "manger",
+      "ja": "食べる",
+      "ko": "먹다"
+    },
+    "ipa": "it",
+    "synonyms": [
+      "consume",
+      "dine",
+      "devour"
+    ],
+    "oxford": 3000
+  },
+  {
+    "id": 1058,
+    "word": "study",
+    "pos": "v.",
+    "definition": "to learn about something",
+    "examples": [
+      {
+        "en": "Study hard for the test.",
+        "translations": {
+          "th": "เรียนหนักเพื่อสอบ",
+          "zh": "努力学习备考。",
+          "es": "Estudia duro para el examen.",
+          "fr": "Étudie dur pour l'examen.",
+          "ja": "テストのために一生懸命勉強しなさい。",
+          "ko": "시험을 위해 열심히 공부하세요."
+        }
+      }
+    ],
+    "hint": "learn about",
+    "level": "A1",
+    "cats": [
+      "school"
+    ],
+    "translations": {
+      "th": "เรียน",
+      "zh": "学习",
+      "es": "estudiar",
+      "fr": "étudier",
+      "ja": "勉強する",
+      "ko": "공부하다"
+    },
+    "ipa": "ˈstədi",
+    "synonyms": [
+      "learn",
+      "examine",
+      "review"
+    ],
+    "oxford": 3000
+  },
+  {
+    "word": "A/B testing",
+    "pos": "n.",
+    "definition": "a method of comparing two versions of something to see which performs better",
+    "hint": "comparing two versions for performance",
+    "level": "B2",
+    "cats": [
+      "technology",
+      "work"
+    ],
+    "examples": [
+      {
+        "en": "A/B testing showed that the blue button got more clicks than the red one.",
+        "translations": {
+          "th": "การทดสอบ A/B แสดงว่าปุ่มสีน้ำเงินได้คลิกมากกว่าสีแดง",
+          "zh": "A/B测试显示蓝色按钮比红色按钮获得更多点击。",
+          "es": "Las pruebas A/B mostraron que el botón azul obtuvo más clics que el rojo.",
+          "fr": "Les tests A/B ont montré que le bouton bleu a obtenu plus de clics que le rouge.",
+          "ja": "A/Bテストで青いボタンの方が赤いボタンより多くクリックされることがわかりました。",
+          "ko": "A/B 테스트 결과 파란색 버튼이 빨간색 버튼보다 더 많은 클릭을 받았습니다."
+        }
+      }
+    ],
+    "translations": {
+      "th": "การทดสอบ A/B",
+      "zh": "A/B测试",
+      "es": "pruebas A/B",
+      "fr": "tests A/B",
+      "ja": "A/Bテスト",
+      "ko": "A/B 테스트"
+    },
+    "ipa": "eɪ biː ˈtɛs.tɪŋ",
+    "id": 7083,
+    "synonyms": [
+      "split testing"
+    ]
+  },
+  {
+    "id": 1775,
+    "word": "abundance",
+    "pos": "n.",
+    "definition": "a very large quantity of something",
+    "hint": "plenty / large amount",
+    "level": "B2",
+    "cats": [
+      "academic"
+    ],
+    "examples": [
+      {
+        "en": "The region has an abundance of natural resources.",
+        "translations": {
+          "th": "ภูมิภาคนี้มีทรัพยากรธรรมชาติอย่างอุดมสมบูรณ์",
+          "zh": "该地区拥有丰富的自然资源。",
+          "es": "La región tiene abundancia de recursos naturales.",
+          "fr": "La région a une abondance de ressources naturelles.",
+          "ja": "その地域には天然資源が豊富にある。",
+          "ko": "그 지역에는 천연자원이 풍부하다."
+        }
+      }
+    ],
+    "translations": {
+      "th": "ความอุดมสมบูรณ์",
+      "zh": "丰富",
+      "es": "abundancia",
+      "fr": "abondance",
+      "ja": "豊富さ",
+      "ko": "풍요"
+    },
+    "ipa": "əˈbəndəns",
+    "synonyms": [
+      "plenty",
+      "wealth",
+      "profusion"
+    ]
+  },
+  {
+    "id": 1428,
+    "word": "able",
+    "pos": "adj.",
+    "definition": "having the power to do something",
+    "hint": "can do something",
+    "level": "A1",
+    "cats": [
+      "daily"
+    ],
+    "examples": [
+      {
+        "en": "Are you able to help?",
+        "translations": {
+          "th": "คุณช่วยได้ไหม",
+          "zh": "你能帮忙吗？",
+          "es": "¿Puedes ayudar?",
+          "fr": "Peux-tu aider ?",
+          "ja": "手伝ってもらえますか？",
+          "ko": "도와줄 수 있나요?"
+        }
+      }
+    ],
+    "translations": {
+      "th": "สามารถ",
+      "zh": "能够",
+      "es": "capaz",
+      "fr": "capable",
+      "ja": "できる",
+      "ko": "할 수 있는"
+    },
+    "ipa": "ˈeɪbəl",
+    "synonyms": [
+      "capable",
+      "competent",
+      "skilled"
+    ],
+    "oxford": 3000
+  },
+  {
+    "id": 1486,
+    "word": "about",
+    "pos": "prep.",
+    "definition": "concerning or regarding",
+    "hint": "concerning",
+    "level": "A1",
+    "cats": [
+      "daily"
+    ],
+    "examples": [
+      {
+        "en": "Tell me about your day.",
+        "translations": {
+          "th": "เล่าเรื่องวันนี้ของคุณให้ฟัง",
+          "zh": "告诉我你的一天。",
+          "es": "Cuéntame sobre tu día.",
+          "fr": "Raconte-moi ta journée.",
+          "ja": "あなたの一日について教えてください。",
+          "ko": "당신의 하루에 대해 말해 주세요."
+        }
+      }
+    ],
+    "translations": {
+      "th": "เกี่ยวกับ",
+      "zh": "关于",
+      "es": "sobre",
+      "fr": "à propos de",
+      "ja": "〜について",
+      "ko": "~에 대해"
+    },
+    "ipa": "əˈbaʊt",
+    "synonyms": [
+      "regarding",
+      "concerning"
+    ],
+    "oxford": 3000
+  }
+]

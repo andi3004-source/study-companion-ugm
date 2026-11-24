@@ -11,20 +11,29 @@ use Database\Seeders\MandarinHskSeeder;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\WithSmallVocabularyFixtures;
 use Tests\TestCase;
 
 class KamusSearchTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithSmallVocabularyFixtures;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->useSmallVocabularyFixtures();
+
         $this->seed(ReferenceDataSeeder::class);
         $this->seed(MandarinHskSeeder::class);
         $this->seed(IrregularVerbSeeder::class);
         $this->seed(EnglishVocabSeeder::class);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeSmallVocabularyFixtures();
+        parent::tearDown();
     }
 
     protected function onboardedUser(): User
@@ -38,6 +47,8 @@ class KamusSearchTest extends TestCase
 
     public function test_mandarin_filter_with_no_search_shows_the_full_hsk1to6_count(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji jumlah lengkap 4.991 kata HSK');
+
         Livewire::actingAs($this->onboardedUser())->test(Search::class)
             ->set('filterLang', 'mandarin')
             ->assertSet('totalCount', 4991);
@@ -45,6 +56,8 @@ class KamusSearchTest extends TestCase
 
     public function test_mandarin_hsk6_level_filter_shows_only_hsk6_words(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji jumlah lengkap 2.500 kata HSK6');
+
         $component = Livewire::actingAs($this->onboardedUser())->test(Search::class)
             ->set('filterLang', 'mandarin')
             ->set('filterLevel', '6');
@@ -58,6 +71,8 @@ class KamusSearchTest extends TestCase
 
     public function test_english_filter_with_no_search_shows_cefr_plus_verbs(): void
     {
+        $this->skipWithoutFullVocabularyCorpus('menguji jumlah lengkap 10.706 kata CEFR dan kata kerja');
+
         // 10674 CEFR + 32 irregular verbs with no english_vocab entry of
         // their own. The other 151 irregular verbs are already CEFR words
         // (e.g. "eat"), so their V1/V2/V3 rides along on that same row
@@ -136,6 +151,8 @@ class KamusSearchTest extends TestCase
 
     public function test_english_b2_level_filter_excludes_verbs(): void
     {
+        $this->skipWithoutFullEnglishCorpus('menguji jumlah lengkap 2.253 kata B2');
+
         $component = Livewire::actingAs($this->onboardedUser())->test(Search::class)
             ->set('filterLang', 'english')
             ->set('filterLevel', 'B2');
@@ -173,6 +190,8 @@ class KamusSearchTest extends TestCase
 
     public function test_kamus_page_loads_quickly_with_the_full_dataset(): void
     {
+        $this->skipWithoutFullVocabularyCorpus('menguji kecepatan halaman kamus dengan seluruh korpus');
+
         $user = $this->onboardedUser();
 
         $start = microtime(true);
@@ -184,6 +203,8 @@ class KamusSearchTest extends TestCase
 
     public function test_results_are_capped_and_load_more_extends_them(): void
     {
+        $this->skipWithoutFullMandarinCorpus('menguji batas hasil 50 dan 100 dengan korpus penuh');
+
         $component = Livewire::actingAs($this->onboardedUser())->test(Search::class)
             ->set('filterLang', 'mandarin');
 
@@ -233,6 +254,12 @@ class KamusSearchTest extends TestCase
         $component = Livewire::actingAs($this->onboardedUser())->test(Search::class)
             ->set('filterLang', 'mandarin')
             ->set('query', 'ayo');
+
+        $this->assertCount(0, $component->get('results')->filter(function ($row) {
+            $en = strtolower((string) $row->meaning_en);
+
+            return str_contains($en, 'layout') || str_contains($en, 'mayor');
+        }));
 
         foreach ($component->get('results') as $row) {
             $this->assertStringNotContainsString('layout', strtolower((string) $row->meaning_en));

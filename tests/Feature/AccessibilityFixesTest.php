@@ -15,17 +15,25 @@ use Database\Seeders\MandarinHskSeeder;
 use Database\Seeders\ReferenceDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\WithSmallVocabularyFixtures;
 use Tests\TestCase;
 
 class AccessibilityFixesTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithSmallVocabularyFixtures;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->useSmallVocabularyFixtures();
         $this->seed(ReferenceDataSeeder::class);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeSmallVocabularyFixtures();
+        parent::tearDown();
     }
 
     protected function onboardedUser(): User
