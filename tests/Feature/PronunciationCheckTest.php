@@ -157,7 +157,7 @@ class PronunciationCheckTest extends TestCase
             ->call('checkPronunciation', 'hello there')
             ->assertSet('transcript', 'hello there')
             ->assertSee('hello there')
-            ->assertSee('Coba Lagi');
+            ->assertSee('Coba lagi');
     }
 
     public function test_reset_check_clears_the_result_without_losing_the_selected_word(): void

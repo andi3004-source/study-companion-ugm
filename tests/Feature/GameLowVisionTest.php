@@ -48,7 +48,8 @@ class GameLowVisionTest extends TestCase
         $css = file_get_contents(resource_path('css/app.css'));
         $this->assertStringContainsString('html.teks-sangat-besar', $css);
         $this->assertStringContainsString('html.teks-lega body', $css);
-        $this->assertStringContainsString('html.kontras-tinggi .text-red-700', $css);
+        $this->assertStringContainsString('color-scheme: only light', $css);
+        $this->assertStringContainsString('@media (forced-colors: active)', $css);
 
         $js = file_get_contents(resource_path('js/app.js'));
         $this->assertStringContainsString("kelas.toggle('teks-lega', this.lega);", $js);

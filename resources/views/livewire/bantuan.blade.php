@@ -2,14 +2,14 @@
     <h1 class="font-display font-600 text-2xl text-ink">Bantuan</h1>
     <p class="text-ink">Belajar bahasa dengan keyboard dan suara. Dirancang agar mudah diakses.</p>
 
-    <section aria-labelledby="bantuan-keyboard" class="bg-card rounded-2xl p-5 space-y-3">
+    <section aria-labelledby="bantuan-keyboard" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-keyboard" class="font-display font-600 text-lg text-ink">Memakai dengan keyboard dan pembaca layar</h2>
         <p class="text-ink">Setiap halaman diawali tautan <strong>Lewati ke konten</strong>. Di halaman percakapan ada juga <strong>Lewati ke kolom tulis</strong>. Tautan ini muncul saat kamu menekan Tab pertama kali.</p>
         <p class="text-ink">Halaman punya bagian header, navigasi, konten utama, dan footer, sehingga pembaca layar bisa melompat antarbagian. Di percakapan, pesan baru dibacakan otomatis dengan nama pengirimnya (<em>Kamu</em> atau <em>Teman bicara</em>), dan status seperti "Teman sedang membalas" atau "Analisis selesai" diumumkan tanpa memindahkan fokus.</p>
         <p class="text-ink">Tidak ada pintasan satu tombol; semua tindakan memakai tombol biasa yang bisa dijangkau dengan Tab.</p>
     </section>
 
-    <section aria-labelledby="bantuan-tombol" class="bg-card rounded-2xl p-5 space-y-3">
+    <section aria-labelledby="bantuan-tombol" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-tombol" class="font-display font-600 text-lg text-ink">Tombol standar</h2>
         <table class="w-full text-left text-ink">
             <caption class="sr-only">Tombol keyboard dan fungsinya</caption>
@@ -29,7 +29,7 @@
         </table>
     </section>
 
-    <section aria-labelledby="bantuan-suara" class="bg-card rounded-2xl p-5 space-y-3">
+    <section aria-labelledby="bantuan-suara" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-suara" class="font-display font-600 text-lg text-ink">Memakai input suara</h2>
         <p class="text-ink">Input suara memakai Web Speech API dan hanya berjalan di <strong>Chrome atau Edge</strong>. Izinkan mikrofon saat browser meminta.</p>
         <ol class="list-decimal pl-6 text-ink space-y-1">
@@ -40,7 +40,7 @@
         <p class="text-ink">Setiap balasan punya tombol <strong>Dengarkan</strong> untuk memutar suaranya.</p>
     </section>
 
-    <section aria-labelledby="bantuan-mode-suara" class="bg-card rounded-2xl p-5 space-y-3">
+    <section aria-labelledby="bantuan-mode-suara" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-mode-suara" class="font-display font-600 text-lg text-ink">Mode suara</h2>
         <p class="text-ink">Mode suara adalah pelengkap untuk memakai aplikasi dengan perintah lisan. Pembaca layar dan keyboard tetap jalur utama. Mode ini mati secara bawaan; nyalakan dengan tombol <strong>Mode suara</strong> di bagian paling atas halaman, dan matikan dengan tombol <strong>Berhenti</strong> atau perintah "berhenti". Mode suara dan Mode pembaca layar tidak bisa aktif bersamaan.</p>
         <h3 class="font-700 text-ink">Perintah</h3>
@@ -68,18 +68,25 @@
         </ul>
     </section>
 
-    <section aria-labelledby="bantuan-tampilan" class="bg-card rounded-2xl p-5 space-y-3">
+    <section aria-labelledby="bantuan-tampilan" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-tampilan" class="font-display font-600 text-lg text-ink">Mengatur tampilan</h2>
         <p class="text-ink">Buka tombol <strong>Tampilan</strong> di header. Pilihan tersimpan di browser ini:</p>
         <ul class="list-disc pl-6 text-ink space-y-1">
             <li><strong>Ukuran teks</strong>: Normal, Besar, atau Sangat besar.</li>
-            <li><strong>Mode kontras tinggi</strong>: teks hitam di latar putih.</li>
             <li><strong>Mode pembaca layar</strong>: balasan tidak diputar otomatis; suara hanya diputar saat kamu menekan tombol putar.</li>
+            <li><strong>Kontras di perangkat</strong>: gunakan setelan kontras atau inversi warna di sistem operasi (Windows <em>forced colors</em>, Smart Invert iOS, dll.). Aplikasi tidak lagi memiliki mode kontras tinggi sendiri.</li>
         </ul>
         <p class="text-ink">Animasi dikurangi otomatis bila sistem operasimu diatur untuk mengurangi gerakan.</p>
     </section>
 
-    <section aria-labelledby="bantuan-pernyataan" class="bg-card rounded-2xl p-5 space-y-3">
+    <section aria-labelledby="bantuan-privasi" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
+        <h2 id="bantuan-privasi" class="font-display font-600 text-lg text-ink">Privasi dan data</h2>
+        <p class="text-ink">Percakapan Ngobrol disimpan di database sementara dan dihapus otomatis setiap jam setelah sekitar 24 jam sejak dimulai (pemangkasan bisa menyisakan data mendekati 25 jam).</p>
+        <p class="text-ink">Rekaman dan transkrip Ucapan serta teks yang dikirim ke penyedia AI dikirim ke layanan terkait untuk diproses. Kami tidak menyimpan rekaman suara Mode suara di server aplikasi.</p>
+        <p class="text-ink">Log, cadangan, dan kebijakan pihak ketiga (penyedia AI, hosting) memiliki aturan retensi sendiri yang tidak kami kendalikan penuh.</p>
+    </section>
+
+    <section aria-labelledby="bantuan-pernyataan" class="bg-white rounded-2xl border-2 border-navy p-5 space-y-3">
         <h2 id="bantuan-pernyataan" class="font-display font-600 text-lg text-ink">Pernyataan aksesibilitas</h2>
         <p class="text-ink">Pernyataan aksesibilitas (draf): kami berupaya mengikuti pedoman WCAG 2.2 AA. Aplikasi ini dirancang untuk pembaca layar; pengujian oleh tim dengan Narator sedang berlangsung dan belum dilakukan dengan pengguna tunanetra. Masukan Anda sangat kami harapkan.</p>
     </section>

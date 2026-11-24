@@ -38,8 +38,8 @@ class DisplaySettingsTest extends TestCase
         foreach (['normal', 'besar', 'sangat-besar'] as $value) {
             $this->assertStringContainsString('value="'.$value.'"', $header);
         }
-        $this->assertStringContainsString('Mode kontras tinggi', $header);
         $this->assertStringContainsString('Mode pembaca layar', $header);
+        $this->assertStringNotContainsString('Mode kontras tinggi', $header);
         $this->assertStringContainsString('x-data="displaySettings()"', $header);
     }
 
@@ -49,15 +49,16 @@ class DisplaySettingsTest extends TestCase
         $head = substr($html, 0, strpos($html, '</head>'));
 
         $this->assertStringContainsString("localStorage.getItem('tampilan')", $head);
-        foreach (['teks-besar', 'teks-sangat-besar', 'kontras-tinggi', 'mode-pembaca-layar'] as $class) {
+        foreach (['teks-besar', 'teks-sangat-besar', 'mode-pembaca-layar'] as $class) {
             $this->assertStringContainsString("kelas.add('{$class}')", $head);
         }
+        $this->assertStringNotContainsString('kontras-tinggi', $head);
     }
 
     public function test_css_and_js_define_the_display_classes(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));
-        foreach (['html.teks-besar', 'html.teks-sangat-besar', 'html.kontras-tinggi', ':focus-visible', 'prefers-reduced-motion', 'min-height: 44px'] as $rule) {
+        foreach (['html.teks-besar', 'html.teks-sangat-besar', 'color-scheme: only light', ':focus-visible', 'prefers-reduced-motion', 'min-height: 3.5rem'] as $rule) {
             $this->assertStringContainsString($rule, $css);
         }
 

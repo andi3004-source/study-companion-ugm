@@ -13,13 +13,10 @@ export default {
             screens: {
                 sidebar: '861px',
             },
-            // One look for the whole app (same as the public home page): Plus Jakarta Sans,
-            // self-hosted via @fontsource (resources/js/app.js, resources/js/welcome.js).
             fontFamily: {
-                display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-                sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                display: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
+                sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
                 hand: ['Caveat', 'cursive'],
-                jakarta: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
             },
             // The views use numeric weights (font-600, font-700); without these keys
             // Tailwind generated nothing for them.
@@ -41,11 +38,12 @@ export default {
                 navy: '#14294D',
                 'navy-deep': '#0E1F3B',
                 'navy-soft': '#24416E',
-                cream: '#FBF8F3',
+                cream: '#FFFFFF',
                 card: '#FFFFFF',
-                'card-alt': '#F7F3EC',
+                'card-alt': '#FFFFFF',
                 ink: '#2B3648',
                 'ink-soft': '#4F5968',
+                secondary: '#4F5968',
                 'ink-faint': '#5A6472',
                 line: '#ECE7DD',
                 'line-card': '#ECE7DD',

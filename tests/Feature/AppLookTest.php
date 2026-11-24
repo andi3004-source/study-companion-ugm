@@ -31,11 +31,11 @@ class AppLookTest extends TestCase
     {
         $config = file_get_contents(base_path('tailwind.config.js'));
 
-        foreach (["navy: '#14294D'", "orange: '#F9B934'", "cream: '#FBF8F3'", "navy: '#14294D',\n                    yellow: '#F9B934'"] as $token) {
+        foreach (["navy: '#14294D'", "orange: '#F9B934'", "cream: '#FFFFFF'", "navy: '#14294D',\n                    yellow: '#F9B934'"] as $token) {
             $this->assertStringContainsString($token, $config, $token);
         }
-        $this->assertStringContainsString("display: ['\"Plus Jakarta Sans\"', 'system-ui', 'sans-serif']", $config);
-        $this->assertStringContainsString("sans: ['\"Plus Jakarta Sans\"', 'system-ui', 'sans-serif']", $config);
+        $this->assertStringContainsString("display: ['\"Inter Variable\"', 'Inter', 'system-ui', 'sans-serif']", $config);
+        $this->assertStringContainsString("sans: ['\"Inter Variable\"', 'Inter', 'system-ui', 'sans-serif']", $config);
         // font-600 / font-700 in the views now generate CSS.
         $this->assertMatchesRegularExpression('/fontWeight: \{\s*400: \'400\',\s*500: \'500\',\s*600: \'600\',\s*700: \'700\',\s*800: \'800\',\s*\}/', $config);
     }
@@ -49,7 +49,7 @@ class AppLookTest extends TestCase
         $this->assertStringNotContainsString('@import url(', $css);
         $this->assertStringNotContainsString('Fredoka', $css);
         $this->assertStringNotContainsString('Nunito', $css);
-        $this->assertStringContainsString("import '@fontsource/plus-jakarta-sans/700.css';", $js);
+        $this->assertStringContainsString("import '@fontsource-variable/inter';", $js);
         $this->assertStringContainsString("import '@fontsource/caveat/600.css';", $js);
 
         $html = $this->page();
@@ -81,11 +81,10 @@ class AppLookTest extends TestCase
         $this->get('/login')->assertOk()->assertSee('images/landing/logo-buku.png', false)->assertDontSee('>好</div>', false);
     }
 
-    public function test_cards_get_a_soft_shadow_except_in_high_contrast(): void
+    public function test_cards_get_a_soft_shadow(): void
     {
         $css = file_get_contents(resource_path('css/app.css'));
 
         $this->assertStringContainsString(".bg-card.rounded-2xl,\n.bg-card.rounded-3xl {\n    box-shadow:", $css);
-        $this->assertStringContainsString("html.kontras-tinggi .bg-card {\n    box-shadow: none;", $css);
     }
 }

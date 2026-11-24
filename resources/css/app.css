@@ -1,60 +1,72 @@
-/* Fonts are self-hosted (@fontsource, imported in resources/js/app.js): no request to an outside font service. */
+/* Fonts are self-hosted (@fontsource-variable/inter, imported in resources/js/app.js). */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+:root {
+    color-scheme: only light;
+    accent-color: #14294D;
 }
 
-/* White cards get the same soft shadow as the home page cards (high contrast mode drops it below). */
+body {
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
+}
+
+.o-ic {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
 .bg-card.rounded-xl,
 .bg-card.rounded-2xl,
 .bg-card.rounded-3xl {
     box-shadow: 0 1px 2px rgba(20, 41, 77, 0.04), 0 4px 16px rgba(20, 41, 77, 0.05);
 }
 
-html.kontras-tinggi .bg-card {
-    box-shadow: none;
-}
-
 [x-cloak] {
     display: none !important;
 }
 
-/*
- * Display settings (header "Tampilan" panel). Classes are set on <html> by the
- * inline script in layouts/study.blade.php from localStorage. Tailwind sizes
- * are rem-based, so changing the root font size scales the whole page.
- */
 html {
-    font-size: 112.5%; /* 18px base */
+    font-size: 112.5%;
 }
 
 html.teks-besar {
-    font-size: 125%; /* 20px */
+    font-size: 125%;
 }
 
 html.teks-sangat-besar {
-    font-size: 137.5%; /* 22px */
+    font-size: 137.5%;
 }
 
-/* Thick, always-visible focus indicator (two-tone so it shows on light and navy backgrounds). */
 :focus-visible {
-    outline: 3px solid #b45309 !important;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 5px #ffffff;
+    outline: 3px solid #1D4ED8 !important;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px #ffffff;
 }
 
-/* Minimum 44px touch targets for controls (inline text links are exempt). */
+@media (forced-colors: active) {
+    :focus-visible {
+        outline: 3px solid Highlight !important;
+        outline-offset: 2px;
+        box-shadow: none;
+    }
+
+    .border-navy,
+    .border-2 {
+        border-color: CanvasText !important;
+    }
+}
+
 button,
 summary,
 [role='button'],
 input[type='submit'],
 select {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 3.5rem;
+    min-width: 3.5rem;
 }
 
 input[type='checkbox'],
@@ -63,44 +75,12 @@ input[type='radio'] {
     height: 1.25rem;
 }
 
-/* Current page is marked by shape, not only by colour. */
 nav [aria-current='page'] {
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 4px;
 }
 
-/* High contrast mode: pure black on white, muted greys become black, links underlined. */
-html.kontras-tinggi body,
-html.kontras-tinggi .bg-cream,
-html.kontras-tinggi .bg-card,
-html.kontras-tinggi .bg-card-alt {
-    background-color: #ffffff !important;
-}
-
-html.kontras-tinggi .text-ink,
-html.kontras-tinggi .text-ink-soft,
-html.kontras-tinggi .text-ink-faint {
-    color: #000000 !important;
-}
-
-html.kontras-tinggi .border-line-card,
-html.kontras-tinggi .border-line {
-    border-color: #000000 !important;
-}
-
-html.kontras-tinggi main a {
-    text-decoration: underline;
-}
-
-/* Coloured status text reaches 7:1 in high contrast mode; feedback also has ✓/✗ and words, so no meaning is lost. */
-html.kontras-tinggi .text-english,
-html.kontras-tinggi .text-mandarin,
-html.kontras-tinggi .text-red-700 {
-    color: #000000 !important;
-}
-
-/* "Jarak baris dan huruf lebih lega": WCAG 1.4.12 text spacing values. */
 html.teks-lega body {
     line-height: 1.8;
     letter-spacing: 0.12em;
@@ -111,11 +91,6 @@ html.teks-lega p,
 html.teks-lega li,
 html.teks-lega label {
     margin-bottom: 0.25em;
-}
-
-/* Translucent white text on navy becomes solid white. */
-html.kontras-tinggi [class*='text-white/'] {
-    color: #ffffff !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -129,7 +104,6 @@ html.kontras-tinggi [class*='text-white/'] {
     }
 }
 
-/* Skip links: off-screen until focused, then shown top-left above everything. */
 .skip-link {
     position: absolute;
     left: -9999px;
@@ -137,9 +111,9 @@ html.kontras-tinggi [class*='text-white/'] {
     z-index: 100;
     padding: 0.75rem 1rem;
     border-radius: 0.75rem;
-    background: #1b2a44;
+    background: #14294D;
     color: #fff;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .skip-link:focus {
@@ -147,11 +121,28 @@ html.kontras-tinggi [class*='text-white/'] {
 }
 
 .font-display {
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
 }
 
 .font-hand {
     font-family: 'Caveat', cursive;
+}
+
+.bab-isi h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #14294D;
+}
+
+.bab-isi ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+}
+
+.bab-isi li {
+    margin-bottom: 0.75rem;
 }
 
 ::-webkit-scrollbar {
@@ -160,7 +151,7 @@ html.kontras-tinggi [class*='text-white/'] {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #d8cfb4;
+    background: #ECE7DD;
     border-radius: 999px;
 }
 

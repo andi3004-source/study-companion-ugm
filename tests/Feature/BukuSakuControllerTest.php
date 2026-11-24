@@ -16,7 +16,9 @@ class BukuSakuControllerTest extends TestCase
 
         $root = base_path('tests/Fixtures/buku-saku');
         $this->app->instance(BukuSakuCatalog::class, new BukuSakuCatalog($root.'/resources', $root.'/public'));
-        View::addLocation($root.'/views');
+        // Fixture views win over the real resources/views/buku-saku templates (W1-C),
+        // which link to route names only registered in W2; those are tested separately.
+        View::getFinder()->prependLocation($root.'/views');
         Route::get('/_buku-saku', [BukuSakuController::class, 'index']);
         Route::get('/_buku-saku/{buku}', [BukuSakuController::class, 'book']);
         Route::get('/_buku-saku/{buku}/{bab}', [BukuSakuController::class, 'chapter']);

@@ -15,13 +15,13 @@
     <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div>
             <h1 class="font-display font-600 text-xl text-ink">{{ $this->scenario['label'] }}</h1>
-            <p class="text-xs text-ink-soft">{{ ucfirst($session->lang) }} · Sisa kuota hari ini: {{ $this->remainingToday }}/{{ $dailyLimit }}</p>
+            <p class="text-xs text-secondary">{{ ucfirst($session->lang) }} · Sisa kuota hari ini: {{ $this->remainingToday }}/{{ $dailyLimit }}</p>
             @if ($this->levelLocked)
-                <span class="inline-block mt-1 text-[10px] font-700 text-mandarin bg-mandarin-soft rounded-full px-2 py-0.5">Level: HSK 1 (terkunci)</span>
+                <span class="inline-block mt-1 text-xs font-600 text-navy border-2 border-navy rounded-full px-2 py-0.5">Level: HSK 1 (terkunci)</span>
             @endif
         </div>
         <div class="flex flex-wrap items-center gap-3">
-            <label class="flex items-center gap-1.5 text-xs text-ink-soft">
+            <label class="flex items-center gap-1.5 text-xs text-secondary">
                 <input type="checkbox" wire:model.live="autoPlay" class="rounded text-mandarin focus:ring-mandarin">
                 Auto-play balasan
             </label>
@@ -30,18 +30,18 @@
                 <div x-data="{ confirming: false }" class="flex items-center gap-2">
                     <button type="button" x-show="!confirming"
                             x-on:click="confirming = true; $nextTick(() => $refs.confirmYes.focus())"
-                            class="text-sm text-ink-soft hover:text-ink underline">Selesai dan analisis</button>
+                            class="text-sm text-secondary hover:text-ink underline">Selesai dan analisis</button>
                     <div x-show="confirming" x-cloak class="flex items-center gap-2" role="group" aria-labelledby="konfirmasi-selesai">
                         <span id="konfirmasi-selesai" class="text-sm text-ink">Selesaikan sesi ini dan analisis?</span>
                         <button type="button" x-ref="confirmYes" wire:click="finishSession"
                                 class="text-sm font-700 text-white bg-navy rounded-lg px-3 py-1">Ya, selesaikan</button>
                         <button type="button"
                                 x-on:click="confirming = false; $nextTick(() => $root.querySelector('button').focus())"
-                                class="text-sm text-ink-soft underline">Batal</button>
+                                class="text-sm text-secondary underline">Batal</button>
                     </div>
                 </div>
             @endif
-            <a href="{{ route('conversation') }}" class="text-sm text-ink-soft"><span aria-hidden="true">←</span> Kembali</a>
+            <a href="{{ route('conversation') }}" class="text-sm text-secondary"><span aria-hidden="true">←</span> Kembali</a>
         </div>
     </div>
 
@@ -81,32 +81,32 @@
 
     @if ($this->analysisState)
         {{-- Polls only while an ended session's analysis is queued and unfinished (analyzed_at NULL), for at most Chat::ANALYSIS_POLL_SECONDS. --}}
-        <div class="bg-card rounded-2xl p-5 mb-4" @if ($this->analysisState === 'pending') wire:poll.3s="pollAnalysis" @endif>
+        <div class="bg-white border-2 border-navy rounded-2xl p-5 mb-4" @if ($this->analysisState === 'pending') wire:poll.3s="pollAnalysis" @endif>
             <h2 class="font-display font-600 text-ink mb-2">Analisis kesalahan</h2>
 
             @if ($this->analysisState === 'pending')
-                <p class="text-sm text-ink-soft">Analisis kesalahan sedang diproses…</p>
+                <p class="text-sm text-secondary">Analisis kesalahan sedang diproses…</p>
             @elseif ($this->analysisState === 'timeout')
-                <p class="text-sm text-ink-soft">Analisis belum selesai. Hasilnya akan muncul di halaman Progress setelah selesai diproses.</p>
+                <p class="text-sm text-secondary">Analisis belum selesai. Hasilnya akan muncul di halaman Progress setelah selesai diproses.</p>
                 <button type="button" wire:click="pollAnalysis" class="mt-2 text-xs font-700 text-mandarin underline">Muat ulang</button>
             @elseif ($this->analysisState === 'failed')
-                <p class="text-sm text-ink-soft">Analisis kesalahan gagal untuk sesi ini. Coba lagi nanti.</p>
+                <p class="text-sm text-secondary">Analisis kesalahan gagal untuk sesi ini. Coba lagi nanti.</p>
             @elseif (empty($session->error_analysis['items']))
                 <p class="text-sm text-ink">Tidak ada kesalahan yang terdeteksi di sesi ini. Mantap! 🎉</p>
             @else
                 <ul class="space-y-3">
                     @foreach ($session->error_analysis['items'] as $item)
                         <li class="text-sm">
-                            <span class="inline-block text-[10px] font-700 text-mandarin bg-mandarin-soft rounded-full px-2 py-0.5 mb-1">{{ \App\Enums\ErrorCategory::fromLoose($item['kategori'])->label() }}</span>
+                            <span class="inline-block text-xs font-600 text-navy border border-navy rounded-full px-2 py-0.5 mb-1">{{ \App\Enums\ErrorCategory::fromLoose($item['kategori'])->label() }}</span>
                             <p class="text-ink">
                                 <span class="sr-only">Salah:</span>
-                                <span class="line-through text-ink-soft" lang="{{ $targetLang }}">{{ $item['contoh'] }}</span>
+                                <span class="line-through text-secondary" lang="{{ $targetLang }}">{{ $item['contoh'] }}</span>
                                 <span aria-hidden="true">→</span>
                                 <span class="sr-only">Benar:</span>
                                 <span class="font-700" lang="{{ $targetLang }}">{{ $item['koreksi'] }}</span>
                             </p>
                             @if ($item['penjelasan'])
-                                <p class="text-xs text-ink-soft mt-0.5">{{ $item['penjelasan'] }}</p>
+                                <p class="text-xs text-secondary mt-0.5">{{ $item['penjelasan'] }}</p>
                             @endif
                         </li>
                     @endforeach
@@ -114,14 +114,14 @@
             @endif
 
             @if ($this->analysisState === 'done' && ! empty($session->error_analysis['catatan']))
-                <p class="text-xs text-ink-soft mt-3">{{ $session->error_analysis['catatan'] }}</p>
+                <p class="text-xs text-secondary mt-3">{{ $session->error_analysis['catatan'] }}</p>
             @endif
 
             {{-- Sessions analyzed before 'sumber' existed show no label. --}}
             @if ($this->analysisState === 'done' && ($session->error_analysis['sumber'] ?? null) === 'langflow')
-                <p class="text-[10px] text-ink-soft mt-2">Dianalisis oleh IBM Langflow</p>
+                <p class="text-[10px] text-secondary mt-2">Dianalisis oleh IBM Langflow</p>
             @elseif ($this->analysisState === 'done' && ($session->error_analysis['sumber'] ?? null) === 'gemini')
-                <p class="text-[10px] text-ink-soft mt-2">Dianalisis oleh Gemini (cadangan)</p>
+                <p class="text-[10px] text-secondary mt-2">Dianalisis oleh Gemini (cadangan)</p>
             @endif
         </div>
     @endif
@@ -144,21 +144,21 @@
             @else
                 @php($replyNumber++)
                 <div class="flex justify-start" wire:key="turn-{{ $turn->id }}">
-                    <div class="max-w-[80%] break-words bg-card rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm text-ink border border-line-card">
-                        <p class="text-xs font-700 text-ink-soft">Teman bicara:</p>
+                    <div class="max-w-[80%] break-words bg-white rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm text-ink border-2 border-navy">
+                        <p class="text-xs font-700 text-secondary">Teman bicara:</p>
                         <p lang="{{ $targetLang }}">{{ $turn->content }}</p>
                         @if ($turn->translation)
-                            <p class="text-ink-soft text-xs mt-1"><span aria-hidden="true">🇮🇩</span> <span class="sr-only">Terjemahan:</span> <span lang="id">{{ $turn->translation }}</span></p>
+                            <p class="text-secondary text-xs mt-1"><span aria-hidden="true">🇮🇩</span> <span class="sr-only">Terjemahan:</span> <span lang="id">{{ $turn->translation }}</span></p>
                         @endif
                         <button type="button"
                                 onclick="speak({{ Illuminate\Support\Js::from($turn->content) }}, '{{ $this->scenario['target_lang_code'] }}')"
                                 aria-label="Putar suara balasan {{ $replyNumber }}"
-                                class="mt-1.5 text-ink-soft hover:text-mandarin text-xs underline"><span aria-hidden="true">🔊</span> Dengarkan</button>
+                                class="mt-1.5 text-secondary hover:text-mandarin text-xs underline"><span aria-hidden="true">🔊</span> Dengarkan</button>
                     </div>
                 </div>
             @endif
         @empty
-            <div class="text-center text-ink-soft text-sm py-10">Mulai percakapan dengan mengetik pesan di bawah.</div>
+            <div class="text-center text-secondary text-sm py-10">Mulai percakapan dengan mengetik pesan di bawah.</div>
         @endforelse
     </div>
 
@@ -170,7 +170,7 @@
                 <p class="text-xs text-red-700 mb-2"><span aria-hidden="true">⚠</span> {{ $errorMessage }}</p>
             @endif
 
-            <p class="text-xs text-ink-soft mb-2" x-show="state === 'listening'">
+            <p class="text-xs text-secondary mb-2" x-show="state === 'listening'">
                 <span x-show="interimText" x-text="interimText"></span>
                 <span x-show="!interimText">Mendengarkan... bicara saja, tekan tombol Berhenti kalau sudah selesai.</span>
             </p>
@@ -178,7 +178,7 @@
 
             <form wire:submit="sendMessage" class="flex flex-col gap-2" x-ref="form">
                 <label for="kolom-tulis" class="text-sm font-700 text-ink">Pesanmu</label>
-                <p id="petunjuk-kolom-tulis" class="text-xs text-ink-soft">
+                <p id="petunjuk-kolom-tulis" class="text-xs text-secondary">
                     @if ($session->lang === 'mandarin')
                         Tulis jawabanmu dalam bahasa Mandarin atau pinyin dengan angka nada, misalnya wo3 bu4 you3 qian2. Tekan Enter untuk kirim, Shift+Enter untuk baris baru.
                     @else
@@ -190,7 +190,7 @@
                     <textarea id="kolom-tulis" x-ref="kolomTulis" wire:model="newMessage" maxlength="500" rows="2"
                               aria-describedby="petunjuk-kolom-tulis"
                               x-on:keydown.enter="if ($event.shiftKey || $event.isComposing || $event.keyCode === 229) return; $event.preventDefault(); $refs.form.requestSubmit()"
-                              class="flex-1 rounded-xl border-line-card text-sm focus:border-mandarin focus:ring-mandarin resize-y"
+                              class="flex-1 min-h-[3.5rem] rounded-xl border-2 border-navy bg-white text-base focus:border-navy focus:ring-navy resize-y"
                               @if ($this->remainingToday <= 0) disabled @endif></textarea>
 
                     <button type="button" x-show="supported" x-on:click="toggleListening"
@@ -199,12 +199,12 @@
                             aria-pressed="false" aria-label="Mulai bicara"
                             x-bind:disabled="(state === 'processing' || state === 'speaking') || {{ $this->remainingToday <= 0 ? 'true' : 'false' }}"
                             x-bind:class="{
-                                'bg-navy text-white hover:bg-navy-soft': state === 'idle',
-                                'bg-red-700 text-white motion-safe:animate-pulse': state === 'listening',
-                                'bg-card-alt text-ink-soft': state === 'processing',
-                                'bg-orange text-navy': state === 'speaking',
+                                'bg-navy text-white border-2 border-navy': state === 'idle',
+                                'bg-red-700 text-white border-2 border-red-700 motion-safe:animate-pulse': state === 'listening',
+                                'bg-white text-secondary border-2 border-navy': state === 'processing',
+                                'bg-orange text-navy border-2 border-navy': state === 'speaking',
                             }"
-                            class="w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition disabled:opacity-70">
+                            class="min-h-[3.5rem] min-w-[3.5rem] shrink-0 rounded-full flex items-center justify-center transition disabled:opacity-70 border-2">
                         <span aria-hidden="true" x-show="state === 'processing'">⏳</span>
                         <span aria-hidden="true" x-show="state === 'speaking'">🔊</span>
                         <span aria-hidden="true" x-show="state === 'listening'">⏹️</span>
@@ -212,7 +212,7 @@
                     </button>
 
                     <button type="submit"
-                            class="px-5 py-2 min-h-[44px] rounded-xl bg-navy text-white font-700 text-sm hover:bg-navy-soft transition disabled:opacity-50"
+                            class="px-5 min-h-[3.5rem] rounded-xl border-2 border-navy bg-navy text-white font-600 text-base transition disabled:opacity-50"
                             @if ($this->remainingToday <= 0) disabled @endif
                             wire:loading.attr="disabled" wire:target="sendMessage">
                         Kirim
@@ -220,7 +220,7 @@
                 </div>
             </form>
 
-            <p class="text-[11px] text-ink-soft mt-1.5" x-show="!supported">Voice input butuh Chrome/Edge.</p>
+            <p class="text-[11px] text-secondary mt-1.5" x-show="!supported">Voice input butuh Chrome/Edge.</p>
         </div>
     @endif
 </div>

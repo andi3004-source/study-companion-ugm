@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="only light">
+    <meta name="theme-color" content="#14294D">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Study Companion' }}</title>
+    <title>{{ $title ?? 'Tuturnusa' }}</title>
     {{-- Applies saved display settings before first paint (see displaySettings() in app.js). --}}
     <script>
         try {
@@ -12,7 +14,6 @@
             var kelas = document.documentElement.classList;
             if (tampilan.ukuran === 'besar') kelas.add('teks-besar');
             if (tampilan.ukuran === 'sangat-besar') kelas.add('teks-sangat-besar');
-            if (tampilan.kontras) kelas.add('kontras-tinggi');
             if (tampilan.pembacaLayar) kelas.add('mode-pembaca-layar');
             if (tampilan.lega) kelas.add('teks-lega');
         } catch (e) {}
@@ -20,7 +21,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-cream text-ink font-sans antialiased min-h-screen">
+<body class="bg-white text-ink font-sans antialiased min-h-screen">
+    @include('components.voice-icons')
     {{-- Skip links: first focusable elements on every page, visible only on focus. Pages add more via @push('skip-links'). --}}
     <a href="#konten" class="skip-link">Lewati ke konten</a>
     @stack('skip-links')
@@ -39,8 +41,9 @@
         <button type="button" id="tombol-mode-suara" x-ref="tombol" x-on:click="toggle()"
                 aria-pressed="false" x-bind:aria-pressed="aktif ? 'true' : 'false'"
                 x-bind:aria-disabled="didukung ? 'false' : 'true'" aria-describedby="mode-suara-catatan"
-                class="min-h-[44px] px-5 rounded-xl bg-navy text-white font-700 aria-disabled:opacity-60">
-            <span aria-hidden="true">🎙️</span> Mode suara
+                class="min-h-[3.5rem] min-w-[3.5rem] px-5 rounded-full border-2 border-navy bg-white text-navy font-600 aria-disabled:opacity-60">
+            <svg class="o-ic w-5 h-5 inline-block align-middle mr-1" aria-hidden="true"><use href="#i-mic"/></svg>
+            Mode suara: <span x-text="aktif ? 'nyala' : 'mati'"></span>
         </button>
         <button type="button" x-show="aktif" x-cloak x-on:click="berhenti()"
                 class="min-h-[44px] px-5 rounded-xl border-2 border-red-700 text-red-700 font-700">Berhenti</button>
@@ -61,6 +64,26 @@
         </div>
     </div>
 
+    @if ($navRingkas ?? false)
+        <header class="px-4 py-4 border-b-2 border-navy bg-white">
+            <a id="logo-beranda" href="{{ Route::has('home') ? route('home') : url('/') }}"
+               class="inline-flex items-center gap-3 no-underline text-navy font-600 text-2xl">
+                <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-navy" aria-hidden="true">
+                    <img src="{{ asset('images/landing/logo-buku-putih.png') }}" alt="" width="32" height="28" class="w-8 h-auto">
+                </span>
+                TUTURNUSA
+            </a>
+        </header>
+        <main id="konten" tabindex="-1" class="pb-8 focus:outline-none">
+            {{ $slot }}
+        </main>
+        <footer class="px-4 pb-8 text-lg text-ink-soft border-t border-line pt-6">
+            <p class="flex items-center gap-2">
+                <svg class="o-ic w-5 h-5" aria-hidden="true"><use href="#i-circle-help"/></svg>
+                <a href="{{ route('bantuan') }}" class="underline text-navy">Bantuan dan aksesibilitas</a>
+            </p>
+        </footer>
+    @else
     <div class="sidebar:flex min-h-screen">
         {{-- Desktop sidebar --}}
         <aside class="hidden sidebar:flex sidebar:flex-col w-[252px] shrink-0 bg-navy text-white px-5 py-6">
@@ -173,10 +196,6 @@
                                 </div>
                             </fieldset>
                             <label class="flex items-center gap-2 text-sm min-h-[44px]">
-                                <input type="checkbox" x-model="kontras" x-on:change="simpan()">
-                                Mode kontras tinggi
-                            </label>
-                            <label class="flex items-center gap-2 text-sm min-h-[44px]">
                                 <input type="checkbox" x-model="lega" x-on:change="simpan()">
                                 Jarak baris dan huruf lebih lega
                             </label>
@@ -260,7 +279,7 @@
                                                 <a href="{{ route($item['route']) }}"
                                                    @if ($navAktif($item)) aria-current="page" @endif
                                                    class="flex flex-col items-center justify-center gap-1 px-2 py-3 min-h-[44px] rounded-xl text-xs font-600 text-center
-                                                          {{ $navAktif($item) ? 'bg-mandarin-soft text-mandarin' : 'text-ink-soft hover:bg-card-alt' }}">
+                                                          {{ $navAktif($item) ? 'bg-white text-navy border-2 border-navy' : 'text-ink-soft border border-line-card' }}">
                                                     <span class="leading-none" aria-hidden="true"><x-landing.icon :name="$item['icon']" class="w-6 h-6" /></span>
                                                     <span>{{ $item['label'] }}</span>
                                                 </a>
@@ -275,6 +294,7 @@
             </div>
         </template>
     </nav>
+    @endif
 
     @livewireScripts
     @stack('scripts')

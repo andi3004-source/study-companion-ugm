@@ -1,8 +1,5 @@
 import './bootstrap';
-import '@fontsource/plus-jakarta-sans/400.css';
-import '@fontsource/plus-jakarta-sans/600.css';
-import '@fontsource/plus-jakarta-sans/700.css';
-import '@fontsource/plus-jakarta-sans/800.css';
+import '@fontsource-variable/inter';
 import '@fontsource/caveat/600.css';
 import './voice/engine';
 import './voice/adapters';
@@ -399,6 +396,65 @@ window.screenReaderMode = function () {
  * 'tampilan' and mirrors the settings as classes on <html> (the same classes
  * the inline <head> script in layouts/study.blade.php applies on page load).
  */
+/** Alpine: kontrol audio bab Buku Saku (tanpa kontrol native). */
+window.chapterAudio = function (src) {
+    return {
+        memutar: false,
+        status: '',
+        posisiTeks: '',
+        init() {
+            const el = this.$refs.pemutar;
+            const perbarui = () => {
+                this.posisiTeks = `${this.format(el.currentTime)} / ${this.format(el.duration || 0)}`;
+            };
+            el.addEventListener('timeupdate', perbarui);
+            el.addEventListener('loadedmetadata', perbarui);
+            el.addEventListener('play', () => {
+                this.memutar = true;
+                this.status = 'Narasi diputar.';
+            });
+            el.addEventListener('pause', () => {
+                this.memutar = false;
+                if (!el.ended) {
+                    this.status = 'Narasi dijeda.';
+                }
+            });
+            el.addEventListener('ended', () => {
+                this.memutar = false;
+                this.status = 'Narasi selesai.';
+            });
+            if (src) {
+                el.src = src;
+            }
+        },
+        toggle() {
+            const el = this.$refs.pemutar;
+            if (el.paused) {
+                el.play();
+            } else {
+                el.pause();
+            }
+        },
+        mundur() {
+            const el = this.$refs.pemutar;
+            el.currentTime = Math.max(0, el.currentTime - 10);
+        },
+        maju() {
+            const el = this.$refs.pemutar;
+            el.currentTime = Math.min(el.duration || el.currentTime + 10, el.currentTime + 10);
+        },
+        format(detik) {
+            if (!Number.isFinite(detik)) {
+                return '0:00';
+            }
+            const m = Math.floor(detik / 60);
+            const s = Math.floor(detik % 60);
+
+            return `${m}:${String(s).padStart(2, '0')}`;
+        },
+    };
+};
+
 window.displaySettings = function () {
     let saved = {};
     try {
@@ -407,7 +463,6 @@ window.displaySettings = function () {
 
     return {
         ukuran: saved.ukuran || 'normal',
-        kontras: !!saved.kontras,
         pembacaLayar: !!saved.pembacaLayar,
         lega: !!saved.lega,
 
@@ -421,7 +476,6 @@ window.displaySettings = function () {
             const kelas = document.documentElement.classList;
             kelas.toggle('teks-besar', this.ukuran === 'besar');
             kelas.toggle('teks-sangat-besar', this.ukuran === 'sangat-besar');
-            kelas.toggle('kontras-tinggi', this.kontras);
             kelas.toggle('mode-pembaca-layar', this.pembacaLayar);
             kelas.toggle('teks-lega', this.lega);
             if (this.pembacaLayar && 'speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -434,7 +488,6 @@ window.displaySettings = function () {
                 localStorage.setItem('tampilan', JSON.stringify({
                     ...current,
                     ukuran: this.ukuran,
-                    kontras: this.kontras,
                     pembacaLayar: this.pembacaLayar,
                     lega: this.lega,
                 }));
