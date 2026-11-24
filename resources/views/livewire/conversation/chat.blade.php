@@ -221,6 +221,8 @@
             </form>
 
             <p class="text-[11px] text-secondary mt-1.5" x-show="!supported">Voice input butuh Chrome/Edge.</p>
+
+            @include('components.microphone-privasi')
         </div>
     @endif
 </div>

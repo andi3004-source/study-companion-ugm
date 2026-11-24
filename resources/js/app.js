@@ -4,6 +4,7 @@ import '@fontsource-variable/inter';
 import '@fontsource/caveat/600.css';
 import './voice/engine';
 import './voice/adapters';
+import { microphonePrivasiMixin } from './microphone-consent';
 
 /**
  * Web Speech API text-to-speech. lang: 'zh-CN' for Mandarin, 'en-US' for English.
@@ -39,6 +40,7 @@ window.speak = function (text, lang = 'en-US', onEnd = null, rate = null) {
  */
 window.voiceInput = function (langCode) {
     return {
+        ...microphonePrivasiMixin(),
         langCode,
         supported: false,
         state: 'idle', // idle | listening | processing | speaking
@@ -117,7 +119,11 @@ window.voiceInput = function (langCode) {
         },
 
         toggleListening() {
-            this.state === 'listening' ? this.stopListening() : this.startListening();
+            if (this.state === 'listening') {
+                this.stopListening();
+                return;
+            }
+            this.mintaSetujuMikrofon(() => this.startListening());
         },
 
         handleAiReply(text, replyLangCode) {
@@ -291,6 +297,7 @@ window.pronunciationRecorder = function (lang) {
     const RECOGNITION_END_TIMEOUT_MS = 2000;
 
     return {
+        ...microphonePrivasiMixin(),
         state: 'idle', // idle | recording | uploading
         micError: null,
         mediaRecorder: null,
@@ -401,7 +408,11 @@ window.pronunciationRecorder = function (lang) {
             // tap while the first attempt is still being checked is ignored
             // rather than starting a new recording on top of it.
             if (this.state === 'uploading') return;
-            this.state === 'recording' ? this.stopRecording() : this.startRecording();
+            if (this.state === 'recording') {
+                this.stopRecording();
+                return;
+            }
+            this.mintaSetujuMikrofon(() => this.startRecording());
         },
 
         maybeUpload() {

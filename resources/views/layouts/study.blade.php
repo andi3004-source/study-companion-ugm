@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#14294D">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
     <title>{{ $title ?? 'Tuturnusa' }}</title>
     <script>
@@ -54,9 +55,8 @@
             </div>
             <a id="logo-beranda" href="{{ route('home') }}" aria-label="Tuturnusa, beranda"
                class="inline-flex items-center gap-3 no-underline text-navy font-display font-600 text-2xl shrink-0">
-                <span class="inline-flex items-center justify-center w-12 h-12 rounded-[12px] bg-navy shrink-0" aria-hidden="true">
-                    <svg class="o-ic w-7 h-7 text-orange" aria-hidden="true"><use href="#i-book"/></svg>
-                </span>
+                <img src="{{ asset('images/logo-tuturnusa.svg') }}" alt="" width="48" height="48"
+                     class="w-12 h-12 shrink-0 rounded-[12px]" aria-hidden="true">
                 TUTURNUSA
             </a>
         </div>

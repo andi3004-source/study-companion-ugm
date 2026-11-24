@@ -85,6 +85,8 @@
 
                 <p class="text-base text-secondary mt-2" x-show="!navigator.mediaDevices">Rekam suara butuh browser modern dengan akses mikrofon.</p>
                 <p role="status" class="sr-only"><span x-show="state === 'recording'">Merekam. Tekan Berhenti merekam kalau sudah selesai.</span><span x-show="state === 'uploading'">Memproses rekaman…</span></p>
+
+                @include('components.microphone-privasi')
             </div>
         @endif
 
