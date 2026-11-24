@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -20,11 +19,6 @@ class VoiceAlternativesFlowTest extends TestCase
         Http::preventStrayRequests();
     }
 
-    private function user(): User
-    {
-        return User::factory()->create(['onboarded' => true, 'start_date' => now()->toDateString(), 'track' => 'both']);
-    }
-
     /** JS source with comments removed, so tests only look at code. */
     private function js(string $file): string
     {
@@ -33,29 +27,25 @@ class VoiceAlternativesFlowTest extends TestCase
 
     public function test_endpoint_decides_between_alternatives(): void
     {
-        $user = $this->user();
+        $this->postJson(route('voice.command'), ['transcript' => 'buku saku', 'alternatives' => ['buku saku', 'Buku Saku', 'buka buku saku']])
+            ->assertOk()->assertExactJson(['type' => 'navigate', 'target' => 'buku-saku', 'index' => null, 'decision' => 'accept']);
 
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'buka kamus', 'alternatives' => ['buka kamus', 'Kamus', 'ke kamus']])
-            ->assertOk()->assertExactJson(['type' => 'navigate', 'target' => 'kamus', 'index' => null, 'decision' => 'accept']);
-
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'ujian', 'alternatives' => ['ujian', 'isian']])
+        $this->postJson(route('voice.command'), ['transcript' => 'ucapan', 'alternatives' => ['ucapan', 'bantuan']])
             ->assertOk()
             ->assertJsonPath('decision', 'choose')
-            ->assertJsonPath('candidates.0.label', 'ujian')
-            ->assertJsonPath('candidates.1.label', 'isian');
+            ->assertJsonPath('candidates.0.label', 'ucapan')
+            ->assertJsonPath('candidates.1.label', 'bantuan');
 
         // Without alternatives the answer is exactly as before.
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'kamus'])
-            ->assertExactJson(['type' => 'navigate', 'target' => 'kamus', 'index' => null]);
+        $this->postJson(route('voice.command'), ['transcript' => 'buku saku'])
+            ->assertExactJson(['type' => 'navigate', 'target' => 'buku-saku', 'index' => null]);
     }
 
     public function test_alternatives_are_validated(): void
     {
-        $user = $this->user();
-
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => ['a', 'b', 'c', 'd']])->assertStatus(422);
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => [str_repeat('a', 201)]])->assertStatus(422);
-        $this->actingAs($user)->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => []])->assertStatus(422);
+        $this->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => ['a', 'b', 'c', 'd']])->assertStatus(422);
+        $this->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => [str_repeat('a', 201)]])->assertStatus(422);
+        $this->postJson(route('voice.command'), ['transcript' => 'a', 'alternatives' => []])->assertStatus(422);
     }
 
     public function test_alternatives_are_not_logged_stored_or_echoed(): void
@@ -63,7 +53,7 @@ class VoiceAlternativesFlowTest extends TestCase
         Log::spy();
         DB::enableQueryLog();
 
-        $response = $this->actingAs($this->user())->postJson(route('voice.command'), [
+        $response = $this->postJson(route('voice.command'), [
             'transcript' => 'rahasia-satu-xyz',
             'alternatives' => ['rahasia-satu-xyz', 'rahasia-dua-xyz', 'lanjut'],
         ])->assertOk();

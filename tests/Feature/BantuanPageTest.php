@@ -2,31 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BantuanPageTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected function onboardedUser(): User
+    public function test_bantuan_is_public(): void
     {
-        return User::factory()->create([
-            'start_date' => now()->subDays(2)->toDateString(),
-            'track' => 'both',
-            'onboarded' => true,
-        ]);
-    }
-
-    public function test_guests_are_redirected_to_login(): void
-    {
-        $this->get('/bantuan')->assertRedirect(route('login'));
+        $this->get('/bantuan')->assertOk();
     }
 
     public function test_bantuan_page_explains_keyboard_voice_and_display_settings(): void
     {
-        $html = $this->actingAs($this->onboardedUser())->get('/bantuan')
+        $html = $this->get('/bantuan')
             ->assertOk()
             ->assertSee('Memakai dengan keyboard dan pembaca layar')
             ->assertSee('Memakai input suara')
@@ -42,7 +29,7 @@ class BantuanPageTest extends TestCase
 
     public function test_statement_texts_are_exact_and_no_disability_claim(): void
     {
-        $this->actingAs($this->onboardedUser())->get('/bantuan')
+        $this->get('/bantuan')
             ->assertOk()
             ->assertSee('Belajar bahasa dengan keyboard dan suara. Dirancang agar mudah diakses.')
             ->assertSee('Pernyataan aksesibilitas (draf): kami berupaya mengikuti pedoman WCAG 2.2 AA. Aplikasi ini dirancang untuk pembaca layar; pengujian oleh tim dengan Narator sedang berlangsung dan belum dilakukan dengan pengguna tunanetra. Masukan Anda sangat kami harapkan.')
@@ -50,17 +37,13 @@ class BantuanPageTest extends TestCase
             ->assertDontSee('membantu penyandang disabilitas');
     }
 
-    public function test_bantuan_is_linked_from_navigation_and_footer(): void
+    public function test_bantuan_is_linked_from_layout_footer(): void
     {
-        $html = $this->actingAs($this->onboardedUser())->get(route('dashboard'))->assertOk()->getContent();
+        $html = $this->get(route('home'))->assertOk()->getContent();
         $link = 'href="'.route('bantuan').'"';
-
-        $nav = substr($html, strpos($html, 'aria-label="Navigasi utama"'));
-        $nav = substr($nav, 0, strpos($nav, '</nav>'));
-        $this->assertStringContainsString($link, $nav);
 
         $footer = substr($html, strpos($html, '<footer'), strpos($html, '</footer>') - strpos($html, '<footer'));
         $this->assertStringContainsString($link, $footer);
-        $this->assertStringContainsString('Belajar bahasa dengan keyboard dan suara. Dirancang agar mudah diakses.', $footer);
+        $this->assertStringContainsString('Bantuan dan aksesibilitas', $footer);
     }
 }

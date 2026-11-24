@@ -2,11 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Livewire\Kamus\Search;
 use App\Models\MandarinHskWord;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class ClearUnreliableTranslationsTest extends TestCase
@@ -67,19 +64,5 @@ class ClearUnreliableTranslationsTest extends TestCase
         $this->artisan('hsk:clear-unreliable-translations')
             ->expectsOutputToContain('Nothing to clear.')
             ->assertSuccessful();
-    }
-
-    public function test_cleared_row_shows_meaning_not_available_in_kamus(): void
-    {
-        $this->word('测试也', 'surname Ye', 'nama keluarga Ye');
-
-        $this->artisan('hsk:clear-unreliable-translations')->assertSuccessful();
-
-        $user = User::factory()->create(['start_date' => now()->toDateString(), 'track' => 'both', 'onboarded' => true]);
-
-        Livewire::actingAs($user)->test(Search::class)
-            ->set('query', '测试也')
-            ->assertSee('Arti belum tersedia')
-            ->assertDontSee('nama keluarga Ye');
     }
 }

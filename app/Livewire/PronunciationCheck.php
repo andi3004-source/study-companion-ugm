@@ -4,10 +4,14 @@ namespace App\Livewire;
 
 use App\Contracts\PronunciationChecker as PronunciationCheckerContract;
 use App\Services\KamusSearchService;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 /**
@@ -20,7 +24,7 @@ use Throwable;
  * degrading to the free STT-match checker if the ML microservice is
  * unreachable — see MlPronunciationChecker).
  */
-#[Layout('layouts.study')]
+#[Layout('layouts.study', ['navRingkas' => true])]
 class PronunciationCheck extends Component
 {
     use WithFileUploads;
@@ -30,6 +34,7 @@ class PronunciationCheck extends Component
     public string $query = '';
 
     /** @var array{headword: string, sub: ?string, meaning_id: ?string, meaning_en: ?string, lang_code: string}|null */
+    #[Locked]
     public ?array $selectedWord = null;
 
     public $audioFile;
@@ -70,7 +75,7 @@ class PronunciationCheck extends Component
     #[Computed]
     public function suggestions()
     {
-        if ($this->selectedWord !== null || trim($this->query) === '') {
+        if (! in_array($this->lang, ['english', 'mandarin'], true) || $this->selectedWord !== null || trim($this->query) === '' || mb_strlen($this->query) > 100) {
             return collect();
         }
 
@@ -79,13 +84,13 @@ class PronunciationCheck extends Component
 
     public function selectWord(string $headword, ?string $sub, ?string $meaningId, ?string $meaningEn, string $langCode): void
     {
-        $this->selectedWord = [
-            'headword' => $headword,
-            'sub' => $sub,
-            'meaning_id' => $meaningId,
-            'meaning_en' => $meaningEn,
-            'lang_code' => $langCode,
-        ];
+        $word = app(KamusSearchService::class)->pronunciationWord($this->lang, $headword, $sub);
+        if ($word === null) {
+            $this->errorMessage = 'Pilih kata dari daftar dulu.';
+
+            return;
+        }
+        $this->selectedWord = $word;
         $this->query = '';
         $this->result = null;
         $this->transcript = null;
@@ -113,6 +118,38 @@ class PronunciationCheck extends Component
             return;
         }
 
+        if (! in_array($this->lang, ['english', 'mandarin'], true)
+            || ! is_string($sttTranscript) && $sttTranscript !== null
+            || mb_strlen($sttTranscript ?? '') > 500) {
+            $this->errorMessage = 'Bahasa atau transkrip tidak valid.';
+
+            return;
+        }
+
+        if (! is_string($this->selectedWord['headword'] ?? null) || ! is_string($this->selectedWord['sub'] ?? null) && ($this->selectedWord['sub'] ?? null) !== null) {
+            $this->errorMessage = 'Pilih kata dari daftar dulu.';
+
+            return;
+        }
+
+        $word = app(KamusSearchService::class)->pronunciationWord(
+            $this->lang,
+            $this->selectedWord['headword'],
+            $this->selectedWord['sub'] ?? null,
+        );
+        if ($word === null || $word !== $this->selectedWord) {
+            $this->errorMessage = 'Pilih kata dari daftar dulu.';
+
+            return;
+        }
+
+        $key = 'ucapan:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($key, 10)) {
+            $this->errorMessage = 'Terlalu banyak pemeriksaan. Coba lagi sebentar.';
+
+            return;
+        }
+
         $target = $this->selectedWord['headword'];
 
         // Defense in depth: the picker can only ever set $selectedWord from a
@@ -131,8 +168,34 @@ class PronunciationCheck extends Component
             return;
         }
 
+        if (! $this->audioFile instanceof UploadedFile
+            || ! $this->audioFile->isValid()
+            || $this->audioFile->getSize() > 2_000_000
+            || ! in_array($this->audioFile->getMimeType(), ['audio/webm', 'video/webm', 'audio/ogg', 'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp4'], true)) {
+            $this->errorMessage = 'Rekaman harus berupa audio maksimal 2 MB.';
+
+            return;
+        }
+
+        $probe = new Process(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', $this->audioFile->getRealPath()]);
+        $probe->setTimeout(5);
+        try {
+            $probe->run();
+        } catch (Throwable $e) {
+            report($e);
+            $this->errorMessage = 'Pemeriksaan rekaman tidak tersedia. Coba lagi nanti.';
+
+            return;
+        }
+        if (! $probe->isSuccessful() || ! is_numeric(trim($probe->getOutput())) || (float) trim($probe->getOutput()) < 1 || (float) trim($probe->getOutput()) > 30) {
+            $this->errorMessage = 'Durasi rekaman harus antara 1 dan 30 detik.';
+
+            return;
+        }
+
         $targetPinyin = $this->lang === 'mandarin' ? $this->selectedWord['sub'] : null;
 
+        RateLimiter::hit($key, 60);
         try {
             $this->result = app(PronunciationCheckerContract::class)
                 ->check($this->audioFile->getRealPath(), $target, $this->lang, $sttTranscript, $targetPinyin);

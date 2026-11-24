@@ -5,13 +5,13 @@ namespace App\Livewire\Conversation;
 use App\Models\ConversationSession;
 use App\Services\ConversationService;
 use App\Support\AiErrorMessage;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Throwable;
 
-#[Layout('layouts.study')]
+#[Layout('layouts.study', ['navRingkas' => true])]
 class Chat extends Component
 {
     /**
@@ -31,41 +31,48 @@ class Chat extends Component
 
     public ?array $summary = null;
 
-    public bool $autoPlay = true;
+    public bool $autoPlay = false;
 
     /** Unix time the error analysis was queued by finishSession(); drives the polling window. */
     public ?int $analysisQueuedAt = null;
 
     public function mount(ConversationSession $session): void
     {
-        abort_if($session->user_id !== Auth::id(), 403);
+        abort_unless(in_array($session->id, session('ngobrol.sesi', []), true), 404);
 
         $this->session = $session;
+    }
+
+    private function ownedSession(): ConversationSession
+    {
+        abort_unless(in_array($this->session->id, session('ngobrol.sesi', []), true), 404);
+
+        return ConversationSession::findOrFail($this->session->id);
     }
 
     #[Computed]
     public function turns()
     {
-        return $this->session->turns()->orderBy('created_at')->orderBy('id')->get();
+        return $this->ownedSession()->turns()->orderBy('created_at')->orderBy('id')->get();
     }
 
     #[Computed]
     public function scenario(): array
     {
-        return app(ConversationService::class)->scenarioDisplay($this->session);
+        return app(ConversationService::class)->scenarioDisplay($this->ownedSession());
     }
 
     /** Same check that adds the HSK1 lock to the system prompt — see ConversationService::levelLocked(). */
     #[Computed]
     public function levelLocked(): bool
     {
-        return app(ConversationService::class)->levelLocked($this->session);
+        return app(ConversationService::class)->levelLocked($this->ownedSession());
     }
 
     #[Computed]
     public function remainingToday(): int
     {
-        return app(ConversationService::class)->remainingMessagesToday(Auth::user());
+        return app(ConversationService::class)->remainingMessagesToday();
     }
 
     /**
@@ -78,6 +85,7 @@ class Chat extends Component
      */
     public function sendMessage(?string $voiceText = null): void
     {
+        $this->ownedSession();
         $this->errorMessage = null;
         $this->statusMessage = null;
 
@@ -101,7 +109,14 @@ class Chat extends Component
 
         $service = app(ConversationService::class);
 
-        if ($service->remainingMessagesToday(Auth::user()) <= 0) {
+        $minuteKey = 'ngobrol:minute:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($minuteKey, 10)) {
+            $this->errorMessage = 'Terlalu banyak pesan. Coba lagi sebentar.';
+
+            return;
+        }
+
+        if ($service->remainingMessagesToday() <= 0) {
             $this->errorMessage = 'Kuota harian habis, lanjut besok.';
 
             return;
@@ -117,6 +132,8 @@ class Chat extends Component
             return;
         }
 
+        RateLimiter::hit($minuteKey, 60);
+        RateLimiter::hit('ngobrol:day:'.request()->ip(), 86400);
         $this->newMessage = '';
         $this->statusMessage = 'Terkirim';
         $this->session->refresh();
@@ -127,9 +144,12 @@ class Chat extends Component
 
     public function finishSession(): void
     {
+        $this->ownedSession();
+        abort_if(RateLimiter::tooManyAttempts('ngobrol:finish:'.request()->ip(), 20), 429);
+        RateLimiter::hit('ngobrol:finish:'.request()->ip(), 3600);
         $this->summary = app(ConversationService::class)->endSession($this->session);
         $this->analysisQueuedAt = $this->summary['analysis_queued'] ? now()->timestamp : null;
-        $this->session->refresh();
+        $this->session = $this->ownedSession()->refresh();
         unset($this->analysisState);
     }
 
@@ -143,6 +163,7 @@ class Chat extends Component
     #[Computed]
     public function analysisState(): ?string
     {
+        $this->ownedSession();
         if (! $this->session->ended_at || $this->session->lang !== 'mandarin') {
             return null;
         }
@@ -161,7 +182,7 @@ class Chat extends Component
     /** wire:poll target while the analysis is pending, and the "Muat ulang" button after the window — just re-reads the session. */
     public function pollAnalysis(): void
     {
-        $this->session->refresh();
+        $this->session = $this->ownedSession()->refresh();
         unset($this->analysisState);
     }
 

@@ -40,6 +40,26 @@ class KamusSearchService
         return $rows;
     }
 
+    public function pronunciationWord(string $lang, string $headword, ?string $sub): ?array
+    {
+        if (! in_array($lang, ['english', 'mandarin'], true) || mb_strlen($headword) > 100 || mb_strlen($sub ?? '') > 100) {
+            return null;
+        }
+
+        $row = DB::query()->fromSub($this->buildUnion($lang, 'all', $headword), 'words')
+            ->where('headword', $headword)
+            ->where('sub', $sub ?? '')
+            ->first();
+
+        return $row ? [
+            'headword' => $row->headword,
+            'sub' => $row->sub,
+            'meaning_id' => $row->meaning_id,
+            'meaning_en' => $row->meaning_en,
+            'lang_code' => $row->lang_code,
+        ] : null;
+    }
+
     public function count(string $lang, string $level, string $search): int
     {
         return DB::query()->fromSub($this->buildUnion($lang, $level, $search), 'kamus_union')->count();

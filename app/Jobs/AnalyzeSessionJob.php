@@ -98,6 +98,11 @@ class AnalyzeSessionJob implements ShouldQueue
             return;
         }
 
+        $session = ConversationSession::find($this->sessionId);
+        if (! $session) {
+            return;
+        }
+
         $usage = $result['usage'] ?? null;
 
         // normalize() keeps only items/catatan/sumber, so 'usage' is never stored.

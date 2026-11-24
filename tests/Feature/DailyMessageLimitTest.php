@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Services\ConversationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\RateLimiter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -36,12 +36,12 @@ class DailyMessageLimitTest extends TestCase
         $this->assertSame(120, ConversationService::dailyMessageLimit());
     }
 
-    public function test_configured_limit_is_what_remains_for_a_new_user(): void
+    public function test_configured_limit_is_what_remains_for_a_new_browser(): void
     {
         config(['conversation.daily_message_limit' => '75']);
-        $user = User::factory()->create(['onboarded' => true, 'start_date' => now()->toDateString(), 'track' => 'both']);
+        RateLimiter::clear('ngobrol:day:127.0.0.1');
 
-        $this->assertSame(75, app(ConversationService::class)->remainingMessagesToday($user));
+        $this->assertSame(75, app(ConversationService::class)->remainingMessagesToday());
     }
 
     /** @return array<string, array{mixed, int}> */

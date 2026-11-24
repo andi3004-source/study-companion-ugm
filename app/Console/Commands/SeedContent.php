@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 
 /**
  * One command to fill the content tables after `migrate` (no users): the
- * curriculum/reference data, HSK 1-6, irregular verbs and English CEFR
+ * Mandarin words and week topics, HSK 1-6, irregular verbs and English CEFR
  * vocabulary, all read from storage/app/seed-data. Safe to run again: every
  * seeder is idempotent (insert-if-empty or upsert). A seeder whose source
  * file is missing is skipped with a message, and the command then fails so

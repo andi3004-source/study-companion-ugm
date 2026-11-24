@@ -2,15 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\GenericTip;
-use App\Models\IeltsVocab;
-use App\Models\InfoDetail;
 use App\Models\IrregularVerb;
-use App\Models\MandarinConversation;
-use App\Models\MandarinWeekGrammar;
 use App\Models\MandarinWord;
-use App\Models\PastTenseStep;
-use App\Models\PlatformLink;
 use App\Models\WeekTopic;
 use App\Services\AnswerChecker;
 use Illuminate\Database\Seeder;
@@ -41,14 +34,7 @@ class ReferenceDataSeeder extends Seeder
         $tables = [
             MandarinWord::class => fn () => $this->seedMandarinWords(),
             IrregularVerb::class => fn () => $this->seedIrregularVerbs(),
-            IeltsVocab::class => fn () => $this->seedIeltsVocab(),
             WeekTopic::class => fn () => $this->seedWeekTopics(),
-            PastTenseStep::class => fn () => $this->seedPastTenseSteps(),
-            MandarinWeekGrammar::class => fn () => $this->seedMandarinWeekGrammar(),
-            InfoDetail::class => fn () => $this->seedInfoDetails(),
-            GenericTip::class => fn () => $this->seedGenericTips(),
-            PlatformLink::class => fn () => $this->seedPlatformLinks(),
-            MandarinConversation::class => fn () => $this->seedMandarinConversations(),
         ];
 
         foreach ($tables as $model => $seed) {
@@ -116,24 +102,6 @@ class ReferenceDataSeeder extends Seeder
         IrregularVerb::insert($rows);
     }
 
-    protected function seedIeltsVocab(): void
-    {
-        $vocab = $this->loadJson('ielts_vocab.json');
-        $rows = [];
-        foreach ($vocab as [$topic, $wordEn, $meaningId, $example]) {
-            $rows[] = [
-                'topic' => $topic,
-                'word_en' => $wordEn,
-                'meaning_id' => $meaningId,
-                'example_sentence' => $example,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        IeltsVocab::insert($rows);
-    }
-
     protected function seedWeekTopics(): void
     {
         $weeks = $this->loadJson('week_topics.json');
@@ -151,122 +119,5 @@ class ReferenceDataSeeder extends Seeder
         }
 
         WeekTopic::insert($rows);
-    }
-
-    protected function seedPastTenseSteps(): void
-    {
-        $steps = $this->loadJson('past_tense_steps.json');
-        $rows = [];
-        foreach ($steps as $i => $step) {
-            $rows[] = [
-                'slot_number' => $i,
-                'title' => $step['title'],
-                'detail' => $step['detail'],
-                'batch_number_ref' => $step['batch'] ?? null,
-                'platform_link_key' => $step['link'] ?? null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        PastTenseStep::insert($rows);
-    }
-
-    protected function seedMandarinWeekGrammar(): void
-    {
-        $grammar = $this->loadJson('mandarin_week_grammar.json');
-        $rows = [];
-        foreach ($grammar as $letter => $content) {
-            $rows[] = [
-                'week_letter' => $letter,
-                'grammar_text' => $content['grammar'],
-                'listening_text' => $content['listening'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        MandarinWeekGrammar::insert($rows);
-    }
-
-    protected function seedInfoDetails(): void
-    {
-        $details = $this->loadJson('info_details.json');
-        $entries = array_values($details);
-        $labels = array_keys($details);
-
-        // First 4 entries = Fondasi Pinyin Hari 1, last 4 = Hari 2 (see spec section 9j ordering)
-        $rows = [];
-        foreach ($labels as $i => $label) {
-            $dayNumber = $i < 4 ? 1 : 2;
-            $orderInDay = ($i % 4) + 1;
-            $rows[] = [
-                'label_key' => $label,
-                'detail_text' => $entries[$i],
-                'day_number' => $dayNumber,
-                'order_in_day' => $orderInDay,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        InfoDetail::insert($rows);
-    }
-
-    protected function seedGenericTips(): void
-    {
-        $tips = $this->loadJson('generic_tips.json');
-        $rows = [];
-        foreach ($tips as $itemType => $text) {
-            $rows[] = [
-                'item_type' => $itemType,
-                'tip_text' => $text,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        GenericTip::insert($rows);
-    }
-
-    protected function seedPlatformLinks(): void
-    {
-        $links = $this->loadJson('platform_links.json');
-        $rows = [];
-        foreach ($links as $key => $link) {
-            $rows[] = [
-                'link_key' => $key,
-                'name' => $link['name'],
-                'url' => $link['url'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        PlatformLink::insert($rows);
-    }
-
-    protected function seedMandarinConversations(): void
-    {
-        $conversations = $this->loadJson('mandarin_conversations.json');
-        $rows = [];
-        foreach ($conversations as $letter => $pairs) {
-            foreach ($pairs as $order => $pair) {
-                $rows[] = [
-                    'week_letter' => $letter,
-                    'order_in_week' => $order,
-                    'q_hanzi' => $pair['q_hanzi'],
-                    'q_pinyin' => $pair['q_pinyin'],
-                    'q_id' => $pair['q_id'],
-                    'a_hanzi' => $pair['a_hanzi'],
-                    'a_pinyin' => $pair['a_pinyin'],
-                    'a_id' => $pair['a_id'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-        }
-
-        MandarinConversation::insert($rows);
     }
 }

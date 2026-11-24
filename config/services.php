@@ -59,9 +59,6 @@ return [
     'openai_compatible' => [
         'key' => env('OPENAI_COMPATIBLE_API_KEY'),
         'model' => env('OPENAI_COMPATIBLE_MODEL', 'default'),
-        // Vision model for "Raba lalu dengar" (must be vision-capable;
-        // the text model above is often text-only, e.g. 9router-combo1).
-        'vision_model' => env('OPENAI_COMPATIBLE_VISION_MODEL', 'gemini/gemini-3.6-flash'),
         'base_url' => env('OPENAI_COMPATIBLE_BASE_URL', 'http://127.0.0.1:20128/v1'),
     ],
 

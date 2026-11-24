@@ -49,8 +49,7 @@ class StudyLayoutTest extends TestCase
         $posSuara = strpos($html, 'id="tombol-mode-suara"');
         $posAside = strpos($html, '<aside');
         $this->assertNotFalse($posSuara);
-        $this->assertNotFalse($posAside);
-        $this->assertLessThan($posAside, $posSuara, 'Mode suara harus muncul sebelum sidebar.');
+        $this->assertFalse($posAside);
     }
 
     public function test_layout_uses_escaped_slot_not_blade_unescaped_output(): void

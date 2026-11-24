@@ -6,6 +6,8 @@
     <meta name="color-scheme" content="only light">
     <meta name="theme-color" content="#14294D">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
     <title>{{ $title ?? 'Tuturnusa' }}</title>
     {{-- Applies saved display settings before first paint (see displaySettings() in app.js). --}}
     <script>
@@ -32,8 +34,7 @@
         A complement to the semantic markup and screen readers, never a replacement. Off by default.
     --}}
     @php
-        $voiceRoutes = collect(['dashboard', 'cards.index', 'kamus', 'ujian', 'latihan-isian', 'game', 'game.error-hunter', 'game.listen-pick', 'conversation', 'pronunciation-check', 'kata-bicara', 'progress', 'bantuan'])
-            ->when(config('scan.enabled'), fn ($routes) => $routes->push('scan.object'))
+        $voiceRoutes = collect(['home', 'conversation', 'pronunciation-check', 'buku-saku', 'bantuan'])
             ->mapWithKeys(fn ($name) => [$name => route($name)]);
     @endphp
     <div x-data="voiceModeBar({{ \Illuminate\Support\Js::from(route('voice.command')) }}, {{ \Illuminate\Support\Js::from($voiceRoutes) }})"

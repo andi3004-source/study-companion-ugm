@@ -11,9 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
-            'onboarded' => \App\Http\Middleware\EnsureOnboarded::class,
-        ]);
+        // No product route requires an account.
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

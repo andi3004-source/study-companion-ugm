@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Imports the 183-verb reference dataset into irregular_verbs_reference — a
- * separate table from irregular_verbs, which drives the existing 7-day/5-verb
- * English curriculum in Scheduler and isn't touched here. Indonesian meanings
+ * separate table from the historical irregular_verbs curriculum. Indonesian meanings
  * already ship in the source file, so no translation step is needed.
  */
 class IrregularVerbSeeder extends Seeder

@@ -23,6 +23,6 @@ echo "== PHPUnit"
 php artisan test --compact
 
 echo "== Pint (file yang berubah terhadap ${CI_BASE:-main})"
-changed=$( { git diff --name-only --diff-filter=ACMR "${CI_BASE:-main}"...HEAD -- '*.php'; git diff --name-only --diff-filter=ACMR HEAD -- '*.php'; git ls-files --others --exclude-standard -- '*.php'; } 2>/dev/null | grep -v '/\._' | sort -u || true)
+changed=$( { git diff --name-only --diff-filter=ACMR "${CI_BASE:-main}"...HEAD -- '*.php'; git diff --name-only --diff-filter=ACMR HEAD -- '*.php'; git ls-files --others --exclude-standard -- '*.php'; } 2>/dev/null | grep -v '/\._' | sort -u | while IFS= read -r file; do [ -f "$file" ] && printf '%s\n' "$file"; done || true)
 [ -z "$changed" ] || vendor/bin/pint --test $changed
 

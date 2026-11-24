@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
  * English sense is "surname ..." or "(slang) ..." (see
  * MandarinHskWord::scopeUnreliableGloss). Those translations came from the
  * dataset's wrong-homograph gloss (也 "surname Ye" → "nama keluarga Ye") and
- * teach a wrong meaning; with meaning_id NULL, Kamus/Kartu show "Arti belum
+ * teach a wrong meaning; with meaning_id NULL, Ucapan shows "Arti belum
  * tersedia" instead and translate:meanings leaves the row alone.
  *
  * Hand-corrected rows (data_status='corrected_draft') are never touched.

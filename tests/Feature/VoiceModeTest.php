@@ -2,10 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Database\Seeders\ReferenceDataSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -15,15 +11,6 @@ use Tests\TestCase;
  */
 class VoiceModeTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Http::preventStrayRequests();
-        $this->seed(ReferenceDataSeeder::class);
-    }
-
     protected function tearDown(): void
     {
         // Livewire remembers "a component was rendered" in static state; without this the next
@@ -32,14 +19,9 @@ class VoiceModeTest extends TestCase
         parent::tearDown();
     }
 
-    private function user(): User
+    private function page(string $url = '/'): string
     {
-        return User::factory()->create(['start_date' => now()->subDays(2)->toDateString(), 'track' => 'both', 'onboarded' => true]);
-    }
-
-    private function page(string $url = '/dashboard'): string
-    {
-        return $this->actingAs($this->user())->get($url)->assertOk()->getContent();
+        return $this->get($url)->assertOk()->getContent();
     }
 
     /** JS source with comments removed, so tests only look at code. */
@@ -203,28 +185,32 @@ class VoiceModeTest extends TestCase
         $adapters = $this->js('voice/adapters.js');
         preg_match_all("/VoiceMode\.register\(\s*'([a-z-]+)'/", $adapters, $m);
 
-        $this->assertEqualsCanonicalizing(['kata-bicara', 'game-listen-pick', 'game-error-hunter', 'chat', 'cards', 'dashboard', 'progress', 'scan', 'game-hub', 'chat-picker', 'kamus', 'ujian-picker', 'ujian-run', 'latihan-isian', 'ucapan', 'bantuan', 'onboarding'], $m[1]);
-
-        $views = collect(glob(resource_path('views/livewire/{,*/}*.blade.php'), GLOB_BRACE))->map(fn ($p) => file_get_contents($p))->implode("\n");
-        foreach ($m[1] as $name) {
-            $this->assertStringContainsString('data-voice-page="'.$name.'"', $views, $name);
+        foreach (['chat', 'chat-picker', 'ucapan', 'bantuan'] as $name) {
+            $this->assertContains($name, $m[1]);
         }
 
-        // Answers go through the existing radios and Jawab button, never a new path.
-        $this->assertStringContainsString('radio.click();', $adapters);
-        $this->assertStringContainsString('buttonNamed(/^jawab$/i)?.click();', $adapters);
-        // Raba lalu dengar: a voice command can't open the file picker, so it focuses the button.
-        $this->assertStringContainsString("'Tekan Enter untuk membuka kamera'", $adapters);
+        $views = collect([
+            resource_path('views/livewire/conversation/chat.blade.php'),
+            resource_path('views/livewire/conversation/picker.blade.php'),
+            resource_path('views/livewire/pronunciation-check.blade.php'),
+            resource_path('views/livewire/bantuan.blade.php'),
+        ])->map(fn ($p) => file_get_contents($p))->implode("\n");
+        foreach (['chat', 'chat-picker', 'ucapan', 'bantuan'] as $name) {
+            $this->assertStringContainsString('data-voice-page="'.$name.'"', $views, $name);
+        }
     }
 
-    public function test_scan_route_is_offered_to_voice_navigation_only_when_enabled(): void
+    public function test_voice_route_allowlist_contains_only_active_pages(): void
     {
-        $bar = fn (string $html) => preg_match('#x-data="(voiceModeBar\([^"]*)"#', $html, $m) ? $m[1] : '';
+        $html = $this->page();
+        preg_match('#x-data="(voiceModeBar\([^"]*)"#', $html, $m);
+        $bar = $m[1] ?? '';
 
-        $this->assertStringContainsString('kata-bicara', $bar($this->page()));
-        $this->assertStringNotContainsString('scan-benda', $bar($this->page()));
-
-        config(['scan.enabled' => true]);
-        $this->assertStringContainsString('scan-benda', $bar($this->page()));
+        foreach (['home', 'conversation', 'pronunciation-check', 'buku-saku', 'bantuan'] as $route) {
+            $this->assertStringContainsString($route, $bar);
+        }
+        foreach (['kamus', 'ujian', 'game', 'cards', 'scan-benda', 'dashboard'] as $route) {
+            $this->assertStringNotContainsString($route, $bar);
+        }
     }
 }

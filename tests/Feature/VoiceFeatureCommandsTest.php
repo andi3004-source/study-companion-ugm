@@ -2,10 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Database\Seeders\ReferenceDataSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -17,15 +13,6 @@ use Tests\TestCase;
  */
 class VoiceFeatureCommandsTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Http::preventStrayRequests();
-        $this->seed(ReferenceDataSeeder::class);
-    }
-
     protected function tearDown(): void
     {
         Livewire::flushState();
@@ -34,9 +21,7 @@ class VoiceFeatureCommandsTest extends TestCase
 
     private function page(string $url): string
     {
-        $user = User::factory()->create(['start_date' => now()->subDays(2)->toDateString(), 'track' => 'both', 'onboarded' => true]);
-
-        return $this->actingAs($user)->get($url)->assertOk()->getContent();
+        return $this->get($url)->assertOk()->getContent();
     }
 
     /** JS source with comments removed, so tests only look at code. */
@@ -79,63 +64,6 @@ class VoiceFeatureCommandsTest extends TestCase
         $this->assertStringContainsString('clone.querySelectorAll(\'[aria-hidden="true"]\').forEach((n) => n.remove());', $js);
     }
 
-    public function test_kamus_search_filters_and_results(): void
-    {
-        $html = $this->page('/kamus?query=ai');
-        $kamus = $this->adapter('kamus');
-
-        $this->assertStringContainsString('data-voice-page="kamus"', $html);
-        $this->assertStringContainsString("fill(document.getElementById('cari-kamus')", $kamus);
-        $this->assertStringContainsString('buttonNamed(/^tampilkan lebih$/i)', $kamus);
-        $this->assertStringContainsString("root().querySelectorAll('[role=\"group\"] button')", $kamus);
-        $this->assertStringContainsString("el.querySelector('button[aria-label^=\"Dengarkan\"]')?.click();", $kamus);
-        foreach (['cari lalu katanya', 'lanjut', 'nomor hasil', 'bahasa mandarin', 'level HSK'] as $command) {
-            $this->assertStringContainsString($command, $kamus, $command);
-        }
-
-        // Markers the adapter reads.
-        $view = file_get_contents(resource_path('views/livewire/kamus/search.blade.php'));
-        foreach (['data-hasil data-lang-code="{{ $entry->lang_code }}"', '<p data-kata', '<p data-bacaan', 'data-kosong'] as $marker) {
-            $this->assertStringContainsString($marker, $view, $marker);
-        }
-        // The meaning line starts with a flag emoji; the adapter says the meaning, not "bendera".
-        $this->assertStringContainsString(".replace(/[\\u{1F1E6}-\\u{1F1FF}]/gu, '')", $kamus);
-    }
-
-    public function test_ujian_picker_opens_modes_by_name(): void
-    {
-        $html = $this->page('/ujian');
-        $picker = $this->adapter('ujian-picker');
-
-        $this->assertStringContainsString('data-voice-page="ujian-picker"', $html);
-        $this->assertStringContainsString('data-voice-start="Ujian Mandarin"', $html);
-        $this->assertStringContainsString('data-voice-start="Ujian English"', $html);
-        $this->assertStringContainsString('link.click();', $picker);
-        $this->assertStringContainsString("hint: 'mulai, tes hari ini, mandarin, inggris, riwayat, kembali, berhenti'", $picker);
-    }
-
-    public function test_ujian_runner_answers_through_the_options_and_confirms_before_submitting(): void
-    {
-        $html = $this->page('/ujian/mandarin');
-        $run = $this->adapter('ujian-run');
-
-        $this->assertStringContainsString('data-voice-page="ujian-run"', $html);
-        $this->assertMatchesRegularExpression('#<div data-soal class="[^"]*">\s*<p[^>]*>1\. <span data-pertanyaan>#', $html);
-        $this->assertStringContainsString('aria-pressed="false"', $html);
-
-        // Answers press the existing option buttons; hanzi in a question is read in Mandarin.
-        $this->assertStringContainsString("q?.querySelectorAll('button[aria-pressed]')", $run);
-        $this->assertStringContainsString('option.click();', $run);
-        $this->assertStringContainsString("mixedSegments(text(q.querySelector('[data-pertanyaan]')))", $run);
-        // Feature rules: no changes after submitting, and submitting always asks first.
-        $this->assertStringContainsString("if (submitted()) return engine.tell('Ujian sudah dikumpulkan, jawaban tidak bisa diubah.", $run);
-        $this->assertMatchesRegularExpression('/const collect = \(engine\) => \{.*?engine\.pending = \{\s*onYes: async \(\) => \{\s*submit\.click\(\);/s', $run);
-        $this->assertStringContainsString('soal belum dijawab. ', $run);
-        $this->assertStringContainsString('buttonNamed(/^kumpulkan jawaban$/i)', $run);
-        // "Ulangi" stays "read again"; a new exam is "coba lagi", only after submitting.
-        $this->assertStringContainsString('const retry = submitted() ? buttonNamed(/^ulangi$/i) : null;', $run);
-    }
-
     public function test_ucapan_records_through_the_existing_button_and_reads_the_result(): void
     {
         $html = $this->page('/pronunciation-check');
@@ -166,63 +94,18 @@ class VoiceFeatureCommandsTest extends TestCase
         $this->assertStringContainsString('data-voice-page="bantuan"', $html);
         $this->assertStringContainsString("root().querySelectorAll('section')", $bantuan);
         $this->assertStringContainsString('Katakan nomor bagian untuk mendengarnya.', $bantuan);
-        // Bantuan lists the new feature commands.
-        foreach (['"isi hanzi"', '"kumpulkan" (selalu ditanya dulu)', '"rekam" (setelah bunyi', '"bahasa mandarin"', '"jalur mandarin"'] as $phrase) {
+        foreach (['"rekam" (setelah bunyi', '"baca halaman"', '"berhenti"'] as $phrase) {
             $this->assertStringContainsString($phrase, $html, $phrase);
         }
     }
 
-    public function test_onboarding_fields_are_labelled_and_voice_fills_them(): void
+    public function test_active_livewire_pages_have_voice_adapters(): void
     {
-        $user = User::factory()->create(['onboarded' => false]);
-        $html = $this->actingAs($user)->get('/onboarding')->assertOk()->getContent();
-        $onboarding = $this->adapter('onboarding');
-
-        $this->assertStringContainsString('data-voice-page="onboarding"', $html);
-        // Label tied to the date field, radio group named by a legend, decorative glyph hidden.
-        $this->assertStringContainsString('<label for="onboarding-tanggal"', $html);
-        $this->assertStringContainsString('id="onboarding-tanggal"', $html);
-        $this->assertMatchesRegularExpression('#<fieldset>\s*<legend[^>]*>Pilih jalur belajar</legend>#', $html);
-        $this->assertStringContainsString('<div aria-hidden="true" class="w-14 h-14', $html);
-
-        $this->assertStringContainsString('fill(dateField(), isoDate(day));', $onboarding);
-        $this->assertStringContainsString('radio?.click();', $onboarding);
-        $this->assertStringContainsString('buttonNamed(/^mulai belajar$/i)?.click();', $onboarding);
-    }
-
-    public function test_every_page_after_login_has_a_voice_adapter(): void
-    {
-        $views = collect(glob(resource_path('views/livewire/{,*/}*.blade.php'), GLOB_BRACE))
-            ->reject(fn ($p) => str_contains($p, '/layout/') || str_contains($p, '/pages/') || str_contains($p, '/partials/') || str_contains($p, '/profile/') || str_contains($p, '/welcome/'));
-
-        foreach ($views as $view) {
-            preg_match('/data-voice-page="([a-z-]+)"/', file_get_contents($view), $m);
-            $this->assertNotEmpty($m, basename($view).' has no data-voice-page');
+        foreach (['conversation/picker', 'conversation/chat', 'pronunciation-check', 'bantuan'] as $view) {
+            $path = resource_path("views/livewire/{$view}.blade.php");
+            preg_match('/data-voice-page="([a-z-]+)"/', file_get_contents($path), $m);
+            $this->assertNotEmpty($m, basename($path).' has no data-voice-page');
             $this->assertMatchesRegularExpression("/VoiceMode\\.register\\(\\s*'".preg_quote($m[1], '/')."'/", $this->js(), $m[1]);
-        }
-    }
-
-    public function test_latihan_isian_fills_the_existing_fields_and_hears_hanzi_in_mandarin(): void
-    {
-        $html = $this->page('/latihan-isian');
-        $isian = $this->adapter('latihan-isian');
-
-        $this->assertStringContainsString('data-voice-page="latihan-isian"', $html);
-        $this->assertMatchesRegularExpression('#<tr data-soal [^>]*>\s*<td[^>]*>1</td>\s*<td data-petunjuk#', $html);
-        $this->assertMatchesRegularExpression('#wire:model="answers\.0\.hanzi" data-isian="hanzi"#', $html);
-        $this->assertStringContainsString('<td data-hasil-soal', $html);
-
-        // Hanzi answers are recognised in Mandarin, pinyin in Indonesian; both go into the existing inputs.
-        $this->assertStringContainsString("hanzi: { label: 'Hanzi', lang: 'zh-CN' }, pinyin: { label: 'Pinyin', lang: 'id-ID' }", $isian);
-        $this->assertStringContainsString('engine.captureNext(FIELD[name].lang, (heard) => fillField(engine, field, heard));', $isian);
-        $this->assertStringContainsString('fill(field, clean(value));', $isian);
-        // Grading stays on the server (the existing button); reset asks first like the button does.
-        $this->assertStringContainsString('buttonNamed(/analisis jawaban/i)?.click();', $isian);
-        $this->assertStringContainsString('if (reset) await engine.activate(reset);', $isian);
-        $this->assertMatchesRegularExpression('/const DANGEROUS = \/hapus\|reset\|/', $this->js('voice/engine.js'));
-        // Settings change the existing selects.
-        foreach (["'isian-mode'", "'isian-jumlah'", "'isian-urutan'"] as $select) {
-            $this->assertStringContainsString($select, $isian, $select);
         }
     }
 }
