@@ -5,7 +5,7 @@ namespace App\Support;
 /**
  * Masks API keys in text that may reach a log, an exception message or the
  * console (Langflow error bodies echo request details back). The configured
- * Langflow and Gemini keys are replaced literally first, then anything that
+ * provider keys are replaced literally first, then anything that
  * looks like an OpenAI/Langflow (sk-…), Google (AIza…) or Astra (AstraCS:…)
  * key.
  */
@@ -40,7 +40,7 @@ class SecretRedactor
     /** @return array<int, string> */
     private static function configuredSecrets(): array
     {
-        return collect([config('services.langflow.api_key'), config('services.gemini.key')])
+        return collect([config('services.langflow.api_key'), config('services.gemini.key'), config('services.anthropic.key'), config('services.openai_compatible.key')])
             ->filter(fn ($secret) => is_string($secret) && strlen(trim($secret)) >= self::MIN_LITERAL_LENGTH)
             ->map(fn (string $secret) => trim($secret))
             ->all();

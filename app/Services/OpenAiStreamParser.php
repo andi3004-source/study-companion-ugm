@@ -40,6 +40,9 @@ final class OpenAiStreamParser
             if (is_string($delta)) {
                 $text .= $delta;
             }
+            if (($chunk['choices'][0]['finish_reason'] ?? null) === 'content_filter') {
+                $text = AiDailyBudget::SAFE_REPLY;
+            }
             $tokensIn = $chunk['usage']['prompt_tokens'] ?? $tokensIn;
             $tokensOut = $chunk['usage']['completion_tokens'] ?? $tokensOut;
         }

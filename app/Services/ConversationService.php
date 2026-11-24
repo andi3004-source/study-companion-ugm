@@ -165,7 +165,10 @@ class ConversationService
 
     public function remainingMessagesToday(): int
     {
-        return max(0, self::dailyMessageLimit() - RateLimiter::attempts('ngobrol:day:'.request()->ip()));
+        return max(0, min(
+            self::dailyMessageLimit() - RateLimiter::attempts('ngobrol:day:session:'.session()->getId()),
+            self::dailyMessageLimit() * 10 - RateLimiter::attempts('ngobrol:day:ip:'.request()->ip()),
+        ));
     }
 
     /**

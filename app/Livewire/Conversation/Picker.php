@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Conversation;
 
+use App\Services\AiBudgetExceeded;
+use App\Services\AiDailyBudget;
 use App\Services\ConversationService;
 use App\Support\AiErrorMessage;
 use Illuminate\Support\Facades\RateLimiter;
@@ -40,6 +42,10 @@ class Picker extends Component
 
         try {
             $session = app(ConversationService::class)->startRandomSession($this->lang);
+        } catch (AiBudgetExceeded $e) {
+            $this->errorMessage = AiDailyBudget::MESSAGE;
+
+            return null;
         } catch (Throwable $e) {
             report($e);
             $this->errorMessage = AiErrorMessage::for($e);
@@ -52,8 +58,11 @@ class Picker extends Component
 
     private function guardStart(): void
     {
-        abort_if(RateLimiter::tooManyAttempts('ngobrol:start:'.request()->ip(), 20), 429);
-        RateLimiter::hit('ngobrol:start:'.request()->ip(), 3600);
+        $sessionKey = 'ngobrol:start:session:'.session()->getId();
+        $ipKey = 'ngobrol:start:ip:'.request()->ip();
+        abort_if(RateLimiter::tooManyAttempts($sessionKey, 20) || RateLimiter::tooManyAttempts($ipKey, 200), 429);
+        RateLimiter::hit($sessionKey, 3600);
+        RateLimiter::hit($ipKey, 3600);
     }
 
     public function render()

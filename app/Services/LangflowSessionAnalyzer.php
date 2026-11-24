@@ -108,7 +108,7 @@ class LangflowSessionAnalyzer implements SessionAnalyzer
     /** One run request, exactly as Langflow's API panel shows it; the response is returned as-is (not thrown). */
     public function send(string $input, string $langflowSessionId): Response
     {
-        return Http::timeout($this->timeout)
+        return AiDailyBudget::run(1000 + strlen($input), fn () => Http::timeout($this->timeout)
             ->asJson()
             ->withHeaders(filled($this->apiKey) ? ['x-api-key' => $this->apiKey] : [])
             ->post($this->endpoint(), [
@@ -116,7 +116,7 @@ class LangflowSessionAnalyzer implements SessionAnalyzer
                 'input_type' => 'chat',
                 'input_value' => $input,
                 'session_id' => $langflowSessionId,
-            ]);
+            ]));
     }
 
     public static function extractText(array $data): ?string

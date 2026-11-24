@@ -49,42 +49,58 @@ class OpenAiCompatibleClient implements AiClient
             throw new RuntimeException('OPENAI_COMPATIBLE_API_KEY / OPENAI_COMPATIBLE_BASE_URL is not set; cannot call the OpenAI-compatible API.');
         }
 
-        $payload = [
-            'model' => $model !== '' ? $model : $this->model,
-            'messages' => [
-                ['role' => 'system', 'content' => $system],
-                ...array_map(fn (array $m) => [
-                    'role' => $m['role'],
-                    'content' => $m['content'],
-                ], $messages),
-            ],
-            'max_tokens' => $maxTokens,
-            'stream' => false,
-        ];
-
-        $request = Http::acceptJson();
-        if (filled($this->apiKey)) {
-            $request = $request->withToken($this->apiKey);
+        $parts = parse_url($this->baseUrl);
+        $local = in_array($parts['host'] ?? null, ['127.0.0.1', 'localhost'], true);
+        if (! is_array($parts) || ! in_array($parts['scheme'] ?? null, ['http', 'https'], true)
+            || isset($parts['user']) || isset($parts['pass']) || isset($parts['fragment'])
+            || ($parts['scheme'] !== 'https' && (app()->environment('production') || ! $local))) {
+            throw new RuntimeException('OPENAI_COMPATIBLE_BASE_URL must use HTTPS (localhost is allowed outside production).');
         }
 
-        $response = $request->post($this->baseUrl.'/chat/completions', $payload)->throw();
+        return AiDailyBudget::run($maxTokens + strlen($system) + strlen(AiDailyBudget::CHILD_SAFETY) + strlen(json_encode($messages)), function () use ($model, $system, $messages, $maxTokens) {
 
-        // Some routers (e.g. 9router) answer with server-sent events even when
-        // stream:false was requested — a "data: {...}" chunk per line instead
-        // of one JSON object. Detect and stitch those together.
-        $body = (string) $response->body();
-        if (str_contains($response->header('Content-Type'), 'text/event-stream') || str_starts_with(ltrim($body), 'data:')) {
-            return OpenAiStreamParser::parse($body);
-        }
+            $payload = [
+                'model' => $model !== '' ? $model : $this->model,
+                'messages' => [
+                    ['role' => 'system', 'content' => $system."\n\n".AiDailyBudget::CHILD_SAFETY],
+                    ...array_map(fn (array $m) => [
+                        'role' => $m['role'],
+                        'content' => $m['content'],
+                    ], $messages),
+                ],
+                'max_tokens' => $maxTokens,
+                'stream' => false,
+            ];
 
-        $data = $response->json();
+            $request = Http::acceptJson();
+            if (filled($this->apiKey)) {
+                $request = $request->withToken($this->apiKey);
+            }
 
-        $text = $data['choices'][0]['message']['content'] ?? '';
+            $response = $request->post($this->baseUrl.'/chat/completions', $payload);
+            if ($response->status() === 400 && ($response->json('error.code') === 'content_filter' || $response->json('error.type') === 'content_filter')) {
+                return ['text' => AiDailyBudget::SAFE_REPLY, 'tokens_in' => null, 'tokens_out' => null];
+            }
+            $response->throw();
 
-        return [
-            'text' => is_string($text) ? $text : '',
-            'tokens_in' => $data['usage']['prompt_tokens'] ?? null,
-            'tokens_out' => $data['usage']['completion_tokens'] ?? null,
-        ];
+            // Some routers (e.g. 9router) answer with server-sent events even when
+            // stream:false was requested — a "data: {...}" chunk per line instead
+            // of one JSON object. Detect and stitch those together.
+            $body = (string) $response->body();
+            if (str_contains($response->header('Content-Type'), 'text/event-stream') || str_starts_with(ltrim($body), 'data:')) {
+                return OpenAiStreamParser::parse($body);
+            }
+
+            $data = $response->json();
+
+            $text = ($data['choices'][0]['finish_reason'] ?? null) === 'content_filter'
+                ? AiDailyBudget::SAFE_REPLY : ($data['choices'][0]['message']['content'] ?? '');
+
+            return [
+                'text' => is_string($text) ? $text : '',
+                'tokens_in' => $data['usage']['prompt_tokens'] ?? null,
+                'tokens_out' => $data['usage']['completion_tokens'] ?? null,
+            ];
+        });
     }
 }

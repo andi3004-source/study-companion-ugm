@@ -9,9 +9,7 @@ use RuntimeException;
 /**
  * Thin wrapper around the Gemini generateContent API. The key is read only
  * from config (backed by env), never passed to or exposed in any view/JS —
- * it does travel in the request URL's query string (Gemini's own API
- * design, not something this client can avoid), but never in a header or
- * anywhere the app itself logs or renders.
+ * it travels in the x-goog-api-key header, never in the URL.
  *
  * Implements the same AiClient contract as AnthropicClient so
  * ConversationService's rate-limit/history/system-prompt logic never has to
@@ -51,31 +49,40 @@ class GeminiClient implements AiClient
             'parts' => [['text' => $m['content']]],
         ], $messages);
 
-        $endpoint = self::BASE_URL.'/'.$model.':generateContent?key='.urlencode($this->apiKey);
+        $endpoint = self::BASE_URL.'/'.$model.':generateContent';
 
-        $response = Http::post($endpoint, [
-            'contents' => $contents,
-            'systemInstruction' => ['parts' => [['text' => $system]]],
-            'generationConfig' => [
-                'maxOutputTokens' => $maxTokens,
-                // gemini-3.x models "think" by default, and maxOutputTokens caps
-                // thinking + visible output combined — without this, replies were
-                // silently coming back empty (finishReason: MAX_TOKENS) because the
-                // whole budget went to internal reasoning. 'minimal' is the lowest
-                // level 3.x exposes (there's no full off-switch, unlike 2.x's
-                // thinkingBudget: 0). Confirmed against a live API call 2026-09-10.
-                'thinkingConfig' => ['thinkingLevel' => 'minimal'],
-            ],
-        ])->throw();
+        return AiDailyBudget::run($maxTokens + strlen($system) + strlen(AiDailyBudget::CHILD_SAFETY) + strlen(json_encode($messages)), function () use ($endpoint, $contents, $system, $maxTokens) {
+            $response = Http::withHeaders(['x-goog-api-key' => $this->apiKey])->post($endpoint, [
+                'contents' => $contents,
+                'systemInstruction' => ['parts' => [['text' => $system."\n\n".AiDailyBudget::CHILD_SAFETY]]],
+                'safetySettings' => array_map(fn ($category) => ['category' => $category, 'threshold' => 'BLOCK_LOW_AND_ABOVE'], [
+                    'HARM_CATEGORY_HARASSMENT', 'HARM_CATEGORY_HATE_SPEECH',
+                    'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                ]),
+                'generationConfig' => [
+                    'maxOutputTokens' => $maxTokens,
+                    // gemini-3.x models "think" by default, and maxOutputTokens caps
+                    // thinking + visible output combined — without this, replies were
+                    // silently coming back empty (finishReason: MAX_TOKENS) because the
+                    // whole budget went to internal reasoning. 'minimal' is the lowest
+                    // level 3.x exposes (there's no full off-switch, unlike 2.x's
+                    // thinkingBudget: 0). Confirmed against a live API call 2026-09-10.
+                    'thinkingConfig' => ['thinkingLevel' => 'minimal'],
+                ],
+            ])->throw();
 
-        $data = $response->json();
+            $data = $response->json();
 
-        $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = ($data['promptFeedback']['blockReason'] ?? null) || ($data['candidates'][0]['finishReason'] ?? null) === 'SAFETY'
+                ? AiDailyBudget::SAFE_REPLY : ($data['candidates'][0]['content']['parts'][0]['text'] ?? '');
 
-        return [
-            'text' => $text,
-            'tokens_in' => $data['usageMetadata']['promptTokenCount'] ?? null,
-            'tokens_out' => $data['usageMetadata']['candidatesTokenCount'] ?? null,
-        ];
+            return [
+                'text' => $text,
+                'tokens_in' => $data['usageMetadata']['promptTokenCount'] ?? null,
+                'tokens_out' => isset($data['usageMetadata']['totalTokenCount'], $data['usageMetadata']['promptTokenCount'])
+                    ? $data['usageMetadata']['totalTokenCount'] - $data['usageMetadata']['promptTokenCount']
+                    : ($data['usageMetadata']['candidatesTokenCount'] ?? null),
+            ];
+        });
     }
 }

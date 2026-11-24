@@ -177,7 +177,9 @@ class PronunciationCheck extends Component
             return;
         }
 
-        $probe = new Process(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', $this->audioFile->getRealPath()]);
+        $probe = new Process(['ffprobe', '-v', 'error', '-protocol_whitelist', 'file', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', $this->audioFile->getRealPath()]);
+        // ffprobe has no -nostdin option; close its stdin pipe instead.
+        $probe->setInput('');
         $probe->setTimeout(5);
         try {
             $probe->run();

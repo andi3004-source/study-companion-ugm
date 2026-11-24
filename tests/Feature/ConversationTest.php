@@ -26,7 +26,8 @@ class ConversationTest extends TestCase
     {
         parent::setUp();
         foreach (['start', 'finish', 'minute', 'day'] as $name) {
-            RateLimiter::clear('ngobrol:'.$name.':127.0.0.1');
+            RateLimiter::clear('ngobrol:'.$name.':ip:127.0.0.1');
+            RateLimiter::clear('ngobrol:'.$name.':session:'.session()->getId());
         }
     }
 
@@ -106,14 +107,15 @@ class ConversationTest extends TestCase
     {
         $this->client();
         $session = $this->ownedFixture();
-        RateLimiter::hit('ngobrol:minute:127.0.0.1', 60);
+        $minuteKey = 'ngobrol:minute:session:'.session()->getId();
+        RateLimiter::hit($minuteKey, 60);
         for ($i = 1; $i < 10; $i++) {
-            RateLimiter::hit('ngobrol:minute:127.0.0.1', 60);
+            RateLimiter::hit($minuteKey, 60);
         }
         Livewire::test(Chat::class, ['session' => $session])->set('newMessage', 'Hello')->call('sendMessage')->assertSet('errorMessage', 'Terlalu banyak pesan. Coba lagi sebentar.');
-        RateLimiter::clear('ngobrol:minute:127.0.0.1');
+        RateLimiter::clear($minuteKey);
         for ($i = 0; $i < 50; $i++) {
-            RateLimiter::hit('ngobrol:day:127.0.0.1', 86400);
+            RateLimiter::hit('ngobrol:day:session:'.session()->getId(), 86400);
         }
         Livewire::test(Chat::class, ['session' => $session])->set('newMessage', 'Hello')->call('sendMessage')->assertSet('errorMessage', 'Kuota harian habis, lanjut besok.');
         $this->assertDatabaseCount('conversation_turns', 0);
@@ -132,15 +134,33 @@ class ConversationTest extends TestCase
         $this->assertDatabaseCount('conversation_api_calls', 0);
     }
 
-    public function test_start_and_finish_are_limited_per_ip(): void
+    public function test_start_and_finish_are_limited_per_session(): void
     {
         for ($i = 0; $i < 20; $i++) {
-            RateLimiter::hit('ngobrol:start:127.0.0.1', 3600);
-            RateLimiter::hit('ngobrol:finish:127.0.0.1', 3600);
+            RateLimiter::hit('ngobrol:start:session:'.session()->getId(), 3600);
+            RateLimiter::hit('ngobrol:finish:session:'.session()->getId(), 3600);
         }
         Livewire::test(Picker::class)->set('lang', 'english')->call('selectScenario', 'job_interview')->assertStatus(429);
         $session = $this->ownedFixture();
         Livewire::test(Chat::class, ['session' => $session])->call('finishSession')->assertStatus(429);
+    }
+
+    public function test_shared_ip_has_a_looser_daily_cap_than_one_browser(): void
+    {
+        $this->client();
+        $session = $this->ownedFixture();
+        for ($i = 0; $i < 50; $i++) {
+            RateLimiter::hit('ngobrol:day:session:'.session()->getId(), 86400);
+        }
+        $this->assertSame(0, app(ConversationService::class)->remainingMessagesToday());
+        session()->migrate();
+        session()->push('ngobrol.sesi', $session->id);
+        $this->assertSame(50, app(ConversationService::class)->remainingMessagesToday());
+
+        for ($i = 0; $i < 500; $i++) {
+            RateLimiter::hit('ngobrol:day:ip:127.0.0.1', 86400);
+        }
+        $this->assertSame(0, app(ConversationService::class)->remainingMessagesToday());
     }
 
     public function test_delayed_analysis_job_skips_a_deleted_session(): void

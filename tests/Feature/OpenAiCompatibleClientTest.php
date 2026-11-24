@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Contracts\AiClient;
 use App\Providers\AppServiceProvider;
+use App\Services\AiDailyBudget;
 use App\Services\OpenAiCompatibleClient;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -44,7 +45,7 @@ class OpenAiCompatibleClientTest extends TestCase
                 && $request['model'] === 'test-model'
                 && $request['max_tokens'] === 200
                 && $request['messages'] === [
-                    ['role' => 'system', 'content' => 'Kamu tutor.'],
+                    ['role' => 'system', 'content' => 'Kamu tutor.'."\n\n".AiDailyBudget::CHILD_SAFETY],
                     ['role' => 'user', 'content' => 'Hai'],
                 ];
         });
@@ -97,6 +98,18 @@ class OpenAiCompatibleClientTest extends TestCase
 
         try {
             (new OpenAiCompatibleClient)->sendMessage('m', 's', []);
+        } finally {
+            Http::assertNothingSent();
+        }
+    }
+
+    public function test_production_rejects_local_http(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+        Http::fake();
+        $this->expectException(RuntimeException::class);
+        try {
+            (new OpenAiCompatibleClient('key', 'm', 'http://localhost:20128/v1'))->sendMessage('m', 's', []);
         } finally {
             Http::assertNothingSent();
         }

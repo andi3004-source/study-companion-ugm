@@ -10,9 +10,7 @@ use RuntimeException;
  * Thin wrapper around the Claude Messages API. The key is read only from
  * config (backed by env), never passed to or exposed in any view/JS.
  *
- * Not currently bound to AiClient in AppServiceProvider (Gemini is active),
- * but kept in place and still implements the contract so switching back is
- * a one-line binding change.
+ * Selected through AI_PROVIDER=anthropic in AppServiceProvider.
  */
 class AnthropicClient implements AiClient
 {
@@ -42,25 +40,28 @@ class AnthropicClient implements AiClient
             throw new RuntimeException('ANTHROPIC_API_KEY is not set; cannot call the Claude API.');
         }
 
-        $response = Http::withHeaders([
-            'x-api-key' => $this->apiKey,
-            'anthropic-version' => self::API_VERSION,
-        ])->post(self::ENDPOINT, [
-            'model' => $model,
-            'system' => $system,
-            'messages' => $messages,
-            'max_tokens' => $maxTokens,
-        ])->throw();
+        return AiDailyBudget::run($maxTokens + strlen($system) + strlen(AiDailyBudget::CHILD_SAFETY) + strlen(json_encode($messages)), function () use ($model, $system, $messages, $maxTokens) {
+            $response = Http::withHeaders([
+                'x-api-key' => $this->apiKey,
+                'anthropic-version' => self::API_VERSION,
+            ])->post(self::ENDPOINT, [
+                'model' => $model,
+                'system' => $system."\n\n".AiDailyBudget::CHILD_SAFETY,
+                'messages' => $messages,
+                'max_tokens' => $maxTokens,
+            ])->throw();
 
-        $data = $response->json();
+            $data = $response->json();
 
-        $text = collect($data['content'] ?? [])
-            ->firstWhere('type', 'text')['text'] ?? '';
+            $text = ($data['stop_reason'] ?? null) === 'refusal'
+                ? AiDailyBudget::SAFE_REPLY
+                : (collect($data['content'] ?? [])->firstWhere('type', 'text')['text'] ?? '');
 
-        return [
-            'text' => $text,
-            'tokens_in' => $data['usage']['input_tokens'] ?? null,
-            'tokens_out' => $data['usage']['output_tokens'] ?? null,
-        ];
+            return [
+                'text' => $text,
+                'tokens_in' => $data['usage']['input_tokens'] ?? null,
+                'tokens_out' => $data['usage']['output_tokens'] ?? null,
+            ];
+        });
     }
 }

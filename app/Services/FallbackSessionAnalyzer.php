@@ -43,6 +43,9 @@ class FallbackSessionAnalyzer implements SessionAnalyzer
         try {
             return $this->primary->analyze($transcript, $sessionId);
         } catch (Throwable $e) {
+            if ($e instanceof AiBudgetExceeded) {
+                throw $e;
+            }
             if ($this->deferTransient && $e instanceof LangflowRequestException && $e->transient) {
                 throw $e;
             }

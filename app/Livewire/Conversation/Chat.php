@@ -3,6 +3,8 @@
 namespace App\Livewire\Conversation;
 
 use App\Models\ConversationSession;
+use App\Services\AiBudgetExceeded;
+use App\Services\AiDailyBudget;
 use App\Services\ConversationService;
 use App\Support\AiErrorMessage;
 use Illuminate\Support\Facades\RateLimiter;
@@ -109,8 +111,9 @@ class Chat extends Component
 
         $service = app(ConversationService::class);
 
-        $minuteKey = 'ngobrol:minute:'.request()->ip();
-        if (RateLimiter::tooManyAttempts($minuteKey, 10)) {
+        $minuteKey = 'ngobrol:minute:session:'.session()->getId();
+        $ipMinuteKey = 'ngobrol:minute:ip:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($minuteKey, 10) || RateLimiter::tooManyAttempts($ipMinuteKey, 100)) {
             $this->errorMessage = 'Terlalu banyak pesan. Coba lagi sebentar.';
 
             return;
@@ -124,6 +127,10 @@ class Chat extends Component
 
         try {
             $assistantTurn = $service->sendMessage($this->session, $content, $voiceText !== null ? 'voice' : 'text');
+        } catch (AiBudgetExceeded $e) {
+            $this->statusMessage = AiDailyBudget::MESSAGE;
+
+            return;
         } catch (Throwable $e) {
             // $newMessage is left untouched so the typed text is not lost.
             report($e);
@@ -133,7 +140,9 @@ class Chat extends Component
         }
 
         RateLimiter::hit($minuteKey, 60);
-        RateLimiter::hit('ngobrol:day:'.request()->ip(), 86400);
+        RateLimiter::hit($ipMinuteKey, 60);
+        RateLimiter::hit('ngobrol:day:session:'.session()->getId(), 86400);
+        RateLimiter::hit('ngobrol:day:ip:'.request()->ip(), 86400);
         $this->newMessage = '';
         $this->statusMessage = 'Terkirim';
         $this->session->refresh();
@@ -145,8 +154,11 @@ class Chat extends Component
     public function finishSession(): void
     {
         $this->ownedSession();
-        abort_if(RateLimiter::tooManyAttempts('ngobrol:finish:'.request()->ip(), 20), 429);
-        RateLimiter::hit('ngobrol:finish:'.request()->ip(), 3600);
+        $sessionKey = 'ngobrol:finish:session:'.session()->getId();
+        $ipKey = 'ngobrol:finish:ip:'.request()->ip();
+        abort_if(RateLimiter::tooManyAttempts($sessionKey, 20) || RateLimiter::tooManyAttempts($ipKey, 200), 429);
+        RateLimiter::hit($sessionKey, 3600);
+        RateLimiter::hit($ipKey, 3600);
         $this->summary = app(ConversationService::class)->endSession($this->session);
         $this->analysisQueuedAt = $this->summary['analysis_queued'] ? now()->timestamp : null;
         $this->session = $this->ownedSession()->refresh();
