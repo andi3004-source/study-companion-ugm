@@ -100,6 +100,16 @@ Inventaris view hapus milik W3-C: `resources/views/{welcome,dashboard,profile}.b
 
 **Selesai bila** hanya UI tiga fitur/Bantuan dan utilitasnya tersisa, build tidak memuat entry/adapter lama, semua tautan mencapai route aktif, dan CI worktree hijau. Claude merge W3 dan tunggu GitHub Actions hijau sebelum W4.
 
+### W3-P — Cursor Composer (lanjutan W3-C, worktree sama): PWA "Pasang aplikasi" (ditambahkan Claude atas keputusan user)
+
+**Tujuan.** Pengguna dan pengajar bisa memasang Tuturnusa sebagai app dari beranda, dan Buku Saku tetap bisa dipakai offline. Acuan visual: section "Pasang aplikasi" di mockup Figma Beranda desktop/mobile.
+
+**File milik tugas.** Buat `public/manifest.webmanifest` (name "Tuturnusa", short_name "Tuturnusa", lang id, start_url "/", scope "/", display "standalone", background_color "#FFFFFF", theme_color "#14294D", ikon 192/512 + maskable dari logo), `public/icons/*`, `public/sw.js`, `resources/js/pwa.js`; ubah `resources/views/layouts/study.blade.php` (link manifest, theme-color, registrasi SW), `resources/views/home.blade.php` (section pasang), `resources/views/livewire/bantuan.blade.php` (`#pasang` langkah per platform untuk pengajar), `vite.config.js`; tes `tests/Feature/PwaTest.php`.
+
+**TDD.** Tes gagal dulu: manifest valid dan dilayani dengan Content-Type benar; layout memuat `<link rel="manifest">` dan `theme-color`; beranda memuat section ber-`aria-labelledby` dengan tombol `type="button"` bernama "Pasang aplikasi" yang **tersembunyi secara default** (`hidden`) dan tautan "Cara memasang" ke `/bantuan#pasang`; Bantuan memuat `id="pasang"`. JS: tampilkan tombol hanya saat `beforeinstallprompt` diterima, panggil `prompt()` saat ditekan, umumkan hasil lewat `role="status"` yang sudah ada ("Tuturnusa sedang dipasang" / "Pemasangan dibatalkan"), sembunyikan seluruh section saat `matchMedia('(display-mode: standalone)')` atau setelah `appinstalled`. Service worker: precache shell (CSS/JS Vite hasil build, font Inter, ikon), cache-first untuk `/audio/buku-saku/*` dan halaman `/buku-saku*` (stale-while-revalidate), network-only untuk `/conversation*`, `/pronunciation-check`, `/livewire/*`, dan semua non-GET; halaman offline sederhana berbahasa Indonesia. Versi cache diikat ke hash build supaya update tidak tertahan.
+
+**Verifikasi persis.** `php artisan test --compact tests/Feature/PwaTest.php`; `npm run build`; buka `/` di Chrome → DevTools Application: manifest tanpa error dan installable; mode offline: `/buku-saku/...` dan MP3 yang pernah dibuka tetap tampil; `bash scripts/ci.sh`. W4 menambah E2E: tombol tersembunyi tanpa event, muncul setelah event sintetis `beforeinstallprompt`, dan Buku Saku offline.
+
 ## W4 — gelombang terakhir sebelum QA: E2E dan axe
 
 ### W4-G — Antigravity (Gemini): Playwright, aksesibilitas otomatis, job CI
