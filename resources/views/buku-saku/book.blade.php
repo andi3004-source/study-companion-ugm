@@ -17,7 +17,7 @@
                     <a href="{{ route('buku-saku.chapter', [$book['slug'], $bab['slug']]) }}"
                        class="flex items-center gap-4 rounded-2xl border-2 border-navy bg-white px-4 py-3 min-h-[4rem] no-underline text-navy">
                         <span class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-orange font-600 text-navy shrink-0" aria-hidden="true">{{ $bab['urutan'] }}</span>
-                        <span class="font-600 text-xl flex-1">Bab {{ $bab['urutan'] }}. {{ $bab['judul'] }}</span>
+                        <span class="font-600 text-xl flex-1">{{ $bab['judul'] }}</span>
                         <svg class="o-ic w-6 h-6 shrink-0" aria-hidden="true"><use href="#i-chevron-right"/></svg>
                     </a>
                 </li>

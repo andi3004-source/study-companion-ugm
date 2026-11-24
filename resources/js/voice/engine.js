@@ -25,7 +25,7 @@ export const MESSAGES = {
     unsupported: 'Mode suara membutuhkan Chrome atau Edge',
     consent:
         'Mode suara memakai pengenalan suara bawaan browser (Chrome atau Edge). Suaramu dikirim ke penyedia browser untuk diubah menjadi teks. Aplikasi ini tidak menyimpan suara.',
-    resume: 'Mode suara aktif. Ketuk atau tekan Enter pada tombol Mode suara untuk melanjutkan mikrofon',
+    resume: 'Mode suara aktif. Tekan tombol Mode suara untuk satu perintah.',
     silenceStop: 'Mode suara berhenti karena tidak ada suara. Keyboard tetap bisa dipakai.',
     reminder: 'Saya masih mendengarkan. Katakan perintah untuk mendengar daftar perintah.',
     noZhVoice: 'Suara Mandarin belum terpasang di perangkat ini, jadi teks Mandarin mungkin tidak terbaca dengan benar.',
@@ -37,9 +37,8 @@ export const MESSAGES = {
         aborted: 'Mikrofon dihentikan.',
         'audio-capture': 'Mikrofon tidak ditemukan. Periksa mikrofon perangkat.',
     },
-    help: 'Perintah: baca halaman. Daftar tindakan. Nomor satu sampai dua belas. Lanjut. Kembali. Ulangi. Buka, lalu nama halaman, misalnya buka kartu. Isi, untuk mengetik di kolom yang dipilih, dan selesai isi. Berhenti.',
-    // Said anywhere; each page adapter's "hint" comes first.
-    general: 'Di mana saja: baca halaman, daftar tindakan, nomor, buka lalu nama halaman, kembali, ulangi, berhenti. Isi, untuk mengetik di kolom yang dipilih, dan selesai isi.',
+    help: 'Perintah: baca halaman. Daftar tindakan. Nomor satu sampai dua belas. Lanjut. Kembali. Ulangi. Buka lalu nama halaman: beranda, ngobrol, ucapan, buku saku, bantuan. Isi, untuk mengetik di kolom yang dipilih, dan selesai isi. Berhenti.',
+    general: 'Di mana saja: baca halaman, daftar tindakan, nomor, buka lalu beranda, ngobrol, ucapan, buku saku, atau bantuan, kembali, ulangi, berhenti. Isi, untuk mengetik di kolom yang dipilih, dan selesai isi.',
     defaultHint: 'baca halaman, daftar tindakan, satu sampai dua belas, lanjut, kembali, ulangi, berhenti',
     unknown: 'Maaf, perintah tidak dikenali.',
 };
@@ -215,12 +214,22 @@ const VoiceMode = {
         this.reminders = 0;
         this.remember(true);
         window.dispatchEvent(new CustomEvent('mode-suara', { detail: { aktif: true } }));
-        const intro = (srOff ? 'Mode pembaca layar dimatikan karena Mode suara aktif. ' : '') + 'Mode suara aktif. Katakan perintah untuk daftar perintah.';
+        const intro = (srOff ? 'Mode pembaca layar dimatikan karena Mode suara aktif. ' : '') + 'Mode suara aktif. Tekan tombol Mode suara untuk satu perintah. Katakan perintah untuk daftar perintah.';
         this.announce(intro);
         await this.say([{ text: intro, lang: 'id-ID' }]);
         this.watch();
         this.syncAdapter(true);
-        this.listen();
+    },
+
+    /** Stops in-app audio before opening the microphone (narasi bab, TTS aplikasi). */
+    pauseAppAudio() {
+        document.querySelectorAll('audio').forEach((el) => {
+            try {
+                el.pause();
+            } catch (e) {}
+        });
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        this.speaking = false;
     },
 
     /** Stops everything: microphone, speech, timers. Safe to call any time. */
@@ -334,6 +343,7 @@ const VoiceMode = {
     /** Opens the microphone for one utterance (never while speaking). */
     async listen() {
         if (!this.active || this.speaking || this.listening) return;
+        this.pauseAppAudio();
         await this.beep();
         if (!this.active || this.speaking) return;
 
@@ -394,7 +404,6 @@ const VoiceMode = {
             return;
         }
         await this.tell(MESSAGES.reminder);
-        this.listen();
     },
 
     /**
@@ -415,19 +424,16 @@ const VoiceMode = {
             this.capture = null;
             this.lastHeard = heard;
             await onText(heard, this);
-            this.listen();
             return;
         }
 
         // Dictation, a pending yes/no and a numbered choice take the top alternative as is.
         if (this.dictating || this.pending || this.clarifying || !texts.length) {
             await this.handle(heard);
-            this.listen();
             return;
         }
 
         await this.decide(texts, typeof best.confidence === 'number' && best.confidence > 0 && best.confidence < MIN_CONFIDENCE);
-        this.listen();
     },
 
     async decide(texts, lowConfidence) {
@@ -816,10 +822,10 @@ window.voiceModeBar = function (endpoint, routes) {
                 VoiceMode.announce(MESSAGES.unsupported);
                 return;
             }
-            // Pressing it while the microphone or speech is running turns the mode off;
-            // pressing it after a page load (mode remembered, microphone closed) resumes it.
             if (this.aktif && (VoiceMode.listening || VoiceMode.speaking)) {
-                VoiceMode.stop();
+                VoiceMode.stopListening();
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                VoiceMode.speaking = false;
                 return;
             }
             if (!VoiceMode.consented()) {
@@ -827,7 +833,11 @@ window.voiceModeBar = function (endpoint, routes) {
                 this.$nextTick(() => this.$refs.setuju.focus());
                 return;
             }
-            VoiceMode.start();
+            if (!this.aktif) {
+                VoiceMode.start();
+                return;
+            }
+            VoiceMode.listen();
         },
 
         setuju() {

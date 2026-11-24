@@ -24,7 +24,7 @@ class DeployDocsTest extends TestCase
             'composer install --no-dev --optimize-autoloader', 'npm ci', 'npm run build',
             'php artisan migrate --force', 'php artisan config:cache', 'php artisan route:cache', 'php artisan view:cache',
             'php artisan queue:work --tries=3',
-            'php artisan app:seed-content', 'php artisan db:seed --class=DemoUserSeeder',
+            'php artisan app:seed-content',
         ] as $command) {
             $this->assertStringContainsString($command, $section, $command);
         }
@@ -34,7 +34,7 @@ class DeployDocsTest extends TestCase
     {
         $section = $this->section();
 
-        foreach (['APP_KEY', 'DB_HOST', 'QUEUE_CONNECTION', 'GEMINI_API_KEY', 'LANGFLOW_API_KEY', 'REGISTRATION_ENABLED', 'REGISTRATION_INVITE_CODE', 'DEMO_ACCOUNT_PASSWORD'] as $name) {
+        foreach (['APP_KEY', 'DB_HOST', 'QUEUE_CONNECTION', 'GEMINI_API_KEY', 'LANGFLOW_API_KEY', 'DAILY_MESSAGE_LIMIT'] as $name) {
             $this->assertStringContainsString("`{$name}`", $section, $name);
         }
         $this->assertDoesNotMatchRegularExpression('/\b[A-Z][A-Z0-9_]{2,}=\S/', $section);
@@ -70,7 +70,7 @@ class DeployDocsTest extends TestCase
         foreach (['`TRUSTED_PROXIES`', '`APP_FORCE_HTTPS`', '`DAILY_MESSAGE_LIMIT`'] as $name) {
             $this->assertStringContainsString($name, $section, $name);
         }
-        $this->assertStringContainsString("php artisan app:seed-content\n# hanya di staging, bila akun demo dipakai:\nphp artisan db:seed --class=DemoUserSeeder --force", $section);
+        $this->assertStringContainsString('php artisan app:seed-content', $section);
         // The old manual instruction is gone now that the proxy is configured from .env.
         $this->assertStringNotContainsString('bootstrap/app.php', $section);
     }

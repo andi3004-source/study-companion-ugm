@@ -11,7 +11,6 @@ use Illuminate\Support\HtmlString;
 
 Route::get('/', fn () => view('layouts.study', [
     'title' => 'Tuturnusa',
-    'navRingkas' => true,
     'slot' => new HtmlString(view('home')->render()),
 ]))->name('home');
 Route::get('/dashboard', fn () => redirect('/', 302));

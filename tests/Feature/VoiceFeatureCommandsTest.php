@@ -94,7 +94,7 @@ class VoiceFeatureCommandsTest extends TestCase
         $this->assertStringContainsString('data-voice-page="bantuan"', $html);
         $this->assertStringContainsString("root().querySelectorAll('section')", $bantuan);
         $this->assertStringContainsString('Katakan nomor bagian untuk mendengarnya.', $bantuan);
-        foreach (['"rekam" (setelah bunyi', '"baca halaman"', '"berhenti"'] as $phrase) {
+        foreach (['"rekam"', '"baca halaman"', '"berhenti"', 'buku saku'] as $phrase) {
             $this->assertStringContainsString($phrase, $html, $phrase);
         }
     }

@@ -24,7 +24,7 @@ use Throwable;
  * degrading to the free STT-match checker if the ML microservice is
  * unreachable — see MlPronunciationChecker).
  */
-#[Layout('layouts.study', ['navRingkas' => true])]
+#[Layout('layouts.study')]
 class PronunciationCheck extends Component
 {
     use WithFileUploads;
