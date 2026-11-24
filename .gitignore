@@ -38,3 +38,6 @@ hasil-tes.txt
 hasil-benchmark*
 benchmark-*.txt
 benchmark-*.json
+
+# Python bytecode (Buku Saku scripts/tests)
+__pycache__/
