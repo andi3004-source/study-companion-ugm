@@ -150,7 +150,7 @@ class SingleServerDeployTest extends TestCase
     {
         $env = file_get_contents(base_path('.env.production.example'));
 
-        foreach (['TRUSTED_PROXIES=*', 'APP_FORCE_HTTPS=true', 'APP_ENV=staging', 'APP_DEBUG=false', 'DB_JOURNAL_MODE=wal'] as $line) {
+        foreach (['TRUSTED_PROXIES=172.16.0.0/12,10.0.0.0/8,192.168.0.0/16', 'APP_FORCE_HTTPS=true', 'APP_ENV=staging', 'APP_DEBUG=false', 'DB_JOURNAL_MODE=wal'] as $line) {
             $this->assertMatchesRegularExpression('/^'.preg_quote($line, '/').'$/m', $env, $line);
         }
         foreach (['DOMAIN', 'APP_KEY', 'GEMINI_API_KEY', 'ANTHROPIC_API_KEY', 'LANGFLOW_API_KEY', 'MAIL_PASSWORD'] as $secret) {
