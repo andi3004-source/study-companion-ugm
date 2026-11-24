@@ -4,6 +4,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# ponytail: macOS writes AppleDouble "._*" files on exFAT/network drives; PHPUnit
+# picks up "._FooTest.php" as a test file and exits non-zero. Remove them before
+# running. Drop this once the repo lives on APFS.
+[ "$(uname)" = Darwin ] && find app bootstrap config database resources routes tests scripts -name '._*' -type f -delete 2>/dev/null || true
+
 [ -f .env ] || cp .env.example .env
 grep -q '^APP_KEY=base64' .env || php artisan key:generate --ansi
 
